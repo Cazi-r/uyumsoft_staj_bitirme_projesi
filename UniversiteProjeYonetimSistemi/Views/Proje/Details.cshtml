@@ -1,0 +1,301 @@
+@model UniversiteProjeYonetimSistemi.Models.Proje
+
+@{
+    ViewData["Title"] = "Proje Detayları";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h1>@Model.Ad</h1>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+            @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Düzenle
+                </a>
+                <a asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Ata
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Proje Detayları -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Proje Detayları</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Durum:</div>
+                        <div class="col-md-8">
+                            @{
+                                var statusClass = Model.Status switch
+                                {
+                                    "Beklemede" => "badge bg-secondary",
+                                    "Atanmis" => "badge bg-info",
+                                    "Devam" => "badge bg-primary",
+                                    "Tamamlandi" => "badge bg-success",
+                                    "Iptal" => "badge bg-danger",
+                                    _ => "badge bg-secondary"
+                                };
+                            }
+                            <span class="@statusClass">@Model.Status</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Kategori:</div>
+                        <div class="col-md-8">@(Model.Kategori?.Ad ?? "-")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Öğrenci:</div>
+                        <div class="col-md-8">@(Model.Ogrenci != null ? $"{Model.Ogrenci.Ad} {Model.Ogrenci.Soyad} ({Model.Ogrenci.OgrenciNo})" : "-")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Danışman:</div>
+                        <div class="col-md-8">@(Model.Mentor != null ? $"{Model.Mentor.Unvan} {Model.Mentor.Ad} {Model.Mentor.Soyad}" : "-")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Oluşturulma Tarihi:</div>
+                        <div class="col-md-8">@Model.OlusturmaTarihi.ToShortDateString()</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Teslim Tarihi:</div>
+                        <div class="col-md-8">@(Model.TeslimTarihi.HasValue ? Model.TeslimTarihi.Value.ToShortDateString() : "-")</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 fw-bold">Açıklama:</div>
+                        <div class="col-md-8">@Html.Raw(Model.Aciklama.Replace("\n", "<br/>"))</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proje Aşamaları -->
+            @if (Model.Asamalar != null && Model.Asamalar.Any())
+            {
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Proje Aşamaları</h5>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                        {
+                            <button class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus"></i> Aşama Ekle
+                            </button>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Aşama</th>
+                                        <th>Başlangıç</th>
+                                        <th>Bitiş</th>
+                                        <th>Durum</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var asama in Model.Asamalar.OrderBy(a => a.SiraNo))
+                                    {
+                                        <tr>
+                                            <td>@asama.AsamaAdi</td>
+                                            <td>@(asama.BaslangicTarihi?.ToShortDateString() ?? "-")</td>
+                                            <td>@(asama.BitisTarihi?.ToShortDateString() ?? "-")</td>
+                                            <td>
+                                                @if (asama.Tamamlandi)
+                                                {
+                                                    <span class="badge bg-success">Tamamlandı</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Devam Ediyor</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            <!-- Proje Dosyaları -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Proje Dosyaları</h5>
+                    <button class="btn btn-sm btn-primary">
+                        <i class="fas fa-upload"></i> Dosya Yükle
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (Model.Dosyalar != null && Model.Dosyalar.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Dosya Adı</th>
+                                        <th>Boyut</th>
+                                        <th>Tür</th>
+                                        <th>Yükleme Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var dosya in Model.Dosyalar)
+                                    {
+                                        <tr>
+                                            <td>@dosya.DosyaAdi</td>
+                                            <td>@(dosya.DosyaBoyutu / 1024) KB</td>
+                                            <td>@dosya.DosyaTipi</td>
+                                            <td>@dosya.YuklemeTarihi.ToShortDateString()</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a href="#" class="btn btn-sm btn-info">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                    @if (User.IsInRole("Admin"))
+                                                    {
+                                                        <a href="#" class="btn btn-sm btn-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz dosya yüklenmemiş.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Proje Değerlendirmeleri -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Değerlendirmeler</h5>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                    {
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> Değerlendir
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (Model.Degerlendirmeler != null && Model.Degerlendirmeler.Any())
+                    {
+                        @foreach (var degerlendirme in Model.Degerlendirmeler.OrderByDescending(d => d.DegerlendirmeTarihi))
+                        {
+                            <div class="card mb-2">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary">@degerlendirme.DegerlendirmeTipi</span>
+                                    <small>@degerlendirme.DegerlendirmeTarihi.ToShortDateString()</small>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Puan: @degerlendirme.Puan / 100</h5>
+                                    <p class="card-text">@degerlendirme.Aciklama</p>
+                                    <small class="text-muted">Değerlendiren: @(degerlendirme.Akademisyen?.Unvan + " " + degerlendirme.Akademisyen?.Ad + " " + degerlendirme.Akademisyen?.Soyad)</small>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz değerlendirme yapılmamış.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Yorumlar -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Yorumlar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <textarea class="form-control" rows="3" placeholder="Yorumunuzu yazın..."></textarea>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <select class="form-select form-select-sm">
+                                <option>Genel</option>
+                                <option>Geri Bildirim</option>
+                                <option>Soru</option>
+                                <option>Onay</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-sm">
+                            <i class="fas fa-paper-plane"></i> Gönder
+                        </button>
+                    </div>
+
+                    <hr />
+
+                    <!-- Mevcut Yorumlar -->
+                    @if (Model.Yorumlar != null && Model.Yorumlar.Any())
+                    {
+                        @foreach (var yorum in Model.Yorumlar.OrderByDescending(y => y.OlusturmaTarihi))
+                        {
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>
+                                                @if (yorum.Ogrenci != null)
+                                                {
+                                                    @(yorum.Ogrenci.Ad + " " + yorum.Ogrenci.Soyad)
+                                                }
+                                                else if (yorum.Akademisyen != null)
+                                                {
+                                                    @(yorum.Akademisyen.Unvan + " " + yorum.Akademisyen.Ad + " " + yorum.Akademisyen.Soyad)
+                                                }
+                                            </strong>
+                                            <span class="badge bg-info ms-2">@yorum.YorumTipi</span>
+                                        </div>
+                                        <small>@yorum.OlusturmaTarihi.ToShortDateString()</small>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">@yorum.Icerik</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz yorum yapılmamış.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // JavaScript fonksiyonları burada
+        });
+    </script>
+} 
