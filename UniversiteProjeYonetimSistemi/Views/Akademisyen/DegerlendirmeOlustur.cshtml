@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "Değerlendirme Oluştur";
+    var proje = ViewBag.Proje;
+    
+    // Hangi controller'dan çağrıldığını belirle
+    bool isFromProjeDegerlendirme = Context.Request.Path.Value.Contains("ProjeDegerlendirme");
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Proje Değerlendirme</h4>
+                        @if (isFromProjeDegerlendirme)
+                        {
+                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i> Proje Detayına Dön
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Akademisyen" asp-action="ProjeDetay" asp-route-id="@proje.Id" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i> Proje Detayına Dön
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Proje Bilgileri</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th style="width: 150px;">Proje Adı</th>
+                                    <td>@proje.Ad</td>
+                                </tr>
+                                @if (proje.Ogrenci != null)
+                                {
+                                    <tr>
+                                        <th>Öğrenci</th>
+                                        <td>@proje.Ogrenci.Ad @proje.Ogrenci.Soyad (@proje.Ogrenci.OgrenciNo)</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <th>Durum</th>
+                                    <td>
+                                        @{
+                                            string badgeClass = "";
+                                            switch (proje.Status)
+                                            {
+                                                case "Beklemede": badgeClass = "bg-warning"; break;
+                                                case "Atanmis": badgeClass = "bg-info"; break;
+                                                case "Devam": badgeClass = "bg-primary"; break;
+                                                case "Tamamlandi": badgeClass = "bg-success"; break;
+                                                case "Iptal": badgeClass = "bg-danger"; break;
+                                                default: badgeClass = "bg-secondary"; break;
+                                            }
+                                        }
+                                        <span class="badge @badgeClass">@proje.Status</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if (isFromProjeDegerlendirme)
+                    {
+                        <form asp-controller="ProjeDegerlendirme" asp-action="Add" method="post">
+                            <input type="hidden" name="projeId" value="@proje.Id" />
+
+                            <div class="mb-4">
+                                <label class="form-label">Değerlendirme Tipi</label>
+                                <select name="degerlendirmeTipi" class="form-select" required>
+                                    <option value="">Seçiniz...</option>
+                                    <option value="Ara Değerlendirme">Ara Değerlendirme</option>
+                                    <option value="Final Değerlendirme">Final Değerlendirme</option>
+                                    <option value="İlerleme Raporu">İlerleme Raporu</option>
+                                    <option value="Sunum Değerlendirme">Sunum Değerlendirme</option>
+                                    <option value="Teknik İnceleme">Teknik İnceleme</option>
+                                    <option value="Diğer">Diğer</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Puan (0-100)</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="range" name="puan" class="form-range flex-grow-1" min="0" max="100" value="70" id="puanSlider">
+                                    <span class="badge bg-primary ms-3" id="puanDisplay" style="min-width: 50px; font-size: 1rem;">70</span>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted mt-1">
+                                    <span>Yetersiz (0)</span>
+                                    <span>Geliştirilebilir (25)</span>
+                                    <span>İyi (50)</span>
+                                    <span>Çok iyi (75)</span>
+                                    <span>Mükemmel (100)</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Değerlendirme Açıklaması</label>
+                                <textarea name="aciklama" class="form-control" rows="6" placeholder="Değerlendirme detaylarını yazınız..." required></textarea>
+                                <div class="form-text">
+                                    Değerlendirmenizde projenin güçlü yanlarını, geliştirilmesi gereken alanlarını ve önerilerinizi belirtiniz.
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Değerlendirmeyi Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Akademisyen" asp-action="DegerlendirmeOlustur" method="post">
+                            <input type="hidden" name="projeId" value="@proje.Id" />
+
+                            <div class="mb-4">
+                                <label class="form-label">Değerlendirme Tipi</label>
+                                <select name="degerlendirmeTipi" class="form-select" required>
+                                    <option value="">Seçiniz...</option>
+                                    <option value="Ara Değerlendirme">Ara Değerlendirme</option>
+                                    <option value="Final Değerlendirme">Final Değerlendirme</option>
+                                    <option value="İlerleme Raporu">İlerleme Raporu</option>
+                                    <option value="Sunum Değerlendirme">Sunum Değerlendirme</option>
+                                    <option value="Teknik İnceleme">Teknik İnceleme</option>
+                                    <option value="Diğer">Diğer</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Puan (0-100)</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="range" name="puan" class="form-range flex-grow-1" min="0" max="100" value="70" id="puanSlider">
+                                    <span class="badge bg-primary ms-3" id="puanDisplay" style="min-width: 50px; font-size: 1rem;">70</span>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted mt-1">
+                                    <span>Yetersiz (0)</span>
+                                    <span>Geliştirilebilir (25)</span>
+                                    <span>İyi (50)</span>
+                                    <span>Çok iyi (75)</span>
+                                    <span>Mükemmel (100)</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Değerlendirme Açıklaması</label>
+                                <textarea name="aciklama" class="form-control" rows="6" placeholder="Değerlendirme detaylarını yazınız..." required></textarea>
+                                <div class="form-text">
+                                    Değerlendirmenizde projenin güçlü yanlarını, geliştirilmesi gereken alanlarını ve önerilerinizi belirtiniz.
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Değerlendirmeyi Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Puan slider değerini göster
+        document.getElementById('puanSlider').addEventListener('input', function() {
+            document.getElementById('puanDisplay').textContent = this.value;
+        });
+    </script>
+} 

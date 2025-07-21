@@ -69,9 +69,6 @@
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a asp-action="Assign" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-user-plus"></i>
-                                        </a>
                                     }
                                     @if (User.IsInRole("Admin"))
                                     {

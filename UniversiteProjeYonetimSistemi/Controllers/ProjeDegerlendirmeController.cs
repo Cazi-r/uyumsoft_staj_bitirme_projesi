@@ -72,38 +72,45 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 return RedirectToAction("Details", "Proje", new { id });
             }
             
-            var model = new DegerlendirmeViewModel
-            {
-                ProjeId = id
-            };
+            // Akademisyen/DegerlendirmeOlustur view'i ViewBag.Proje bekliyor, o yüzden onu ekliyoruz
+            ViewBag.Proje = proje;
             
-            ViewBag.DegerlendirmeTipleri = new SelectList(new[] { "Ara", "Final", "Genel" });
-            return View(model);
+            // Akademisyen klasöründeki DegerlendirmeOlustur view'ini kullanalım
+            return View("~/Views/Akademisyen/DegerlendirmeOlustur.cshtml");
         }
 
         // POST: ProjeDegerlendirme/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> Add(DegerlendirmeViewModel model)
+        public async Task<IActionResult> Add(int projeId, int puan, string aciklama, string degerlendirmeTipi)
         {
-            if (!ModelState.IsValid)
+            // DegerlendirmeOlustur view'i ViewModel yerine ayrı parametreler bekliyor
+            
+            if (string.IsNullOrEmpty(degerlendirmeTipi) || string.IsNullOrEmpty(aciklama) || puan < 0 || puan > 100)
             {
-                ViewBag.DegerlendirmeTipleri = new SelectList(new[] { "Ara", "Final", "Genel" });
-                return View(model);
+                var proje = await _projeService.GetByIdAsync(projeId);
+                if (proje == null)
+                {
+                    return NotFound();
+                }
+                
+                ViewBag.Proje = proje;
+                TempData["ErrorMessage"] = "Lütfen tüm alanları doldurun ve puanı 0-100 arasında belirtin.";
+                return View("~/Views/Akademisyen/DegerlendirmeOlustur.cshtml");
             }
 
             var akademisyen = await _authService.GetCurrentAkademisyenAsync();
             if (akademisyen == null)
             {
                 TempData["ErrorMessage"] = "Akademisyen bilgilerinize erişilemedi.";
-                return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
+                return RedirectToAction("Details", "Proje", new { id = projeId });
             }
 
-            await _projeService.AddEvaluationAsync(model.ProjeId, model.Puan, model.Aciklama, model.DegerlendirmeTipi, akademisyen.Id);
+            await _projeService.AddEvaluationAsync(projeId, puan, aciklama, degerlendirmeTipi, akademisyen.Id);
             TempData["SuccessMessage"] = "Değerlendirme başarıyla eklendi.";
 
-            return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
+            return RedirectToAction("Details", "Proje", new { id = projeId });
         }
 
         // POST: ProjeDegerlendirme/Delete/5

@@ -4,6 +4,9 @@
     ViewData["Title"] = "Proje Aşaması Ekle";
     // Aciklama null ise boş string olarak ayarla
     Model.Aciklama = Model.Aciklama ?? "";
+    
+    // Hangi controller'dan çağrıldığını belirle
+    bool isFromProjeAsama = Context.Request.Path.Value.Contains("ProjeAsama");
 }
 
 <div class="container py-4">
@@ -14,52 +17,104 @@
                     <h5 class="mb-0">Proje Aşaması Ekle</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form asp-action="AddStage" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-                        
-                        <input type="hidden" asp-for="ProjeId" />
-                        
-                        <div class="mb-3">
-                            <label asp-for="AsamaAdi" class="form-label">Aşama Adı</label>
-                            <input asp-for="AsamaAdi" class="form-control" />
-                            <span asp-validation-for="AsamaAdi" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label asp-for="Aciklama" class="form-label">Açıklama</label>
-                            <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
-                            <span asp-validation-for="Aciklama" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="BaslangicTarihi" class="form-label">Başlangıç Tarihi</label>
-                                <input asp-for="BaslangicTarihi" class="form-control" type="date" />
-                                <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
+                    @if (isFromProjeAsama)
+                    {
+                        <form asp-controller="ProjeAsama" asp-action="Add" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                            
+                            <input type="hidden" asp-for="ProjeId" />
+                            
+                            <div class="mb-3">
+                                <label asp-for="AsamaAdi" class="form-label">Aşama Adı</label>
+                                <input asp-for="AsamaAdi" class="form-control" />
+                                <span asp-validation-for="AsamaAdi" class="text-danger"></span>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label>
-                                <input asp-for="BitisTarihi" class="form-control" type="date" />
-                                <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+                            
+                            <div class="mb-3">
+                                <label asp-for="Aciklama" class="form-label">Açıklama</label>
+                                <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Aciklama" class="text-danger"></span>
                             </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label asp-for="SiraNo" class="form-label">Sıra No</label>
-                            <input asp-for="SiraNo" class="form-control" type="number" min="1" />
-                            <span asp-validation-for="SiraNo" class="text-danger"></span>
-                            <small class="text-muted">Aşamaların görünüm sırasını belirler.</small>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Aşamayı Kaydet
-                            </button>
-                        </div>
-                    </form>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="BaslangicTarihi" class="form-label">Başlangıç Tarihi</label>
+                                    <input asp-for="BaslangicTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label>
+                                    <input asp-for="BitisTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="SiraNo" class="form-label">Sıra No</label>
+                                <input asp-for="SiraNo" class="form-control" type="number" min="1" />
+                                <span asp-validation-for="SiraNo" class="text-danger"></span>
+                                <small class="text-muted">Aşamaların görünüm sırasını belirler.</small>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Aşamayı Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Proje" asp-action="AddStage" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                            
+                            <input type="hidden" asp-for="ProjeId" />
+                            
+                            <div class="mb-3">
+                                <label asp-for="AsamaAdi" class="form-label">Aşama Adı</label>
+                                <input asp-for="AsamaAdi" class="form-control" />
+                                <span asp-validation-for="AsamaAdi" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="Aciklama" class="form-label">Açıklama</label>
+                                <textarea asp-for="Aciklama" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Aciklama" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="BaslangicTarihi" class="form-label">Başlangıç Tarihi</label>
+                                    <input asp-for="BaslangicTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="BitisTarihi" class="form-label">Bitiş Tarihi</label>
+                                    <input asp-for="BitisTarihi" class="form-control" type="date" />
+                                    <span asp-validation-for="BitisTarihi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="SiraNo" class="form-label">Sıra No</label>
+                                <input asp-for="SiraNo" class="form-control" type="number" min="1" />
+                                <span asp-validation-for="SiraNo" class="text-danger"></span>
+                                <small class="text-muted">Aşamaların görünüm sırasını belirler.</small>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Aşamayı Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    }
                 </div>
             </div>
         </div>

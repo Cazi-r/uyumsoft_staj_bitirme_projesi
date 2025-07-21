@@ -1,0 +1,190 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Kullanıcı Etkinlikleri";
+    var secilenKullaniciId = ViewBag.SecilenKullaniciId as int?;
+    var secilenTip = ViewBag.SecilenTip as string;
+    var suankiSayfa = ViewBag.SuankiSayfa;
+    var toplamSayfa = ViewBag.ToplamSayfa;
+}
+
+<div class="container py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h1 class="mb-0">Kullanıcı Etkinlikleri</h1>
+        </div>
+        <div class="col-auto">
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Etkinlik Filtresi</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="KullaniciEtkinlikleri" class="row align-items-end">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Kullanıcı</label>
+                    <!-- Kullanıcı seçimi dropdown menüsü -->
+                    <select name="kullaniciId" class="form-select">
+                        <option value="">Tüm Kullanıcılar</option>
+                        @foreach (var kullanici in ViewBag.Kullanicilar)
+                        {
+                            if (secilenKullaniciId != null && int.Parse(kullanici.Value) == secilenKullaniciId)
+                            {
+                                <option value="@kullanici.Value" selected>@kullanici.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@kullanici.Value">@kullanici.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Etkinlik Tipi</label>
+                    <!-- Etkinlik tipi dropdown menüsü -->
+                    <select name="tip" class="form-select">
+                        <option value="">Tüm Etkinlikler</option>
+                        @if (secilenTip == "Giriş")
+                        {
+                            <option value="Giriş" selected>Giriş</option>
+                        }
+                        else
+                        {
+                            <option value="Giriş">Giriş</option>
+                        }
+                        
+                        @if (secilenTip == "Proje")
+                        {
+                            <option value="Proje" selected>Proje</option>
+                        }
+                        else
+                        {
+                            <option value="Proje">Proje</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3 d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i> Filtrele
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                @if (Model.Count() == 0)
+                {
+                    <span>Etkinlik Bulunamadı</span>
+                }
+                else
+                {
+                    <span>Etkinlik Listesi</span>
+                }
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 180px;">Tarih</th>
+                            <th>Kullanıcı</th>
+                            <th>Rol</th>
+                            <th>İşlem</th>
+                            <th class="text-center">Tip</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var etkinlik in Model)
+                        {
+                            <tr>
+                                <td>@(((DateTime)etkinlik.Tarih).ToString("dd.MM.yyyy HH:mm"))</td>
+                                <td>
+                                    <a href="javascript:void(0);" onclick="filterByUser(@etkinlik.KullaniciId)">
+                                        @etkinlik.KullaniciAdi
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge @GetRolBadge(etkinlik.KullaniciRol)">@etkinlik.KullaniciRol</span>
+                                </td>
+                                <td>@etkinlik.Islem</td>
+                                <td class="text-center">
+                                    <span class="badge @GetTipBadge(etkinlik.Tip)">@etkinlik.Tip</span>
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Count() == 0)
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-search fa-3x mb-3"></i>
+                                        <p>Hiçbir etkinlik kaydı bulunamadı.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @if (Model.Count() > 0 && toplamSayfa > 1)
+        {
+            <div class="card-footer bg-light">
+                <nav aria-label="Sayfalama">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(suankiSayfa == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = suankiSayfa - 1 })">Önceki</a>
+                        </li>
+                        @for (int i = 1; i <= toplamSayfa; i++)
+                        {
+                            <li class="page-item @(suankiSayfa == i ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = i })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(suankiSayfa == toplamSayfa ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = suankiSayfa + 1 })">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterByUser(userId) {
+            window.location.href = '@Url.Action("KullaniciEtkinlikleri")' + '?kullaniciId=' + userId;
+        }
+    </script>
+}
+
+@functions {
+    public string GetRolBadge(string rol)
+    {
+        return rol switch
+        {
+            "Admin" => "bg-danger",
+            "Akademisyen" => "bg-primary",
+            "Ogrenci" => "bg-success",
+            _ => "bg-secondary"
+        };
+    }
+    
+    public string GetTipBadge(string tip)
+    {
+        return tip switch
+        {
+            "Giriş" => "bg-info",
+            "Proje" => "bg-success",
+            _ => "bg-secondary"
+        };
+    }
+} 

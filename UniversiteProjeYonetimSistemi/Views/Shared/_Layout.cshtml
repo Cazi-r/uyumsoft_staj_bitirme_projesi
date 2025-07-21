@@ -46,33 +46,27 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                                     <li>
+                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">
+                                            <i class="fas fa-chart-line me-2"></i> Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a class="dropdown-item" asp-controller="Admin" asp-action="Kullanicilar">
                                             <i class="fas fa-users me-2"></i> Kullanıcılar
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Akademisyenler">
-                                            <i class="fas fa-user-tie me-2"></i> Akademisyenler
+                                        <a class="dropdown-item" asp-controller="Admin" asp-action="KullaniciEtkinlikleri">
+                                            <i class="fas fa-history me-2"></i> Etkinlik Geçmişi
                                         </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Ogrenciler">
-                                            <i class="fas fa-user-graduate me-2"></i> Öğrenciler
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Kategoriler">
-                                            <i class="fas fa-tags me-2"></i> Proje Kategorileri
-                                        </a>
-                                    </li>
-                                </ul>
+                               </ul>
                             </li>
                         }
                         @if (User.IsInRole("Akademisyen"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Akademisyen" asp-action="Projeler">
+                                <a class="nav-link" asp-area="" asp-controller="Akademisyen" asp-action="Danismanliklar">
                                     <i class="fas fa-chalkboard-teacher me-1"></i> Danışmanlıklarım
                                 </a>
                             </li>
@@ -120,3 +114,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

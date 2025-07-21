@@ -53,7 +53,19 @@ namespace UniversiteProjeYonetimSistemi.Services
         public async Task UpdateAsync(T entity)
         {
             entity.UpdatedAt = DateTime.Now;
-            _dbSet.Update(entity);
+            
+            // Mevcut entity'yi getir - böylece aynı ID'ye sahip iki entity örneği sorununu önlemiş oluruz
+            var existingEntity = await _dbSet.FindAsync(entity.Id);
+            
+            if (existingEntity == null)
+            {
+                throw new Exception($"ID {entity.Id} olan entity bulunamadı.");
+            }
+            
+            // Entity Framework'ün entry metodunu kullanarak sadece değiştirilmiş özellikleri güncelle
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+            
+            // Değişiklikleri kaydet
             await _context.SaveChangesAsync();
         }
         

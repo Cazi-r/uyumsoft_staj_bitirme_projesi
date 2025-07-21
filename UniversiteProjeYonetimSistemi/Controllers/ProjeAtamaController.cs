@@ -81,7 +81,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             ViewBag.Ogrenciler = new SelectList(ogrenciler.Select(o => new { Id = o.Id, AdSoyad = $"{o.Ad} {o.Soyad}" }), "Id", "AdSoyad");
             ViewBag.Akademisyenler = new SelectList(akademisyenler.Select(a => new { Id = a.Id, AdSoyad = $"{a.Unvan} {a.Ad} {a.Soyad}" }), "Id", "AdSoyad");
             
-            return View(proje);
+            // Proje klasöründeki Assign view'ini kullanalım
+            return View("~/Views/Proje/Assign.cshtml", proje);
         }
 
         // POST: ProjeAtama/Assign/5

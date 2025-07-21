@@ -76,7 +76,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 SiraNo = (await _projeService.GetStagesByProjeIdAsync(id)).Count() + 1
             };
 
-            return View(model);
+            // Proje klasöründeki AddStage view'ini kullanalım
+            return View("~/Views/Proje/AddStage.cshtml", model);
         }
 
         // POST: ProjeAsama/Add
@@ -87,7 +88,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                // Post işleminde de aynı view'i kullanalım
+                return View("~/Views/Proje/AddStage.cshtml", model);
             }
 
             // Aciklama null ise boş string olarak ayarla

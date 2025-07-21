@@ -31,11 +31,8 @@
             </a>
             @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
             {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                    <i class="fas fa-edit"></i> Düzenle
-                </a>
                 <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
-                    <i class="fas fa-user-plus"></i> Ata
+                    <i class="fas fa-user-plus"></i> Atama Yap
                 </a>
             }
         </div>

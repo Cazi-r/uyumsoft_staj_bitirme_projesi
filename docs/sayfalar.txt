@@ -62,3 +62,9 @@ _Layout.cshtml'i güncelleyin
 Rol bazlı menü yapısı ekleyin
 Kullanışlı partial view'lar oluşturun (örn. proje kartı, bildirim listesi)
 Halihazırda iyi bir temel yapınız var. Adım adım ilerleyerek mevcut kod tabanını koruyarak ve genişleterek devam edebilirsiniz.
+
+
+
+admin yorum yapamıyo
+admin proje atama yapmadan geri çıkamıyor
+admin yeni kullanıcı kaydı yaparken giriş sayfasına dön tuşu gözüküyo

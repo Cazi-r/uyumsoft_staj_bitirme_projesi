@@ -1,0 +1,340 @@
+@model IEnumerable<UniversiteProjeYonetimSistemi.Models.Kullanici>
+
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+    var rolFilter = ViewData["RolFilter"] as string ?? "";
+    var durumFilter = ViewData["DurumFilter"] as string ?? "";
+    var siralamaFilter = ViewData["SiralamaFilter"] as string ?? "id_asc";
+    var aramaFilter = ViewData["AramaFilter"] as string ?? "";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Kullanıcı Yönetimi</h1>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Toplam Kullanıcı</h6>
+                    <h2>@ViewBag.ToplamKullanici</h2>
+                    <a asp-action="Kullanicilar" class="stretched-link text-white"></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Öğrenci</h6>
+                    <h2>@ViewBag.OgrenciSayisi</h2>
+                    <a asp-action="Kullanicilar" asp-route-rol="Ogrenci" class="stretched-link text-white"></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Akademisyen</h6>
+                    <h2>@ViewBag.AkademisyenSayisi</h2>
+                    <a asp-action="Kullanicilar" asp-route-rol="Akademisyen" class="stretched-link text-white"></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Admin</h6>
+                    <h2>@ViewBag.AdminSayisi</h2>
+                    <a asp-action="Kullanicilar" asp-route-rol="Admin" class="stretched-link text-white"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                @if (!string.IsNullOrEmpty(rolFilter))
+                {
+                    <span>@rolFilter Kullanıcıları</span>
+                }
+                else if (!string.IsNullOrEmpty(durumFilter))
+                {
+                    <span>@(durumFilter == "aktif" ? "Aktif" : "Pasif") Kullanıcılar</span>
+                }
+                else if (!string.IsNullOrEmpty(aramaFilter))
+                {
+                    <span>"@aramaFilter" Arama Sonuçları</span>
+                }
+                else
+                {
+                    <span>Tüm Kullanıcılar</span>
+                }
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <!-- Filtreleme bölümü -->
+                    <div class="d-flex flex-wrap align-items-center mb-2">
+                        <span class="me-2">Filtreler:</span>
+                        
+                        <!-- Rol filtresi -->
+                        <div class="btn-group me-3 mb-2">
+                            <a asp-action="Kullanicilar" 
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="@siralamaFilter"
+                               asp-route-arama="@aramaFilter"
+                               class="btn @(string.IsNullOrEmpty(rolFilter) ? "btn-primary" : "btn-outline-primary") btn-sm">
+                                Tümü
+                            </a>
+                            <a asp-action="Kullanicilar" 
+                               asp-route-rol="Admin"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="@siralamaFilter" 
+                               asp-route-arama="@aramaFilter"
+                               class="btn @(rolFilter == "Admin" ? "btn-danger" : "btn-outline-danger") btn-sm">
+                                Admin
+                            </a>
+                            <a asp-action="Kullanicilar" 
+                               asp-route-rol="Akademisyen"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="@siralamaFilter"
+                               asp-route-arama="@aramaFilter"
+                               class="btn @(rolFilter == "Akademisyen" ? "btn-info" : "btn-outline-info") btn-sm">
+                                Akademisyen
+                            </a>
+                            <a asp-action="Kullanicilar" 
+                               asp-route-rol="Ogrenci"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="@siralamaFilter"
+                               asp-route-arama="@aramaFilter"
+                               class="btn @(rolFilter == "Ogrenci" ? "btn-success" : "btn-outline-success") btn-sm">
+                                Öğrenci
+                            </a>
+                        </div>
+                        
+                        <!-- Durum filtresi -->
+                        <div class="btn-group me-3 mb-2">
+                            <a asp-action="Kullanicilar" 
+                               asp-route-rol="@rolFilter"
+                               asp-route-siralama="@siralamaFilter"
+                               asp-route-arama="@aramaFilter"
+                               class="btn @(string.IsNullOrEmpty(durumFilter) ? "btn-secondary" : "btn-outline-secondary") btn-sm">
+                                Tüm Durumlar
+                            </a>
+                            <a asp-action="Kullanicilar" 
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="aktif"
+                               asp-route-siralama="@siralamaFilter"
+                               asp-route-arama="@aramaFilter"
+                               class="btn @(durumFilter == "aktif" ? "btn-success" : "btn-outline-success") btn-sm">
+                                Aktif
+                            </a>
+                            <a asp-action="Kullanicilar" 
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="pasif"
+                               asp-route-siralama="@siralamaFilter"
+                               asp-route-arama="@aramaFilter"
+                               class="btn @(durumFilter == "pasif" ? "btn-danger" : "btn-outline-danger") btn-sm">
+                                Pasif
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <!-- Arama formu -->
+                    <form asp-action="Kullanicilar" method="get" class="d-flex">
+                        <input type="hidden" name="rol" value="@rolFilter" />
+                        <input type="hidden" name="durum" value="@durumFilter" />
+                        <input type="hidden" name="siralama" value="@siralamaFilter" />
+                        <input type="text" name="arama" value="@aramaFilter" class="form-control form-control-sm me-2" 
+                               placeholder="Ad, soyad veya email ara..." />
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        @if (!string.IsNullOrEmpty(aramaFilter))
+                        {
+                            <a asp-action="Kullanicilar" 
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="@siralamaFilter"
+                               class="btn btn-outline-secondary btn-sm ms-1">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        }
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-end mb-3">
+                <div class="btn-group">
+                    <a asp-controller="Auth" asp-action="Register" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus-circle me-1"></i> Yeni Kullanıcı
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fas fa-sort me-1"></i> Sırala
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item @(siralamaFilter == "id_asc" ? "active" : "")" 
+                               asp-action="Kullanicilar" 
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="id_asc"
+                               asp-route-arama="@aramaFilter">
+                                <i class="fas fa-sort-numeric-down me-1"></i> ID (Artan)
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(siralamaFilter == "id_desc" ? "active" : "")" 
+                               asp-action="Kullanicilar"
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="id_desc"
+                               asp-route-arama="@aramaFilter">
+                                <i class="fas fa-sort-numeric-down-alt me-1"></i> ID (Azalan)
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item @(siralamaFilter == "ad_asc" ? "active" : "")" 
+                               asp-action="Kullanicilar"
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="ad_asc"
+                               asp-route-arama="@aramaFilter">
+                                <i class="fas fa-sort-alpha-down me-1"></i> Ad (A-Z)
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(siralamaFilter == "ad_desc" ? "active" : "")" 
+                               asp-action="Kullanicilar"
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="ad_desc"
+                               asp-route-arama="@aramaFilter">
+                                <i class="fas fa-sort-alpha-down-alt me-1"></i> Ad (Z-A)
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item @(siralamaFilter == "tarih_asc" ? "active" : "")" 
+                               asp-action="Kullanicilar"
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="tarih_asc"
+                               asp-route-arama="@aramaFilter">
+                                <i class="fas fa-calendar me-1"></i> Kayıt Tarihi (Eski-Yeni)
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item @(siralamaFilter == "tarih_desc" ? "active" : "")" 
+                               asp-action="Kullanicilar"
+                               asp-route-rol="@rolFilter"
+                               asp-route-durum="@durumFilter"
+                               asp-route-siralama="tarih_desc"
+                               asp-route-arama="@aramaFilter">
+                                <i class="fas fa-calendar-alt me-1"></i> Kayıt Tarihi (Yeni-Eski)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Ad Soyad</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Durum</th>
+                            <th>Son Giriş</th>
+                            <th>Kayıt Tarihi</th>
+                            <th class="text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var kullanici in Model)
+                        {
+                            <tr>
+                                <td>@kullanici.Id</td>
+                                <td>@kullanici.Ad @kullanici.Soyad</td>
+                                <td>@kullanici.Email</td>
+                                <td><span class="badge @GetRoleBadgeClass(kullanici.Rol)">@kullanici.Rol</span></td>
+                                <td>
+                                    @if (kullanici.Aktif)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </td>
+                                <td>@(kullanici.SonGiris.HasValue ? kullanici.SonGiris.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
+                                <td>@kullanici.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <a asp-action="KullaniciDuzenle" asp-route-id="@kullanici.Id" 
+                                           class="btn btn-outline-primary btn-sm" title="Düzenle">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="KullaniciSil" asp-route-id="@kullanici.Id" 
+                                           class="btn btn-outline-danger btn-sm" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="text-muted small">
+                        @if (Model.Count() == 0)
+                        {
+                            <span>Sonuç bulunamadı</span>
+                        }
+                        else
+                        {
+                            <span>Toplam @Model.Count() kullanıcı listeleniyor</span>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="text-muted small">
+                        <span>Aktif: @ViewBag.AktifKullanici | Pasif: @ViewBag.PasifKullanici</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetRoleBadgeClass(string rol)
+    {
+        return rol switch
+        {
+            "Admin" => "bg-danger",
+            "Akademisyen" => "bg-info",
+            "Ogrenci" => "bg-success",
+            _ => "bg-secondary"
+        };
+    }
+} 
