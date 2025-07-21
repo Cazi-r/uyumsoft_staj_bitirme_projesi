@@ -1,0 +1,192 @@
+@{
+    ViewData["Title"] = "Öğrenci Paneli";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Öğrenci Paneli</h1>
+    
+    <!-- Özet İstatistikler -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">Aktif Projeler</h6>
+                        <i class="fas fa-tasks fa-2x"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@ViewBag.AktifProjeSayisi</h2>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>Devam Eden Projeleriniz</span>
+                    <a asp-controller="Ogrenci" asp-action="Projeler" class="text-white">
+                        <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">Yeni Yorumlar</h6>
+                        <i class="fas fa-comments fa-2x"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@ViewBag.YeniYorumSayisi</h2>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>Son 7 Gündeki Yorumlar</span>
+                    <a href="#" class="text-white">
+                        <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">Yaklaşan Teslimler</h6>
+                        <i class="fas fa-calendar-alt fa-2x"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@ViewBag.YaklasanTeslimSayisi</h2>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>Bu Hafta Teslimi Olan Projeler</span>
+                    <a href="#" class="text-white">
+                        <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Projelerim -->
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Projelerim</h5>
+            <a asp-controller="Ogrenci" asp-action="Projeler" class="btn btn-sm btn-primary">Tümünü Gör</a>
+        </div>
+        <div class="card-body p-0">
+            @if (ViewBag.Projeler != null && ViewBag.Projeler.Count > 0)
+            {
+                <div class="list-group list-group-flush">
+                    @foreach (var proje in ViewBag.Projeler)
+                    {
+                        <div class="list-group-item list-group-item-action p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-1">@proje.Ad</h5>
+                                @{
+                                    string badgeClass = "";
+                                    switch (proje.Status)
+                                    {
+                                        case "Beklemede": badgeClass = "bg-warning"; break;
+                                        case "Atanmis": badgeClass = "bg-info"; break;
+                                        case "Devam": badgeClass = "bg-primary"; break;
+                                        case "Tamamlandi": badgeClass = "bg-success"; break;
+                                        case "Iptal": badgeClass = "bg-danger"; break;
+                                        default: badgeClass = "bg-secondary"; break;
+                                    }
+                                }
+                                <span class="badge @badgeClass">@proje.Status</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <p class="mb-1 text-muted">
+                                    <i class="fas fa-tag me-1"></i>
+                                    <span class="badge bg-light text-dark">@proje.Kategori.Ad</span>
+                                    <i class="fas fa-user-tie ms-3 me-1"></i>
+                                    <small>@(proje.Mentor != null ? $"{proje.Mentor.Unvan} {proje.Mentor.Ad} {proje.Mentor.Soyad}" : "Danışman Atanmadı")</small>
+                                </p>
+                                <small class="text-muted">@proje.OlusturmaTarihi.ToString("dd.MM.yyyy")</small>
+                            </div>
+                            <div class="mt-2">
+                                <p class="mb-1 text-truncate">@proje.Aciklama</p>
+                            </div>
+                            <div class="mt-2 d-flex justify-content-end">
+                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="fas fa-eye me-1"></i>Görüntüle
+                                </a>
+                                @if (proje.Status != "Tamamlandi" && proje.Status != "Iptal")
+                                {
+                                    <a href="#" class="btn btn-sm btn-outline-success me-1">
+                                        <i class="fas fa-file-upload me-1"></i>Dosya Yükle
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <p>Henüz hiç projeniz bulunmuyor.</p>
+                    <a asp-controller="Proje" asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-1"></i>Yeni Proje Oluştur
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <!-- Alt Bölüm -->
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Son Yorumlar ve Geri Bildirimler</h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (ViewBag.SonYorumlar != null && ViewBag.SonYorumlar.Count > 0)
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var yorum in ViewBag.SonYorumlar)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@yorum.Proje.Ad</h6>
+                                        <small>@((DateTime.Now - yorum.OlusturmaTarihi).TotalDays < 1 ? 
+                                            $"{(int)(DateTime.Now - yorum.OlusturmaTarihi).TotalHours} saat önce" : 
+                                            $"{(int)(DateTime.Now - yorum.OlusturmaTarihi).TotalDays} gün önce")</small>
+                                    </div>
+                                    <p class="mb-1">@yorum.Icerik</p>
+                                    <small class="text-muted">@yorum.Akademisyen.Unvan @yorum.Akademisyen.Ad @yorum.Akademisyen.Soyad</small>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <p>Henüz yorum yapılmamış.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Hızlı İşlemler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a asp-controller="Proje" asp-action="Create" class="btn btn-outline-primary">
+                            <i class="fas fa-plus-circle me-2"></i>Yeni Proje Oluştur
+                        </a>
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="fas fa-file-upload me-2"></i>Dosya Yükle
+                        </a>
+                        <a href="#" class="btn btn-outline-info">
+                            <i class="fas fa-comment me-2"></i>Soru Sor / Yorum Yap
+                        </a>
+                        <a href="#" class="btn btn-outline-warning">
+                            <i class="fas fa-search me-2"></i>Danışman Ara
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

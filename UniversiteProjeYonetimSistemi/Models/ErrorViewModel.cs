@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace UniversiteProjeYonetimSistemi.Models;
 
 public class ErrorViewModel
@@ -6,3 +8,5 @@ public class ErrorViewModel
 
     public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 }
+
+#nullable disable

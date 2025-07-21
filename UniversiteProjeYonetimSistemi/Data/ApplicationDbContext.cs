@@ -61,13 +61,13 @@ namespace UniversiteProjeYonetimSistemi.Data
 
             // ProjeYorum kontrol kısıtlaması (Öğrenci veya Akademisyen)
             modelBuilder.Entity<ProjeYorum>()
-                .HasCheckConstraint("CHK_YorumYapan",
-                    "(OgrenciId IS NOT NULL AND AkademisyenId IS NULL) OR (OgrenciId IS NULL AND AkademisyenId IS NOT NULL)");
+                .ToTable(tb => tb.HasCheckConstraint("CHK_YorumYapan",
+                    "(OgrenciId IS NOT NULL AND AkademisyenId IS NULL) OR (OgrenciId IS NULL AND AkademisyenId IS NOT NULL)"));
 
             // Bildirim kontrol kısıtlaması (Öğrenci veya Akademisyen)
             modelBuilder.Entity<Bildirim>()
-                .HasCheckConstraint("CHK_BildirimAlici",
-                    "(OgrenciId IS NOT NULL AND AkademisyenId IS NULL) OR (OgrenciId IS NULL AND AkademisyenId IS NOT NULL)");
+                .ToTable(tb => tb.HasCheckConstraint("CHK_BildirimAlici",
+                    "(OgrenciId IS NOT NULL AND AkademisyenId IS NULL) OR (OgrenciId IS NULL AND AkademisyenId IS NOT NULL)"));
         }
     }
 }

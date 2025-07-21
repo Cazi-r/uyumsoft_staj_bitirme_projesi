@@ -112,6 +112,13 @@
                                     <span asp-validation-for="Telefon" class="text-danger"></span>
                                 </div>
                             </div>
+                            
+                            <div id="adminAlanlari" class="role-fields" style="display:none;">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Sistem yöneticisi (Admin) olarak kayıt oluyorsunuz. Temel bilgileriniz kaydedilecektir.
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -146,6 +153,8 @@
                     $("#ogrenciAlanlari").show();
                 } else if (selectedValue === "Akademisyen") {
                     $("#akademisyenAlanlari").show();
+                } else if (selectedValue === "Admin") {
+                    $("#adminAlanlari").show();
                 }
                 
                 // Form validasyonunu güncelle
@@ -158,6 +167,8 @@
                 $("#ogrenciAlanlari").show();
             } else if (initialRole === "Akademisyen") {
                 $("#akademisyenAlanlari").show();
+            } else if (initialRole === "Admin") {
+                $("#adminAlanlari").show();
             }
             
             // İlk yüklemede validasyon kurallarını güncelle
@@ -184,6 +195,8 @@
                     $("#Unvan").removeAttr("data-val");
                     $("#Unvan").removeAttr("data-val-required");
                 }
+                
+                // Admin için ek validasyon kuralı gerekmez
                 
                 // Validasyon kurallarını tekrar çalıştır
                 $('form').validate().resetForm();

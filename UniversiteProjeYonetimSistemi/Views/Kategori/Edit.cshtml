@@ -1,0 +1,103 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeKategori
+
+@{
+    ViewData["Title"] = "Kategori Düzenle";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Kategori Düzenle</h1>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="CreatedAt" />
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Ad" class="control-label">Kategori Adı</label>
+                            <input asp-for="Ad" class="form-control" placeholder="Kategori adını giriniz" />
+                            <span asp-validation-for="Ad" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Aciklama" class="control-label">Açıklama</label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="4" placeholder="Kategori açıklamasını giriniz"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Renk" class="control-label">Renk</label>
+                            <div class="input-group">
+                                <input asp-for="Renk" type="color" class="form-control form-control-color" />
+                                <input type="text" class="form-control" id="renk-kod" value="@Model.Renk" readonly />
+                            </div>
+                            <small class="text-muted">Kategoriyi temsil edecek bir renk seçin</small>
+                            <span asp-validation-for="Renk" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">Önizleme</div>
+                            <div class="card-body">
+                                <h5>Kategori: <span id="preview-ad">@Model.Ad</span></h5>
+                                <div class="mt-2">
+                                    <span id="preview-badge" class="badge" style="background-color: @Model.Renk; padding: 8px;">@Model.Renk</span>
+                                </div>
+                                <p class="mt-2">
+                                    <strong>Açıklama:</strong>
+                                    <span id="preview-aciklama">@Model.Aciklama</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Renk değişikliğini izle
+            $('input[type="color"]').on('input', function() {
+                var renk = $(this).val();
+                $('#renk-kod').val(renk);
+                $('#preview-badge').css('background-color', renk).text(renk);
+            });
+            
+            // Kategori adı değişikliğini izle
+            $('#Ad').on('input', function() {
+                var ad = $(this).val();
+                $('#preview-ad').text(ad || 'Kategori Adı');
+            });
+            
+            // Açıklama değişikliğini izle
+            $('#Aciklama').on('input', function() {
+                var aciklama = $(this).val();
+                $('#preview-aciklama').text(aciklama || 'Kategori açıklaması burada görünecek');
+            });
+        });
+    </script>
+} 

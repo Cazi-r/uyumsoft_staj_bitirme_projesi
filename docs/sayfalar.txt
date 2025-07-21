@@ -1,0 +1,64 @@
+Ana Sayfa Yapısı
+Anasayfa/Gösterge Paneli - Rol tabanlı gösterge paneli
+Kimlik Doğrulama Sayfaları - Giriş/Kayıt/Erişim Reddedildi (başlanmış)
+Profil Yönetimi - Kullanıcı profili görüntüleme/düzenleme
+
+Yönetici Sayfaları
+Kullanıcı Yönetimi - Tüm kullanıcılar için CRUD işlemleri
+Proje Kategori Yönetimi - Kategoriler için CRUD işlemleri
+Sistem İstatistikleri - Sistem kullanımına genel bakış
+
+Akademisyen Sayfaları
+Proje Gösterge Paneli - Atanmış/danışmanlık yapılan projeleri görüntüleme
+Proje Değerlendirme - Değerlendirme ve geri bildirim ekleme
+Öğrenci Yönetimi - Öğrenci bilgilerini görüntüleme
+Bildirimler - Bildirimleri görüntüleme ve yönetme
+
+Öğrenci Sayfaları
+Proje Gösterge Paneli - Kendi projelerini görüntüleme
+Proje Oluşturma - Yeni proje teklifleri sunma
+Proje Detayları - Proje bilgilerini görüntüleme/düzenleme:
+Dosya yönetimi
+Yorum bölümü
+Proje aşamaları takibi
+Kaynak yönetimi
+Bildirimler - Bildirimleri görüntüleme ve yanıtlama
+
+Ortak/Paylaşılan Sayfalar
+Proje Listesi - Filtrelenebilir proje listesi
+Proje Detayları - Sekmeli detaylı proje görünümü:
+Genel Bakış
+Dosyalar
+Yorumlar
+Değerlendirmeler
+Aşamalar
+Kaynaklar
+Her rolün uygun erişim kontrolleri ve izinlerine göre aynı sayfaların farklı görünümleri olmalıdır.
+
+
+Öncelikle gösterge panelini geliştirin:
+HomeController'ı rol tabanlı bir dashboard'a dönüştürün (öğrenci, akademisyen ve admin için farklı görünümler)
+Index.cshtml'i zenginleştirin ve rol bazlı içerik gösterin
+Sonraki adım olarak kullanıcı profil yönetimini ekleyin:
+ProfileController oluşturun
+Views/Profile klasörü altında Index.cshtml (profil görüntüleme) ve Edit.cshtml (profil düzenleme) ekleyin
+Proje ile ilgili işlevselliği genişletin:
+Mevcut ProjeController ve Views/Proje yapısını genişletin
+Dosya yükleme, yorum, değerlendirme gibi özellikleri ekleyin
+
+Admin panelini oluşturun:
+AdminController ekleyin
+Views/Admin klasörü oluşturup yönetim sayfalarını ekleyin
+Bildirim sistemini ekleyin:
+NotificationController oluşturun
+Views/Notification altında görünümler ekleyin
+Geliştirme sırası:
+Önce rol bazlı erişim kontrolünü tamamlayın
+Temel CRUD işlevselliğini ekleyin
+Daha karmaşık özellikleri (dosya yükleme, bildirimler, vs.) ekleyin
+UI/UX iyileştirmelerini yapın
+Layout ve Shared bileşenleri geliştirin:
+_Layout.cshtml'i güncelleyin
+Rol bazlı menü yapısı ekleyin
+Kullanışlı partial view'lar oluşturun (örn. proje kartı, bildirim listesi)
+Halihazırda iyi bir temel yapınız var. Adım adım ilerleyerek mevcut kod tabanını koruyarak ve genişleterek devam edebilirsiniz.

@@ -1,0 +1,85 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeKategori
+
+@{
+    ViewData["Title"] = "Kategori Sil";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Kategori Silme</h1>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <i class="fas fa-exclamation-triangle"></i> Uyarı
+        </div>
+        <div class="card-body">
+            <h4>Bu kategoriyi silmek istediğinizden emin misiniz?</h4>
+            <p class="text-danger">
+                <strong>Bu işlem geri alınamaz!</strong> Kategori silindiğinde, bu kategoriye ait projeler 
+                kategorilendirilmemiş olarak işaretlenecektir.
+            </p>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Kategori ID</dt>
+                        <dd class="col-sm-8">@Model.Id</dd>
+                        
+                        <dt class="col-sm-4">Kategori Adı</dt>
+                        <dd class="col-sm-8">@Model.Ad</dd>
+                        
+                        <dt class="col-sm-4">Renk</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge" style="background-color: @Model.Renk; padding: 8px;">@Model.Renk</span>
+                        </dd>
+                        
+                        <dt class="col-sm-4">Oluşturulma Tarihi</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Açıklama</div>
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(Model.Aciklama))
+                            {
+                                <p>@Model.Aciklama</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Bu kategori için açıklama girilmemiş.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            @if (Model.Projeler != null && Model.Projeler.Any())
+            {
+                <div class="alert alert-warning mt-4">
+                    <i class="fas fa-exclamation-triangle"></i> Bu kategoriye bağlı <strong>@Model.Projeler.Count</strong> adet proje bulunmaktadır. 
+                    Kategoriyi sildiğinizde bu projeler kategorilendirilmemiş olarak işaretlenecektir.
+                </div>
+            }
+            
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Kategoriyi Sil
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

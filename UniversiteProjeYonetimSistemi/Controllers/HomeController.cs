@@ -1,21 +1,163 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using UniversiteProjeYonetimSistemi.Models;
+using UniversiteProjeYonetimSistemi.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using UniversiteProjeYonetimSistemi.Data;
+using System.Linq;
 
 namespace UniversiteProjeYonetimSistemi.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly AuthService _authService;
+    private readonly IProjeService _projeService;
+    private readonly ApplicationDbContext _context;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(
+        ILogger<HomeController> logger,
+        AuthService authService,
+        IProjeService projeService,
+        ApplicationDbContext context)
     {
         _logger = logger;
+        _authService = authService;
+        _projeService = projeService;
+        _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        // Kullanıcı giriş yapmamışsa standart sayfayı göster
+        if (!User.Identity.IsAuthenticated)
+        {
+            return View("Welcome");
+        }
+
+        var userRole = User.FindFirstValue(ClaimTypes.Role);
+        
+        // Kullanıcı rolüne göre farklı dashboard'ları göster
+        ViewBag.UserRole = userRole;
+        
+        switch (userRole)
+        {
+            case "Admin":
+                // Admin dashboard verileri
+                ViewBag.KullaniciSayisi = await _context.Kullanicilar.CountAsync();
+                ViewBag.ProjeSayisi = await _context.Projeler.CountAsync();
+                ViewBag.OgrenciSayisi = await _context.Ogrenciler.CountAsync();
+                ViewBag.AkademisyenSayisi = await _context.Akademisyenler.CountAsync();
+                
+                // Proje durum istatistikleri
+                ViewBag.BeklemedeProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Beklemede");
+                ViewBag.AtanmisProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Atanmis");
+                ViewBag.DevamEdenProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Devam");
+                ViewBag.TamamlananProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Tamamlandi");
+                ViewBag.IptalProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Iptal");
+                
+                // Son etkinlikler - örnek olarak son kayıt olan kullanıcılar
+                ViewBag.SonKullanicilar = await _context.Kullanicilar
+                    .OrderByDescending(k => k.CreatedAt)
+                    .Take(5)
+                    .ToListAsync();
+                
+                return View("AdminDashboard");
+                
+            case "Akademisyen":
+                // Akademisyen dashboard verileri
+                var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+                if (akademisyen != null)
+                {
+                    ViewBag.DanismanlikProjeleri = await _context.Projeler
+                        .Where(p => p.MentorId == akademisyen.Id)
+                        .Include(p => p.Ogrenci)
+                        .Include(p => p.Kategori)
+                        .OrderByDescending(p => p.OlusturmaTarihi)
+                        .Take(5)
+                        .ToListAsync();
+                        
+                    ViewBag.DanismanlikSayisi = await _context.Projeler
+                        .CountAsync(p => p.MentorId == akademisyen.Id);
+                    
+                    // Bekleyen değerlendirmeler
+                    ViewBag.BekleyenDegerlendirmeSayisi = await _context.Projeler
+                        .Where(p => p.MentorId == akademisyen.Id && p.Status == "Devam")
+                        .CountAsync(p => !_context.Degerlendirmeler.Any(d => d.ProjeId == p.Id && d.AkademisyenId == akademisyen.Id));
+                    
+                    // Yaklaşan teslim tarihleri
+                    var bugun = DateTime.Today;
+                    var birHaftaSonra = bugun.AddDays(7);
+                    
+                    ViewBag.YaklasanTeslimler = await _context.Projeler
+                        .Where(p => p.MentorId == akademisyen.Id && 
+                                   p.TeslimTarihi.HasValue && 
+                                   p.TeslimTarihi >= bugun && 
+                                   p.TeslimTarihi <= birHaftaSonra)
+                        .Include(p => p.Ogrenci)
+                        .OrderBy(p => p.TeslimTarihi)
+                        .ToListAsync();
+                    
+                    // Son yorumlar
+                    ViewBag.SonYorumlar = await _context.ProjeYorumlari
+                        .Where(y => y.AkademisyenId == akademisyen.Id)
+                        .Include(y => y.Proje)
+                        .OrderByDescending(y => y.OlusturmaTarihi)
+                        .Take(3)
+                        .ToListAsync();
+                }
+                return View("AkademisyenDashboard");
+                
+            case "Ogrenci":
+                // Öğrenci dashboard verileri
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                if (ogrenci != null)
+                {
+                    ViewBag.Projeler = await _context.Projeler
+                        .Where(p => p.OgrenciId == ogrenci.Id)
+                        .Include(p => p.Mentor)
+                        .Include(p => p.Kategori)
+                        .OrderByDescending(p => p.OlusturmaTarihi)
+                        .ToListAsync();
+                        
+                    // Aktif proje sayısı
+                    ViewBag.AktifProjeSayisi = await _context.Projeler
+                        .CountAsync(p => p.OgrenciId == ogrenci.Id && 
+                                  (p.Status == "Atanmis" || p.Status == "Devam"));
+                    
+                    // Yaklaşan teslim tarihleri
+                    var bugun = DateTime.Today;
+                    var birHaftaSonra = bugun.AddDays(7);
+                    
+                    ViewBag.YaklasanTeslimSayisi = await _context.Projeler
+                        .CountAsync(p => p.OgrenciId == ogrenci.Id && 
+                                  p.TeslimTarihi.HasValue && 
+                                  p.TeslimTarihi >= bugun && 
+                                  p.TeslimTarihi <= birHaftaSonra);
+                    
+                    // Yeni mesaj/yorum sayısı
+                    ViewBag.YeniYorumSayisi = await _context.ProjeYorumlari
+                        .CountAsync(y => y.AkademisyenId != null && 
+                                   y.Proje.OgrenciId == ogrenci.Id &&
+                                   y.OlusturmaTarihi >= DateTime.Now.AddDays(-7));
+                    
+                    // Son yorumlar
+                    ViewBag.SonYorumlar = await _context.ProjeYorumlari
+                        .Where(y => y.AkademisyenId != null && y.Proje.OgrenciId == ogrenci.Id)
+                        .Include(y => y.Proje)
+                        .Include(y => y.Akademisyen)
+                        .OrderByDescending(y => y.OlusturmaTarihi)
+                        .Take(3)
+                        .ToListAsync();
+                }
+                return View("OgrenciDashboard");
+                
+            default:
+                return View();
+        }
     }
 
     public IActionResult Privacy()

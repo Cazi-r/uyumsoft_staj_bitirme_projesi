@@ -16,8 +16,8 @@
                 </span>
             </li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Profilim</a></li>
-            <li><a class="dropdown-item" href="#">Ayarlar</a></li>
+            <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index"><i class="fas fa-user me-2"></i>Profilim</a></li>
+            <li><a class="dropdown-item" asp-controller="Profile" asp-action="Edit"><i class="fas fa-cog me-2"></i>Profil Ayarları</a></li>
             <li><hr class="dropdown-divider"></li>
             <li>
                 <form class="form-inline" asp-controller="Auth" asp-action="Logout" method="post">

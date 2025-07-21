@@ -1,0 +1,160 @@
+@model UniversiteProjeYonetimSistemi.Models.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profil";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <div class="d-inline-block bg-primary text-white rounded-circle p-4">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                    </div>
+                    <h4>@Model.Ad @Model.Soyad</h4>
+                    <p class="text-muted mb-2">@Model.Email</p>
+                    <div class="mb-3">
+                        @switch (Model.Rol)
+                        {
+                            case "Admin":
+                                <span class="badge bg-danger">Yönetici</span>
+                                break;
+                            case "Akademisyen":
+                                <span class="badge bg-primary">@(string.IsNullOrEmpty(Model.Unvan) ? "Akademisyen" : Model.Unvan)</span>
+                                break;
+                            case "Ogrenci":
+                                <span class="badge bg-success">Öğrenci</span>
+                                break;
+                        }
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Kişisel Bilgiler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Ad</h6>
+                            <p>@Model.Ad</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Soyad</h6>
+                            <p>@Model.Soyad</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">E-posta</h6>
+                            <p>@Model.Email</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Rol</h6>
+                            <p>
+                                @switch (Model.Rol)
+                                {
+                                    case "Admin":
+                                        <span>Yönetici</span>
+                                        break;
+                                    case "Akademisyen":
+                                        <span>Akademisyen</span>
+                                        break;
+                                    case "Ogrenci":
+                                        <span>Öğrenci</span>
+                                        break;
+                                    default:
+                                        <span>@Model.Rol</span>
+                                        break;
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Son Giriş</h6>
+                            <p>@(Model.SonGiris.HasValue ? Model.SonGiris.Value.ToString("dd.MM.yyyy HH:mm") : "-")</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Kayıt Tarihi</h6>
+                            <p>@Model.CreatedAt.ToString("dd.MM.yyyy")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Rol bazlı ek bilgileri göster *@
+            @if (Model.Rol == "Ogrenci")
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Öğrenci Bilgileri</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Öğrenci Numarası</h6>
+                                <p>@(string.IsNullOrEmpty(Model.OgrenciNo) ? "-" : Model.OgrenciNo)</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Kayıt Tarihi</h6>
+                                <p>@(Model.KayitTarihi.HasValue ? Model.KayitTarihi.Value.ToString("dd.MM.yyyy") : "-")</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Telefon</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Telefon) ? "-" : Model.Telefon)</p>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h6 class="text-muted">Adres</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Adres) ? "-" : Model.Adres)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.Rol == "Akademisyen")
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Akademisyen Bilgileri</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Unvan</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Unvan) ? "-" : Model.Unvan)</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Ofis</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Ofis) ? "-" : Model.Ofis)</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Telefon</h6>
+                                <p>@(string.IsNullOrEmpty(Model.Telefon) ? "-" : Model.Telefon)</p>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <h6 class="text-muted">Uzmanlık Alanı</h6>
+                                <p>@(string.IsNullOrEmpty(Model.UzmanlikAlani) ? "-" : Model.UzmanlikAlani)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Başarı mesajı varsa göster
+        $(document).ready(function () {
+            if ('@TempData["SuccessMessage"]') {
+                // Bootstrap toast gösterilmesi için kod eklenebilir
+                alert('@TempData["SuccessMessage"]');
+            }
+        });
+    </script>
+} 

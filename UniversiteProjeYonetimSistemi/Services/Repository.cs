@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UniversiteProjeYonetimSistemi.Data;
@@ -27,6 +29,18 @@ namespace UniversiteProjeYonetimSistemi.Services
         {
             return await _dbSet.FindAsync(id);
         }
+        
+        public async Task<T> GetByIdWithIncludeAsync(int id, params Expression<Func<T, object>>[] includeProperties)
+        {
+            IQueryable<T> query = _dbSet;
+            
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+            
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
+        }
 
         public async Task AddAsync(T entity)
         {
@@ -41,6 +55,15 @@ namespace UniversiteProjeYonetimSistemi.Services
             entity.UpdatedAt = DateTime.Now;
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+        }
+        
+        public async Task DeleteAsync(T entity)
+        {
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteAsync(int id)

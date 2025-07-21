@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using UniversiteProjeYonetimSistemi.Models;
 
 namespace UniversiteProjeYonetimSistemi.Services
@@ -19,5 +20,28 @@ namespace UniversiteProjeYonetimSistemi.Services
         Task AssignToOgrenciAsync(int projeId, int ogrenciId);
         Task AssignToMentorAsync(int projeId, int mentorId);
         Task UpdateStatusAsync(int projeId, string newStatus);
+        
+        // Dosya işlemleri
+        Task<ProjeDosya> UploadFileAsync(int projeId, IFormFile file, string aciklama, int? yukleyenId, string yukleyenTipi);
+        Task<ProjeDosya> GetFileByIdAsync(int fileId);
+        Task DeleteFileAsync(int fileId);
+        Task<IEnumerable<ProjeDosya>> GetFilesByProjeIdAsync(int projeId);
+        
+        // Yorum işlemleri
+        Task<ProjeYorum> AddCommentAsync(int projeId, string icerik, string yorumTipi, int? ogrenciId, int? akademisyenId);
+        Task<IEnumerable<ProjeYorum>> GetCommentsByProjeIdAsync(int projeId);
+        Task DeleteCommentAsync(int yorumId);
+        
+        // Değerlendirme işlemleri
+        Task<Degerlendirme> AddEvaluationAsync(int projeId, int puan, string aciklama, string degerlendirmeTipi, int akademisyenId);
+        Task<IEnumerable<Degerlendirme>> GetEvaluationsByProjeIdAsync(int projeId);
+        Task UpdateEvaluationAsync(int degerlendirmeId, int puan, string aciklama, string degerlendirmeTipi);
+        Task DeleteEvaluationAsync(int degerlendirmeId);
+        
+        // Proje aşamaları işlemleri
+        Task<ProjeAsamasi> AddStageAsync(int projeId, string asamaAdi, string aciklama, DateTime? baslangicTarihi, DateTime? bitisTarihi, int siraNo);
+        Task<IEnumerable<ProjeAsamasi>> GetStagesByProjeIdAsync(int projeId);
+        Task UpdateStageStatusAsync(int asamaId, bool tamamlandi);
+        Task DeleteStageAsync(int asamaId);
     }
 } 

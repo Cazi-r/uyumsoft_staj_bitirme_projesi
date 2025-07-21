@@ -29,7 +29,7 @@ namespace UniversiteProjeYonetimSistemi.Models
         [ForeignKey("MentorId")]
         public Akademisyen Mentor { get; set; }
         
-        public int KategoriId { get; set; }
+        public int? KategoriId { get; set; }
         
         [ForeignKey("KategoriId")]
         public ProjeKategori Kategori { get; set; }

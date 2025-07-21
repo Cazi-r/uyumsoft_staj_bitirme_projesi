@@ -5,6 +5,22 @@
 }
 
 <div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="row mb-3">
         <div class="col">
             <h1>@Model.Ad</h1>
@@ -29,8 +45,14 @@
         <div class="col-md-8">
             <!-- Proje Detayları -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Proje Detayları</h5>
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                    }
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
@@ -48,6 +70,37 @@
                                 };
                             }
                             <span class="@statusClass">@Model.Status</span>
+                            
+                            @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                            {
+                                <div class="mt-2">
+                                    @if (Model.Status == "Atanmis")
+                                    {
+                                        <form asp-action="UpdateStatusToInProgress" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Bu projeyi devam ediyor olarak işaretlemek istiyor musunuz?')">
+                                                <i class="fas fa-play"></i> Projeyi Başlat
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (Model.Status == "Devam")
+                                    {
+                                        <form asp-action="CompleteProject" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Bu projeyi tamamlanmış olarak işaretlemek istiyor musunuz?')">
+                                                <i class="fas fa-check-circle"></i> Projeyi Tamamla
+                                            </button>
+                                        </form>
+                                    }
+                                    
+                                    @if (Model.Status != "Tamamlandi" && Model.Status != "Iptal")
+                                    {
+                                        <form asp-action="CancelProject" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu projeyi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')">
+                                                <i class="fas fa-times-circle"></i> Projeyi İptal Et
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -78,19 +131,19 @@
             </div>
 
             <!-- Proje Aşamaları -->
-            @if (Model.Asamalar != null && Model.Asamalar.Any())
-            {
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5>Proje Aşamaları</h5>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                         {
-                            <button class="btn btn-sm btn-primary">
+                        <a asp-action="AddStage" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
                                 <i class="fas fa-plus"></i> Aşama Ekle
-                            </button>
+                        </a>
                         }
                     </div>
                     <div class="card-body">
+                    @if (Model.Asamalar != null && Model.Asamalar.Any())
+                    {
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -106,7 +159,13 @@
                                     @foreach (var asama in Model.Asamalar.OrderBy(a => a.SiraNo))
                                     {
                                         <tr>
-                                            <td>@asama.AsamaAdi</td>
+                                            <td>
+                                                <strong>@asama.AsamaAdi</strong>
+                                                @if (!string.IsNullOrEmpty(asama.Aciklama))
+                                                {
+                                                    <br /><small class="text-muted">@asama.Aciklama</small>
+                                                }
+                                            </td>
                                             <td>@(asama.BaslangicTarihi?.ToShortDateString() ?? "-")</td>
                                             <td>@(asama.BitisTarihi?.ToShortDateString() ?? "-")</td>
                                             <td>
@@ -120,24 +179,60 @@
                                                 }
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-info">
-                                                    <i class="fas fa-eye"></i>
+                                                <div class="btn-group">
+                                                    @if (!asama.Tamamlandi)
+                                                    {
+                                                        <form asp-action="UpdateStageStatus" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@asama.Id" />
+                                                            <input type="hidden" name="projeId" value="@Model.Id" />
+                                                            <input type="hidden" name="tamamlandi" value="true" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-success" @(User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor) ? "" : "disabled")>
+                                                                <i class="fas fa-check"></i> Tamamla
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+                                                        <form asp-action="UpdateStageStatus" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@asama.Id" />
+                                                            <input type="hidden" name="projeId" value="@Model.Id" />
+                                                            <input type="hidden" name="tamamlandi" value="false" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary" @(User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor) ? "" : "disabled")>
+                                                                <i class="fas fa-undo"></i> Geri Al
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    
+                                                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                                                    {
+                                                        <form asp-action="DeleteStage" method="post" class="d-inline" onsubmit="return confirm('Bu aşamayı silmek istediğinize emin misiniz?');">
+                                                            <input type="hidden" name="id" value="@asama.Id" />
+                                                            <input type="hidden" name="projeId" value="@Model.Id" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="fas fa-trash"></i>
                                                 </button>
+                                                        </form>
+                                                    }
+                                                </div>
                                             </td>
                                         </tr>
                                     }
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz aşama eklenmemiş.</p>
+                    }
                 </div>
-            }
+            </div>
             
             <!-- Proje Dosyaları -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Proje Dosyaları</h5>
-                    <button class="btn btn-sm btn-primary">
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
                         <i class="fas fa-upload"></i> Dosya Yükle
                     </button>
                 </div>
@@ -164,15 +259,17 @@
                                             <td>@dosya.DosyaTipi</td>
                                             <td>@dosya.YuklemeTarihi.ToShortDateString()</td>
                                             <td>
-                                                <div class="btn-group">
-                                                    <a href="#" class="btn btn-sm btn-info">
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("DownloadFile", new { id = dosya.Id })" class="btn btn-sm btn-outline-primary">
                                                         <i class="fas fa-download"></i>
                                                     </a>
-                                                    @if (User.IsInRole("Admin"))
+                                                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                                                     {
-                                                        <a href="#" class="btn btn-sm btn-danger">
+                                                        <form asp-action="DeleteFile" asp-route-id="@dosya.Id" asp-route-projeId="@Model.Id" method="post" onsubmit="return confirm('Bu dosyayı silmek istediğinize emin misiniz?');">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
                                                             <i class="fas fa-trash"></i>
-                                                        </a>
+                                                            </button>
+                                                        </form>
                                                     }
                                                 </div>
                                             </td>
@@ -195,11 +292,11 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Değerlendirmeler</h5>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                     {
-                        <button class="btn btn-sm btn-primary">
-                            <i class="fas fa-plus"></i> Değerlendir
-                        </button>
+                        <a asp-action="AddEvaluation" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> Değerlendirme Ekle
+                        </a>
                     }
                 </div>
                 <div class="card-body">
@@ -210,7 +307,19 @@
                             <div class="card mb-2">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <span class="badge bg-primary">@degerlendirme.DegerlendirmeTipi</span>
+                                    <div>
                                     <small>@degerlendirme.DegerlendirmeTarihi.ToShortDateString()</small>
+                                        @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == degerlendirme.AkademisyenId.ToString()))
+                                        {
+                                            <form asp-action="DeleteEvaluation" method="post" class="d-inline" onsubmit="return confirm('Bu değerlendirmeyi silmek istediğinize emin misiniz?');">
+                                                <input type="hidden" name="id" value="@degerlendirme.Id" />
+                                                <input type="hidden" name="projeId" value="@Model.Id" />
+                                                <button type="submit" class="btn btn-sm btn-link text-danger p-0 ms-2">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title">Puan: @degerlendirme.Puan / 100</h5>
@@ -233,22 +342,26 @@
                     <h5>Yorumlar</h5>
                 </div>
                 <div class="card-body">
+                    <form asp-action="AddComment" method="post">
+                        <input type="hidden" name="ProjeId" value="@Model.Id" />
+                        
                     <div class="mb-3">
-                        <textarea class="form-control" rows="3" placeholder="Yorumunuzu yazın..."></textarea>
+                            <textarea name="Icerik" class="form-control" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <select class="form-select form-select-sm">
-                                <option>Genel</option>
-                                <option>Geri Bildirim</option>
-                                <option>Soru</option>
-                                <option>Onay</option>
+                                <select name="YorumTipi" class="form-select form-select-sm">
+                                    <option value="Genel">Genel</option>
+                                    <option value="Geri Bildirim">Geri Bildirim</option>
+                                    <option value="Soru">Soru</option>
+                                    <option value="Onay">Onay</option>
                             </select>
                         </div>
-                        <button class="btn btn-primary btn-sm">
+                            <button type="submit" class="btn btn-primary btn-sm">
                             <i class="fas fa-paper-plane"></i> Gönder
                         </button>
                     </div>
+                    </form>
 
                     <hr />
 
@@ -273,7 +386,21 @@
                                             </strong>
                                             <span class="badge bg-info ms-2">@yorum.YorumTipi</span>
                                         </div>
+                                        <div>
                                         <small>@yorum.OlusturmaTarihi.ToShortDateString()</small>
+                                            @if (User.IsInRole("Admin") || 
+                                                (User.IsInRole("Akademisyen") && yorum.AkademisyenId.HasValue && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == yorum.AkademisyenId.Value.ToString()) ||
+                                                (User.IsInRole("Ogrenci") && yorum.OgrenciId.HasValue && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == yorum.OgrenciId.Value.ToString()))
+                                            {
+                                                <form asp-action="DeleteComment" method="post" class="d-inline" onsubmit="return confirm('Bu yorumu silmek istediğinize emin misiniz?');">
+                                                    <input type="hidden" name="id" value="@yorum.Id" />
+                                                    <input type="hidden" name="projeId" value="@Model.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0 ms-2">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -292,10 +419,52 @@
     </div>
 </div>
 
+<!-- Dosya Yükleme Modal -->
+<div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UploadFile" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadFileModalLabel">Dosya Yükle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="ProjeId" value="@Model.Id" />
+                    
+                    <div class="mb-3">
+                        <label for="Dosya" class="form-label">Dosya</label>
+                        <input type="file" id="Dosya" name="Dosya" class="form-control" required />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="Aciklama" class="form-label">Açıklama (Opsiyonel)</label>
+                        <input type="text" id="Aciklama" name="Aciklama" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Yükle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // JavaScript fonksiyonları burada
+            // Bootstrap 5 tooltip aktivasyonu
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            
+            // 5 saniye sonra alert mesajlarını otomatik kapat
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
         });
     </script>
 } 

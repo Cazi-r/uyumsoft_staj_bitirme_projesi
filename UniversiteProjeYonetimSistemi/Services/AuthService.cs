@@ -104,7 +104,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(a => a.KullaniciId == kullanici.Id);
         }
 
-        // Yeni kayıt metodu - ExecutionStrategy kullanarak düzeltildi
+        // Yeni kayıt metodu - Admin rolü için düzeltildi
         public async Task<(bool Success, string Message)> RegisterAsync(RegisterViewModel model)
         {
             // E-posta adresinin benzersiz olduğunu kontrol et
@@ -161,12 +161,6 @@ namespace UniversiteProjeYonetimSistemi.Services
                     // Role göre öğrenci veya akademisyen kaydı oluştur
                     if (model.Rol == "Ogrenci")
                     {
-                        // Öğrenci numarası zorunludur
-                        if (string.IsNullOrEmpty(model.OgrenciNo))
-                        {
-                            return (false, "Öğrenci numarası zorunludur.");
-                        }
-
                         var ogrenci = new Ogrenci
                         {
                             KullaniciId = kullanici.Id,
@@ -201,7 +195,7 @@ namespace UniversiteProjeYonetimSistemi.Services
 
                         _context.Akademisyenler.Add(akademisyen);
                     }
-                    // Admin için ek tablo gerekmiyor, sadece kullanıcı tablosundaki rol Admin olacak
+                    // Admin için sadece kullanıcı tablosuna ekleme yapılıyor, özel tablo yok
 
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();

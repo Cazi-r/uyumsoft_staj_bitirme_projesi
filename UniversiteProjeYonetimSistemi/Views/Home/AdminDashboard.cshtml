@@ -1,0 +1,215 @@
+@{
+    ViewData["Title"] = "Yönetici Paneli";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Yönetici Paneli</h1>
+    
+    <!-- Özet İstatistikler -->
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">Toplam Kullanıcı</h6>
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@ViewBag.KullaniciSayisi</h2>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>Tüm Kullanıcılar</span>
+                    <a asp-controller="Admin" asp-action="Kullanicilar" class="text-white">
+                        <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">Toplam Proje</h6>
+                        <i class="fas fa-project-diagram fa-2x"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@ViewBag.ProjeSayisi</h2>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>Tüm Projeler</span>
+                    <a asp-controller="Proje" asp-action="Index" class="text-white">
+                        <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">Öğrenciler</h6>
+                        <i class="fas fa-user-graduate fa-2x"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@ViewBag.OgrenciSayisi</h2>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>Kayıtlı Öğrenciler</span>
+                    <a asp-controller="Admin" asp-action="Ogrenciler" class="text-white">
+                        <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">Akademisyenler</h6>
+                        <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@ViewBag.AkademisyenSayisi</h2>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span>Kayıtlı Akademisyenler</span>
+                    <a asp-controller="Admin" asp-action="Akademisyenler" class="text-white">
+                        <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hızlı Erişim Menüsü -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Hızlı Erişim</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-outline-primary w-100 py-3">
+                                <i class="fas fa-users mb-2 d-block fa-2x"></i>
+                                Kullanıcı Yönetimi
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Admin" asp-action="Kategoriler" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-tags mb-2 d-block fa-2x"></i>
+                                Kategori Yönetimi
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Proje" asp-action="Index" class="btn btn-outline-info w-100 py-3">
+                                <i class="fas fa-tasks mb-2 d-block fa-2x"></i>
+                                Proje Yönetimi
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Admin" asp-action="Raporlar" class="btn btn-outline-warning w-100 py-3">
+                                <i class="fas fa-chart-bar mb-2 d-block fa-2x"></i>
+                                Raporlar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sistem Durumu -->
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Son Etkinlikler</h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        @if (ViewBag.SonKullanicilar != null && ViewBag.SonKullanicilar.Count > 0)
+                        {
+                            @foreach (var kullanici in ViewBag.SonKullanicilar)
+                            {
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Yeni kullanıcı kaydı</h6>
+                                        <small>@((DateTime.Now - kullanici.CreatedAt).TotalDays < 1 ? 
+                                            $"{(int)(DateTime.Now - kullanici.CreatedAt).TotalHours} saat önce" : 
+                                            $"{(int)(DateTime.Now - kullanici.CreatedAt).TotalDays} gün önce")</small>
+                                    </div>
+                                    <small class="text-muted">@kullanici.Ad @kullanici.Soyad (@kullanici.Rol) sisteme kayıt oldu.</small>
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <div class="list-group-item">
+                                <p class="text-center mb-0">Henüz etkinlik bulunmamaktadır.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Proje Durumları</h5>
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <p class="mb-1 d-flex justify-content-between">
+                            <span>Beklemede</span>
+                            <span class="text-muted">@ViewBag.BeklemedeProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.BeklemedeProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="mb-1 d-flex justify-content-between">
+                            <span>Atanmış</span>
+                            <span class="text-muted">@ViewBag.AtanmisProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.AtanmisProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="mb-1 d-flex justify-content-between">
+                            <span>Devam Eden</span>
+                            <span class="text-muted">@ViewBag.DevamEdenProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-primary" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.DevamEdenProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="mb-1 d-flex justify-content-between">
+                            <span>Tamamlanmış</span>
+                            <span class="text-muted">@ViewBag.TamamlananProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.TamamlananProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="mb-1 d-flex justify-content-between">
+                            <span>İptal Edilmiş</span>
+                            <span class="text-muted">@ViewBag.IptalProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-danger" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.IptalProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

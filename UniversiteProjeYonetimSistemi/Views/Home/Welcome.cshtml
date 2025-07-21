@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Hoş Geldiniz";
+}
+
+<div class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold text-primary">Üniversite Proje Yönetim Sistemi</h1>
+            <p class="lead my-4">
+                Öğrenci projeleri, akademik danışmanlık süreçleri ve proje takibi için kapsamlı bir çözüm.
+                Proje yönetimi artık çok daha kolay!
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg px-4 me-md-2">
+                    <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                </a>
+                <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="fas fa-user-plus me-2"></i>Kayıt Ol
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center mt-5 mt-lg-0">
+            <img src="~/img/university-projects.svg" alt="Proje Yönetimi" class="img-fluid" style="max-width: 80%;">
+        </div>
+    </div>
+    
+    <div class="row mt-5 pt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fas fa-users fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Öğrenciler İçin</h5>
+                    <p class="card-text">Projelerinizi kolayca yönetin, danışmanlarınızla iletişim kurun ve kaynaklarınızı organize edin.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fas fa-chalkboard-teacher fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Akademisyenler İçin</h5>
+                    <p class="card-text">Danışmanlık yaptığınız projeleri takip edin, öğrencilerinize geri bildirim verin ve değerlendirmeler yapın.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fas fa-tasks fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Proje Takibi</h5>
+                    <p class="card-text">Projelerin aşamalarını izleyin, dosyaları yönetin ve zamanında tamamlanması için gerekli adımları takip edin.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

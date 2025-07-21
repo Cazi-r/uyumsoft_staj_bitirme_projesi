@@ -29,6 +29,28 @@
                         <label asp-for="Password" class="form-label"></label>
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
+
+                        <div class="alert alert-info mt-4" role="alert">
+                            <strong>Test Hesapları:</strong>
+                            <ul class="mb-0">
+                                <li>
+                                    <b>Admin:</b> admin@demo.com / <span class="text-monospace">Admin123!</span>
+                                </li>
+                                <li>
+                                    <b>Akademisyen 1:</b> akademisyen@demo.com / <span class="text-monospace">Akademisyen123!</span>
+                                </li>
+                                <li>
+                                    <b>Akademisyen 2:</b> akademisyen2@demo.com / <span class="text-monospace">Akademisyen123!</span>
+                                </li>
+                                <li>
+                                    <b>Öğrenci 1:</b> ogrenci@demo.com / <span class="text-monospace">Ogrenci123!</span>
+                                </li>
+                                <li>
+                                    <b>Öğrenci 2:</b> ogrenci2@demo.com / <span class="text-monospace">Ogrenci123!</span>
+                                </li>
+                            </ul>
+                            <small class="text-muted">Test için açılmıştır. Gerçek kullanıcılar için geçerli değildir.</small>
+                        </div>
                     </div>
                     <div class="mb-3 form-check">
                         <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe" />
