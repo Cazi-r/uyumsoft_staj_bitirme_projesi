@@ -1,14 +1,11 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Linq;
 using UniversiteProjeYonetimSistemi.Models;
-using UniversiteProjeYonetimSistemi.Models.ViewModels;
 using UniversiteProjeYonetimSistemi.Services;
 
 namespace UniversiteProjeYonetimSistemi.Controllers
@@ -127,6 +124,13 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 return NotFound();
             }
             
+            // Sadece projenin danışmanı düzenleyebilir
+            if (!await IsCurrentUserProjectMentor(id))
+            {
+                TempData["ErrorMessage"] = "Bu projeyi sadece danışmanı veya admin düzenleyebilir.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
             await LoadDropdownDataAsync();
             return View(proje);
         }
@@ -142,12 +146,20 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 return NotFound();
             }
 
+            // Sadece projenin danışmanı düzenleyebilir
+            if (!await IsCurrentUserProjectMentor(id))
+            {
+                TempData["ErrorMessage"] = "Bu projeyi sadece danışmanı veya admin düzenleyebilir.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     await _projeService.UpdateAsync(proje);
-                    return RedirectToAction(nameof(Index));
+                    TempData["SuccessMessage"] = "Proje başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Details), new { id = proje.Id });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -186,68 +198,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _projeService.DeleteAsync(id);
+            TempData["SuccessMessage"] = "Proje başarıyla silindi.";
             return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Proje/Assign/5
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> Assign(int id)
-        {
-            var proje = await _projeService.GetByIdAsync(id);
-            if (proje == null)
-            {
-                return NotFound();
-            }
-
-            var ogrenciler = await _ogrenciService.GetAllAsync();
-            var akademisyenler = await _akademisyenService.GetAllAsync();
-
-            ViewBag.Ogrenciler = new SelectList(ogrenciler.Select(o => new { Id = o.Id, AdSoyad = $"{o.Ad} {o.Soyad}" }), "Id", "AdSoyad");
-            ViewBag.Akademisyenler = new SelectList(akademisyenler.Select(a => new { Id = a.Id, AdSoyad = $"{a.Unvan} {a.Ad} {a.Soyad}" }), "Id", "AdSoyad");
-            
-            return View(proje);
-        }
-
-        // POST: Proje/Assign/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> Assign(int id, int ogrenciId, int mentorId)
-        {
-            var proje = await _projeService.GetByIdAsync(id);
-            if (proje == null)
-            {
-                return NotFound();
-            }
-            
-            // Mevcut öğrenciyi koru, sadece form ile gönderilen öğrenci ID'sini kullan
-            // Öğrenciyi sadece hiç atanmamışsa ata (yeni proje durumunda)
-            if (proje.OgrenciId == null && ogrenciId > 0)
-            {
-                await _projeService.AssignToOgrenciAsync(id, ogrenciId);
-            }
-            
-            // Danışman değişikliği
-            if (mentorId > 0)
-            {
-                // Önceki durumu sakla
-                var oncekiDurum = proje.Status;
-                
-                await _projeService.AssignToMentorAsync(id, mentorId);
-                
-                // Proje durumunu "Atanmis" olarak güncelle - eğer önceki durum "Beklemede" ise
-                if (oncekiDurum == "Beklemede")
-                {
-                    await _projeService.UpdateStatusAsync(id, "Atanmis");
-                    TempData["SuccessMessage"] = "Proje danışmanı başarıyla atandı ve proje durumu 'Atanmış' olarak güncellendi.";
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "Proje danışmanı başarıyla atandı.";
-                }
-            }
-            
-            return RedirectToAction(nameof(Details), new { id });
         }
 
         // Helper method to check if current user is the mentor of the project
@@ -378,339 +330,6 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             }
             
             return RedirectToAction(nameof(Details), new { id });
-        }
-
-        // POST: Proje/UploadFile/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadFile(ProjeDosyaViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["ErrorMessage"] = "Lütfen bir dosya seçin.";
-                return RedirectToAction(nameof(Details), new { id = model.ProjeId });
-            }
-
-            if (model.Dosya != null && model.Dosya.Length > 0)
-            {
-                int? yukleyenId = null;
-                string yukleyenTipi = "Ogrenci";
-
-                // Yükleyen bilgisini belirle
-                if (User.IsInRole("Akademisyen"))
-                {
-                    var akademisyen = await _authService.GetCurrentAkademisyenAsync();
-                    if (akademisyen != null)
-                    {
-                        yukleyenId = akademisyen.Id;
-                        yukleyenTipi = "Akademisyen";
-                    }
-                }
-                else if (User.IsInRole("Ogrenci"))
-                {
-                    var ogrenci = await _authService.GetCurrentOgrenciAsync();
-                    if (ogrenci != null)
-                    {
-                        yukleyenId = ogrenci.Id;
-                        yukleyenTipi = "Ogrenci";
-                    }
-                }
-
-                await _projeService.UploadFileAsync(model.ProjeId, model.Dosya, model.Aciklama, yukleyenId, yukleyenTipi);
-                TempData["SuccessMessage"] = "Dosya başarıyla yüklendi.";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Geçersiz dosya.";
-            }
-
-            return RedirectToAction(nameof(Details), new { id = model.ProjeId });
-        }
-
-        // GET: Proje/DownloadFile/5
-        public async Task<IActionResult> DownloadFile(int id)
-        {
-            var dosya = await _projeService.GetFileByIdAsync(id);
-            if (dosya == null)
-            {
-                return NotFound();
-            }
-
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", dosya.DosyaYolu.TrimStart('/'));
-            if (!System.IO.File.Exists(filePath))
-            {
-                return NotFound();
-            }
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-
-            return File(memory, "application/octet-stream", dosya.DosyaAdi);
-        }
-
-        // POST: Proje/DeleteFile/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> DeleteFile(int id, int projeId)
-        {
-            // Sadece projenin danışmanı dosya silebilir
-            if (!await IsCurrentUserProjectMentor(projeId))
-            {
-                TempData["ErrorMessage"] = "Bu projeye ait dosyaları sadece danışmanı veya admin silebilir.";
-                return RedirectToAction(nameof(Details), new { id = projeId });
-            }
-
-            await _projeService.DeleteFileAsync(id);
-            TempData["SuccessMessage"] = "Dosya başarıyla silindi.";
-            return RedirectToAction(nameof(Details), new { id = projeId });
-        }
-
-        // POST: Proje/AddComment/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddComment(ProjeYorumViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["ErrorMessage"] = "Lütfen yorum alanını doldurun.";
-                return RedirectToAction(nameof(Details), new { id = model.ProjeId });
-            }
-
-            int? ogrenciId = null;
-            int? akademisyenId = null;
-
-            // Yorum yapan kişiyi belirle
-            if (User.IsInRole("Akademisyen"))
-            {
-                var akademisyen = await _authService.GetCurrentAkademisyenAsync();
-                if (akademisyen != null)
-                {
-                    akademisyenId = akademisyen.Id;
-                }
-            }
-            else if (User.IsInRole("Ogrenci"))
-            {
-                var ogrenci = await _authService.GetCurrentOgrenciAsync();
-                if (ogrenci != null)
-                {
-                    ogrenciId = ogrenci.Id;
-                }
-            }
-
-            await _projeService.AddCommentAsync(model.ProjeId, model.Icerik, model.YorumTipi, ogrenciId, akademisyenId);
-            TempData["SuccessMessage"] = "Yorum başarıyla eklendi.";
-
-            return RedirectToAction(nameof(Details), new { id = model.ProjeId });
-        }
-
-        // POST: Proje/DeleteComment/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteComment(int id, int projeId)
-        {
-            var yorumlar = await _projeService.GetCommentsByProjeIdAsync(projeId);
-            var yorum = yorumlar.FirstOrDefault(y => y.Id == id);
-                
-            if (yorum == null)
-            {
-                return NotFound();
-            }
-            
-            bool canDelete = false;
-            
-            // Admin her zaman silebilir
-            if (User.IsInRole("Admin"))
-            {
-                canDelete = true;
-            }
-            // Akademisyen kendi yorumunu silebilir
-            else if (User.IsInRole("Akademisyen"))
-            {
-                var akademisyen = await _authService.GetCurrentAkademisyenAsync();
-                canDelete = akademisyen != null && yorum.AkademisyenId == akademisyen.Id;
-            }
-            // Öğrenci kendi yorumunu silebilir
-            else if (User.IsInRole("Ogrenci"))
-            {
-                var ogrenci = await _authService.GetCurrentOgrenciAsync();
-                canDelete = ogrenci != null && yorum.OgrenciId == ogrenci.Id;
-            }
-            
-            if (!canDelete)
-            {
-                TempData["ErrorMessage"] = "Bu yorumu silme yetkiniz yok.";
-                return RedirectToAction(nameof(Details), new { id = projeId });
-            }
-            
-            await _projeService.DeleteCommentAsync(id);
-            TempData["SuccessMessage"] = "Yorum başarıyla silindi.";
-            return RedirectToAction(nameof(Details), new { id = projeId });
-        }
-
-        // GET: Proje/AddEvaluation/5
-        [HttpGet]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> AddEvaluation(int id)
-        {
-            var proje = await _projeService.GetByIdAsync(id);
-            if (proje == null)
-            {
-                return NotFound();
-            }
-            
-            // Sadece projenin danışmanı değerlendirme ekleyebilir
-            if (!await IsCurrentUserProjectMentor(id))
-            {
-                TempData["ErrorMessage"] = "Bu projeye sadece danışmanı veya admin değerlendirme ekleyebilir.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-            
-            var model = new DegerlendirmeViewModel
-            {
-                ProjeId = id
-            };
-            
-            return View(model);
-        }
-
-        // POST: Proje/AddEvaluation
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> AddEvaluation(DegerlendirmeViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.DegerlendirmeTipleri = new SelectList(new[] { "Ara", "Final", "Genel" });
-                return View(model);
-            }
-
-            var akademisyen = await _authService.GetCurrentAkademisyenAsync();
-            if (akademisyen == null)
-            {
-                TempData["ErrorMessage"] = "Akademisyen bilgilerinize erişilemedi.";
-                return RedirectToAction(nameof(Details), new { id = model.ProjeId });
-            }
-
-            await _projeService.AddEvaluationAsync(model.ProjeId, model.Puan, model.Aciklama, model.DegerlendirmeTipi, akademisyen.Id);
-            TempData["SuccessMessage"] = "Değerlendirme başarıyla eklendi.";
-
-            return RedirectToAction(nameof(Details), new { id = model.ProjeId });
-        }
-
-        // POST: Proje/DeleteEvaluation/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> DeleteEvaluation(int id, int projeId)
-        {
-            var degerlendirmeler = await _projeService.GetEvaluationsByProjeIdAsync(projeId);
-            var evaluation = degerlendirmeler.FirstOrDefault(d => d.Id == id);
-                
-            if (evaluation == null)
-            {
-                return NotFound();
-            }
-            
-            // Sadece projenin danışmanı değerlendirme silebilir
-            if (!await IsCurrentUserProjectMentor(projeId))
-            {
-                TempData["ErrorMessage"] = "Bu değerlendirmeyi sadece projenin danışmanı veya admin silebilir.";
-                return RedirectToAction(nameof(Details), new { id = projeId });
-            }
-            
-            await _projeService.DeleteEvaluationAsync(id);
-            TempData["SuccessMessage"] = "Değerlendirme başarıyla silindi.";
-            
-            return RedirectToAction(nameof(Details), new { id = projeId });
-        }
-
-        // GET: Proje/AddStage/5
-        [HttpGet]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> AddStage(int id)
-        {
-            var proje = await _projeService.GetByIdAsync(id);
-            if (proje == null)
-            {
-                return NotFound();
-            }
-            
-            // Sadece projenin danışmanı aşama ekleyebilir
-            if (!await IsCurrentUserProjectMentor(id))
-            {
-                TempData["ErrorMessage"] = "Bu projeye sadece danışmanı veya admin aşama ekleyebilir.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-
-            var model = new ProjeAsamasi
-            {
-                ProjeId = id,
-                SiraNo = (await _projeService.GetStagesByProjeIdAsync(id)).Count() + 1
-            };
-
-            return View(model);
-        }
-
-        // POST: Proje/AddStage
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> AddStage(ProjeAsamasi model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            // Aciklama null ise boş string olarak ayarla
-            string aciklama = model.Aciklama ?? "";
-
-            await _projeService.AddStageAsync(
-                model.ProjeId, 
-                model.AsamaAdi, 
-                aciklama, 
-                model.BaslangicTarihi, 
-                model.BitisTarihi, 
-                model.SiraNo);
-                
-            TempData["SuccessMessage"] = "Proje aşaması başarıyla eklendi.";
-
-            return RedirectToAction(nameof(Details), new { id = model.ProjeId });
-        }
-
-        // POST: Proje/UpdateStageStatus/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
-        public async Task<IActionResult> UpdateStageStatus(int id, int projeId, bool tamamlandi)
-        {
-            await _projeService.UpdateStageStatusAsync(id, tamamlandi);
-            TempData["SuccessMessage"] = tamamlandi ? "Aşama tamamlandı olarak işaretlendi." : "Aşama devam ediyor olarak işaretlendi.";
-            return RedirectToAction(nameof(Details), new { id = projeId });
-        }
-
-        // POST: Proje/DeleteStage/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> DeleteStage(int id, int projeId)
-        {
-            // Sadece projenin danışmanı aşama silebilir
-            if (!await IsCurrentUserProjectMentor(projeId))
-            {
-                TempData["ErrorMessage"] = "Bu projenin aşamalarını sadece danışmanı veya admin silebilir.";
-                return RedirectToAction(nameof(Details), new { id = projeId });
-            }
-            
-            await _projeService.DeleteStageAsync(id);
-            TempData["SuccessMessage"] = "Proje aşaması başarıyla silindi.";
-            return RedirectToAction(nameof(Details), new { id = projeId });
         }
 
         private async Task<bool> ProjeExists(int id)

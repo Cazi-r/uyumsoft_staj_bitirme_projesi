@@ -34,7 +34,7 @@
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Düzenle
                 </a>
-                <a asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
+                <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
                     <i class="fas fa-user-plus"></i> Ata
                 </a>
             }
@@ -136,7 +136,7 @@
                         <h5>Proje Aşamaları</h5>
                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                         {
-                        <a asp-action="AddStage" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
+                        <a asp-controller="ProjeAsama" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
                                 <i class="fas fa-plus"></i> Aşama Ekle
                         </a>
                         }
@@ -182,22 +182,22 @@
                                                 <div class="btn-group">
                                                     @if (!asama.Tamamlandi)
                                                     {
-                                                        <form asp-action="UpdateStageStatus" method="post" class="d-inline">
+                                                        <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
                                                             <input type="hidden" name="id" value="@asama.Id" />
                                                             <input type="hidden" name="projeId" value="@Model.Id" />
                                                             <input type="hidden" name="tamamlandi" value="true" />
-                                                            <button type="submit" class="btn btn-sm btn-outline-success" @(User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor) ? "" : "disabled")>
-                                                                <i class="fas fa-check"></i> Tamamla
+                                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                                <i class="fas fa-check"></i> Tamamlandı İşaretle
                                                             </button>
                                                         </form>
                                                     }
                                                     else
                                                     {
-                                                        <form asp-action="UpdateStageStatus" method="post" class="d-inline">
+                                                        <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
                                                             <input type="hidden" name="id" value="@asama.Id" />
                                                             <input type="hidden" name="projeId" value="@Model.Id" />
                                                             <input type="hidden" name="tamamlandi" value="false" />
-                                                            <button type="submit" class="btn btn-sm btn-outline-secondary" @(User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor) ? "" : "disabled")>
+                                                            <button type="submit" class="btn btn-sm btn-outline-warning">
                                                                 <i class="fas fa-undo"></i> Geri Al
                                                             </button>
                                                         </form>
@@ -205,10 +205,10 @@
                                                     
                                                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                                                     {
-                                                        <form asp-action="DeleteStage" method="post" class="d-inline" onsubmit="return confirm('Bu aşamayı silmek istediğinize emin misiniz?');">
+                                                        <form asp-controller="ProjeAsama" asp-action="Delete" method="post" class="d-inline ms-2">
                                                             <input type="hidden" name="id" value="@asama.Id" />
                                                             <input type="hidden" name="projeId" value="@Model.Id" />
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu aşamayı silmek istediğinizden emin misiniz?')">
                                                                 <i class="fas fa-trash"></i>
                                                 </button>
                                                         </form>
@@ -232,9 +232,42 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Proje Dosyaları</h5>
-                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
-                        <i class="fas fa-upload"></i> Dosya Yükle
+                    <!-- Dosya Yükleme Butonu -->
+                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
+                        <i class="fas fa-cloud-upload-alt"></i> Dosya Yükle
                     </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="uploadFileModalLabel">Dosya Yükle</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form asp-controller="ProjeDosya" asp-action="Upload" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="ProjeId" value="@Model.Id" />
+                                        
+                                        <div class="mb-3">
+                                            <label for="Dosya" class="form-label">Dosya Seç</label>
+                                            <input class="form-control" type="file" id="Dosya" name="Dosya" required>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="Aciklama" class="form-label">Açıklama</label>
+                                            <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3"></textarea>
+                                        </div>
+                                        
+                                        <div class="text-end">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                            <button type="submit" class="btn btn-primary">Yükle</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     @if (Model.Dosyalar != null && Model.Dosyalar.Any())
@@ -260,14 +293,16 @@
                                             <td>@dosya.YuklemeTarihi.ToShortDateString()</td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <a href="@Url.Action("DownloadFile", new { id = dosya.Id })" class="btn btn-sm btn-outline-primary">
-                                                        <i class="fas fa-download"></i>
+                                                    <a href="@Url.Action("Download", "ProjeDosya", new { id = dosya.Id })" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-download"></i> İndir
                                                     </a>
                                                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                                                     {
-                                                        <form asp-action="DeleteFile" asp-route-id="@dosya.Id" asp-route-projeId="@Model.Id" method="post" onsubmit="return confirm('Bu dosyayı silmek istediğinize emin misiniz?');">
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                            <i class="fas fa-trash"></i>
+                                                        <form asp-controller="ProjeDosya" asp-action="Delete" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@dosya.Id" />
+                                                            <input type="hidden" name="projeId" value="@Model.Id" />
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu dosyayı silmek istediğinizden emin misiniz?')">
+                                                                <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
                                                     }
@@ -294,7 +329,7 @@
                     <h5>Değerlendirmeler</h5>
                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                     {
-                        <a asp-action="AddEvaluation" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
+                        <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
                             <i class="fas fa-plus"></i> Değerlendirme Ekle
                         </a>
                     }
@@ -311,11 +346,11 @@
                                     <small>@degerlendirme.DegerlendirmeTarihi.ToShortDateString()</small>
                                         @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == degerlendirme.AkademisyenId.ToString()))
                                         {
-                                            <form asp-action="DeleteEvaluation" method="post" class="d-inline" onsubmit="return confirm('Bu değerlendirmeyi silmek istediğinize emin misiniz?');">
+                                            <form asp-controller="ProjeDegerlendirme" asp-action="Delete" method="post" class="d-inline ms-2">
                                                 <input type="hidden" name="id" value="@degerlendirme.Id" />
                                                 <input type="hidden" name="projeId" value="@Model.Id" />
-                                                <button type="submit" class="btn btn-sm btn-link text-danger p-0 ms-2">
-                                                    <i class="fas fa-times"></i>
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu değerlendirmeyi silmek istediğinizden emin misiniz?')">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         }
@@ -342,25 +377,22 @@
                     <h5>Yorumlar</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-action="AddComment" method="post">
+                    <form asp-controller="ProjeYorum" asp-action="Add" method="post" class="mt-3">
                         <input type="hidden" name="ProjeId" value="@Model.Id" />
-                        
-                    <div class="mb-3">
-                            <textarea name="Icerik" class="form-control" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                                <select name="YorumTipi" class="form-select form-select-sm">
-                                    <option value="Genel">Genel</option>
-                                    <option value="Geri Bildirim">Geri Bildirim</option>
-                                    <option value="Soru">Soru</option>
-                                    <option value="Onay">Onay</option>
+                        <div class="form-group mb-2">
+                            <label for="YorumTipi">Yorum Tipi</label>
+                            <select class="form-select" id="YorumTipi" name="YorumTipi">
+                                <option value="Genel">Genel</option>
+                                <option value="Geri Bildirim">Geri Bildirim</option>
+                                <option value="Soru">Soru</option>
+                                <option value="Onay">Onay</option>
                             </select>
                         </div>
-                            <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fas fa-paper-plane"></i> Gönder
-                        </button>
-                    </div>
+                        <div class="form-group mb-2">
+                            <label for="Icerik">Yorumunuz</label>
+                            <textarea class="form-control" id="Icerik" name="Icerik" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Yorum Ekle</button>
                     </form>
 
                     <hr />
@@ -392,11 +424,11 @@
                                                 (User.IsInRole("Akademisyen") && yorum.AkademisyenId.HasValue && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == yorum.AkademisyenId.Value.ToString()) ||
                                                 (User.IsInRole("Ogrenci") && yorum.OgrenciId.HasValue && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == yorum.OgrenciId.Value.ToString()))
                                             {
-                                                <form asp-action="DeleteComment" method="post" class="d-inline" onsubmit="return confirm('Bu yorumu silmek istediğinize emin misiniz?');">
+                                                <form asp-controller="ProjeYorum" asp-action="Delete" method="post" class="d-inline ms-2">
                                                     <input type="hidden" name="id" value="@yorum.Id" />
                                                     <input type="hidden" name="projeId" value="@Model.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0 ms-2">
-                                                        <i class="fas fa-times"></i>
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu yorumu silmek istediğinizden emin misiniz?')">
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
                                             }
@@ -415,39 +447,6 @@
                     }
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Dosya Yükleme Modal -->
-<div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form asp-action="UploadFile" method="post" enctype="multipart/form-data">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="uploadFileModalLabel">Dosya Yükle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="ProjeId" value="@Model.Id" />
-                    
-                    <div class="mb-3">
-                        <label for="Dosya" class="form-label">Dosya</label>
-                        <input type="file" id="Dosya" name="Dosya" class="form-control" required />
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="Aciklama" class="form-label">Açıklama (Opsiyonel)</label>
-                        <input type="text" id="Aciklama" name="Aciklama" class="form-control" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-upload me-2"></i>Yükle
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
