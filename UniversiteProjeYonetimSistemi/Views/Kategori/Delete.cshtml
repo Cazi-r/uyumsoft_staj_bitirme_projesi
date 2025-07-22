@@ -23,9 +23,16 @@
         <div class="card-body">
             <h4>Bu kategoriyi silmek istediğinizden emin misiniz?</h4>
             <p class="text-danger">
-                <strong>Bu işlem geri alınamaz!</strong> Kategori silindiğinde, bu kategoriye ait projeler 
-                kategorilendirilmemiş olarak işaretlenecektir.
+                <strong>Bu işlem geri alınamaz!</strong> Kategori silinmeden önce, bu kategoriye ait projelerin
+                nasıl işleneceğine karar vermeniz gerekmektedir.
             </p>
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+                </div>
+            }
             
             <div class="row mt-4">
                 <div class="col-md-6">
@@ -66,20 +73,69 @@
             @if (Model.Projeler != null && Model.Projeler.Any())
             {
                 <div class="alert alert-warning mt-4">
-                    <i class="fas fa-exclamation-triangle"></i> Bu kategoriye bağlı <strong>@Model.Projeler.Count</strong> adet proje bulunmaktadır. 
-                    Kategoriyi sildiğinizde bu projeler kategorilendirilmemiş olarak işaretlenecektir.
+                    <i class="fas fa-exclamation-triangle"></i> Bu kategoriye bağlı <strong>@Model.Projeler.Count</strong> adet proje bulunmaktadır.
+                    Kategoriyi silmeden önce bu projelerin başka bir kategoriye aktarılması gerekmektedir.
                 </div>
+                
+                @if (ViewBag.Kategoriler != null && ViewBag.Kategoriler.Count > 0)
+                {
+                    <form asp-action="Delete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="form-group mb-3">
+                            <label class="form-label">Projeleri aktarmak istediğiniz kategoriyi seçin:</label>
+                            @if (ViewBag.Kategoriler.Count == 1)
+                            {
+                                var onlyCategory = ViewBag.Kategoriler[0];
+                                <input type="hidden" name="transferKategoriId" value="@onlyCategory.Id" />
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-1"></i> Projeler <strong>@onlyCategory.Ad</strong> kategorisine aktarılacaktır (tek mevcut kategori).
+                                </div>
+                            }
+                            else
+                            {
+                                <select name="transferKategoriId" class="form-select" required>
+                                    <option value="">-- Kategori Seçin --</option>
+                                    @foreach (var kategori in ViewBag.Kategoriler)
+                                    {
+                                        <option value="@kategori.Id">@kategori.Ad</option>
+                                    }
+                                </select>
+                                <small class="form-text text-muted">Bu kategorideki tüm projeler seçtiğiniz kategoriye aktarılacaktır.</small>
+                            }
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-exchange-alt me-1"></i> Projeleri Aktar ve Kategoriyi Sil
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-danger mt-4">
+                        <i class="fas fa-exclamation-triangle me-1"></i> <strong>Uyarı:</strong> Bu kategoriyi silemezsiniz çünkü projelerin aktarılacağı başka kategori bulunmamaktadır.
+                        <br />
+                        <a asp-controller="Kategori" asp-action="Create" class="btn btn-outline-primary mt-2">
+                            <i class="fas fa-plus-circle me-1"></i> Önce Yeni Kategori Oluşturun
+                        </a>
+                    </div>
+                }
             }
-            
-            <form asp-action="Delete" method="post" class="mt-4">
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash"></i> Kategoriyi Sil
-                    </button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
-                </div>
-            </form>
+            else
+            {
+                <form asp-action="Delete" method="post" class="mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Kategoriyi Sil
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                    </div>
+                </form>
+            }
         </div>
     </div>
 </div> 

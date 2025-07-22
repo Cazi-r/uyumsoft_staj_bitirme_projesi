@@ -29,11 +29,26 @@
             <a asp-action="Index" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Listeye Dön
             </a>
-            @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+            @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
-                    <i class="fas fa-user-plus"></i> Atama Yap
+                    <i class="fas fa-user-edit"></i> Danışman Değiştir
                 </a>
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                @if (ViewBag.IsCurrentUserMentor)
+                {
+                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="fas fa-user-edit"></i> Danışman Değiştir
+                    </a>
+                }
+                else if (Model.Status == "Beklemede")
+                {
+                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-success">
+                        <i class="fas fa-check-circle"></i> Projeyi Kabul Et
+                    </a>
+                }
             }
         </div>
     </div>

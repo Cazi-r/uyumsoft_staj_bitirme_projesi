@@ -394,7 +394,37 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         {
             var etkinlikler = new List<dynamic>();
             
-            // Giriş bilgileri
+            // 1. Kullanıcı kayıt etkinlikleri
+            var kullaniciKayitlar = await _context.Kullanicilar
+                .Select(k => new {
+                    Id = k.Id,
+                    Ad = k.Ad,
+                    Soyad = k.Soyad,
+                    Email = k.Email,
+                    Rol = k.Rol,
+                    Tarih = k.CreatedAt,
+                    Tip = "Kayıt"
+                })
+                .OrderByDescending(k => k.Tarih)
+                .Take(50)
+                .ToListAsync();
+            
+            foreach (var kayit in kullaniciKayitlar)
+            {
+                etkinlikler.Add(new {
+                    KullaniciId = kayit.Id,
+                    KullaniciAdi = $"{kayit.Ad} {kayit.Soyad}",
+                    KullaniciEmail = kayit.Email,
+                    KullaniciRol = kayit.Rol,
+                    Islem = "sisteme kaydoldu",
+                    Tarih = kayit.Tarih,
+                    Tip = "Kayıt",
+                    Detay = $"{kayit.Rol} rolüyle",
+                    ProjeId = (int?)null
+                });
+            }
+            
+            // 2. Giriş bilgileri
             var sonGirisler = await _context.Kullanicilar
                 .Where(k => k.SonGiris.HasValue)
                 .Select(k => new {
@@ -417,13 +447,15 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     KullaniciAdi = $"{giris.Ad} {giris.Soyad}",
                     KullaniciEmail = giris.Email,
                     KullaniciRol = giris.Rol,
-                    Islem = "Sistem girişi yaptı",
+                    Islem = "sistem girişi yaptı",
                     Tarih = giris.Tarih,
-                    Tip = "Giriş"
+                    Tip = "Giriş",
+                    Detay = "",
+                    ProjeId = (int?)null
                 });
             }
             
-            // Proje oluşturma etkinlikleri
+            // 3. Proje oluşturma etkinlikleri
             var projeler = await _context.Projeler
                 .Include(p => p.Ogrenci)
                 .ThenInclude(o => o.Kullanici)
@@ -434,7 +466,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     KullaniciRol = "Ogrenci",
                     Islem = $"\"{p.Ad}\" adlı projeyi oluşturdu",
                     Tarih = p.OlusturmaTarihi,
-                    Tip = "Proje"
+                    Tip = "Proje",
+                    ProjeId = p.Id,
+                    Detay = p.Kategori != null ? $"Kategori: {p.Kategori.Ad}" : ""
                 })
                 .OrderByDescending(p => p.Tarih)
                 .Take(50)
@@ -442,7 +476,95 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 
             etkinlikler.AddRange(projeler);
             
-            return etkinlikler;
+            // 4. Proje durum değişiklikleri
+            var projeGuncellemeler = await _context.Projeler
+                .Where(p => p.UpdatedAt > p.OlusturmaTarihi) // Güncellenen projeler
+                .Include(p => p.Ogrenci)
+                .ThenInclude(o => o.Kullanici)
+                .Include(p => p.Mentor)
+                .ThenInclude(m => m.Kullanici)
+                .Select(p => new {
+                    KullaniciId = p.Mentor != null ? p.Mentor.KullaniciId : p.Ogrenci.KullaniciId,
+                    KullaniciAdi = p.Mentor != null ? $"{p.Mentor.Ad} {p.Mentor.Soyad}" : $"{p.Ogrenci.Ad} {p.Ogrenci.Soyad}",
+                    KullaniciEmail = p.Mentor != null ? p.Mentor.Email : p.Ogrenci.Email,
+                    KullaniciRol = p.Mentor != null ? "Akademisyen" : "Ogrenci",
+                    Islem = $"\"{p.Ad}\" adlı projenin durumunu \"{p.Status}\" olarak güncelledi",
+                    Tarih = p.UpdatedAt,
+                    Tip = "Proje Güncelleme",
+                    ProjeId = p.Id,
+                    Detay = $"Durum: {p.Status}"
+                })
+                .OrderByDescending(p => p.Tarih)
+                .Take(30)
+                .ToListAsync();
+                
+            etkinlikler.AddRange(projeGuncellemeler);
+            
+            // 5. Proje yorumları
+            var yorumlar = await _context.ProjeYorumlari
+                .Include(y => y.Ogrenci)
+                .Include(y => y.Akademisyen)
+                .Include(y => y.Proje)
+                .Select(y => new {
+                    KullaniciId = y.Ogrenci != null ? y.Ogrenci.KullaniciId : y.Akademisyen.KullaniciId,
+                    KullaniciAdi = y.Ogrenci != null ? $"{y.Ogrenci.Ad} {y.Ogrenci.Soyad}" : $"{y.Akademisyen.Ad} {y.Akademisyen.Soyad}",
+                    KullaniciEmail = y.Ogrenci != null ? y.Ogrenci.Email : y.Akademisyen.Email,
+                    KullaniciRol = y.Ogrenci != null ? "Ogrenci" : "Akademisyen",
+                    Islem = $"\"{y.Proje.Ad}\" adlı projeye yorum yaptı",
+                    Tarih = y.OlusturmaTarihi,
+                    Tip = "Yorum",
+                    ProjeId = y.ProjeId,
+                    Detay = y.Icerik.Length > 50 ? $"{y.Icerik.Substring(0, 50)}..." : y.Icerik
+                })
+                .OrderByDescending(y => y.Tarih)
+                .Take(30)
+                .ToListAsync();
+                
+            etkinlikler.AddRange(yorumlar);
+            
+            // 6. Proje dosya yüklemeleri
+            var dosyalar = await _context.ProjeDosyalari
+                .Include(d => d.Proje)
+                .Select(d => new {
+                    KullaniciId = d.YukleyenId ?? 0,
+                    KullaniciAdi = "Kullanıcı",
+                    KullaniciEmail = "",
+                    KullaniciRol = d.YukleyenTipi,
+                    Islem = $"\"{d.Proje.Ad}\" adlı projeye dosya yükledi",
+                    Tarih = d.YuklemeTarihi,
+                    Tip = "Dosya",
+                    ProjeId = d.ProjeId,
+                    Detay = $"Dosya: {d.DosyaAdi}"
+                })
+                .OrderByDescending(d => d.Tarih)
+                .Take(30)
+                .ToListAsync();
+                
+            etkinlikler.AddRange(dosyalar);
+            
+            // 7. Proje değerlendirmeleri
+            var degerlendirmeler = await _context.Degerlendirmeler
+                .Include(d => d.Akademisyen)
+                .Include(d => d.Proje)
+                .Select(d => new {
+                    KullaniciId = d.Akademisyen.KullaniciId,
+                    KullaniciAdi = $"{d.Akademisyen.Ad} {d.Akademisyen.Soyad}",
+                    KullaniciEmail = d.Akademisyen.Email,
+                    KullaniciRol = "Akademisyen",
+                    Islem = $"\"{d.Proje.Ad}\" adlı projeyi değerlendirdi",
+                    Tarih = d.DegerlendirmeTarihi,
+                    Tip = "Değerlendirme",
+                    ProjeId = d.ProjeId,
+                    Detay = $"Puan: {d.Puan}/100"
+                })
+                .OrderByDescending(d => d.Tarih)
+                .Take(30)
+                .ToListAsync();
+                
+            etkinlikler.AddRange(degerlendirmeler);
+            
+            // Tüm etkinlikleri tarihe göre sırala
+            return etkinlikler.OrderByDescending(e => (dynamic)e.Tarih).ToList();
         }
         
         private bool KullaniciExists(int id)

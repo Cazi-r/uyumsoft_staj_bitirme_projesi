@@ -7,11 +7,22 @@
 <div class="container mt-4">
     <div class="row mb-3">
         <div class="col">
-            <h1>Proje Atama</h1>
+            @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+            {
+                <h1>Danışman Değiştir</h1>
+            }
+            else if (User.IsInRole("Akademisyen") && Model.Status == "Beklemede")
+            {
+                <h1>Projeyi Kabul Et</h1>
+            }
+            else
+            {
+                <h1>Proje Atama</h1>
+            }
         </div>
         <div class="col-auto">
-            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Proje Detaylarına Dön
+            <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Proje Detayına Dön
             </a>
         </div>
     </div>
@@ -81,35 +92,80 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group mb-3">
-                            <label for="mentorId" class="form-label">Danışman Seçimi</label>
-                            <select name="mentorId" id="mentorId" class="form-select">
-                                <option value="0">-- Danışman Seçiniz --</option>
-                                @foreach (var item in ViewBag.Akademisyenler)
-                                {
-                                    if (Model.MentorId.HasValue && Model.MentorId.Value == int.Parse(item.Value))
+                            @if (User.IsInRole("Akademisyen") && Model.Status == "Beklemede" && !ViewBag.IsCurrentUserMentor)
+                            {
+                                <label for="mentorId" class="form-label">Bu projeyi kabul etmek için onaylayın</label>
+                                <select name="mentorId" id="mentorId" class="form-select">
+                                    <option value="@ViewBag.CurrentAkademisyenId">@ViewBag.CurrentAkademisyenAd</option>
+                                    @foreach (var item in ViewBag.Akademisyenler)
                                     {
-                                        <option value="@item.Value" selected>@item.Text</option>
+                                        if (ViewBag.CurrentAkademisyenId != null && ViewBag.CurrentAkademisyenId.ToString() == item.Value)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
                                     }
-                                    else
+                                </select>
+                                <small class="text-muted">Projeyi kabul ettiğinizde danışman olarak atanacaksınız.</small>
+                            }
+                            else
+                            {
+                                <label for="mentorId" class="form-label">Danışman Seçimi</label>
+                                <select name="mentorId" id="mentorId" class="form-select">
+                                    <option value="0">-- Danışman Seçiniz --</option>
+                                    @foreach (var item in ViewBag.Akademisyenler)
                                     {
-                                        <option value="@item.Value">@item.Text</option>
+                                        if (Model.MentorId.HasValue && Model.MentorId.Value == int.Parse(item.Value))
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
                                     }
-                                }
-                            </select>
-                            <small class="text-muted">Projenin danışmanını seçin</small>
+                                </select>
+                                <small class="text-muted">Projenin danışmanını seçin</small>
+                            }
                         </div>
                     </div>
                 </div>
                 
                 <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> Not: Proje danışmanı değiştirildikten sonra, projenin durumu otomatik olarak "Atanmış" olarak güncellenecektir.
+                    <i class="fas fa-info-circle"></i> Not: 
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                    {
+                        <span>Proje danışmanı değiştirildikten sonra, projenin durumu güncellenecektir.</span>
+                    }
+                    else if (User.IsInRole("Akademisyen") && Model.Status == "Beklemede")
+                    {
+                        <span>Projeyi kabul ettiğinizde, danışman olarak atanacak ve projenin durumu "Atanmış" olarak güncellenecektir.</span>
+                    }
+                    else
+                    {
+                        <span>Proje danışmanı değiştirildikten sonra, projenin durumu otomatik olarak "Atanmış" olarak güncellenecektir.</span>
+                    }
                 </div>
                 
                 <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-user-check"></i> Danışman Ata
-                    </button>
-                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">İptal</a>
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                    {
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-edit"></i> Danışman Değiştir
+                        </button>
+                    }
+                    else if (User.IsInRole("Akademisyen") && Model.Status == "Beklemede")
+                    {
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check-circle"></i> Projeyi Kabul Et
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-check"></i> Danışman Ata
+                        </button>
+                    }
+                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">İptal</a>
                 </div>
             </form>
         </div>

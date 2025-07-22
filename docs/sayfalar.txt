@@ -65,6 +65,7 @@ Halihazırda iyi bir temel yapınız var. Adım adım ilerleyerek mevcut kod tab
 
 
 
-admin yorum yapamıyo
-admin proje atama yapmadan geri çıkamıyor
-admin yeni kullanıcı kaydı yaparken giriş sayfasına dön tuşu gözüküyo
+admin yorum yapamıyo // 19 id li akademisyen üstünden yapıyo
+admin proje atama yapmadan geri çıkamıyor //
+admin yeni kullanıcı kaydı yaparken giriş sayfasına dön tuşu gözüküyo 
+admin proje kategorisi silmehye çalışırken hata //

@@ -53,6 +53,11 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     ogrenciId = ogrenci.Id;
                 }
             }
+            // Admin rolü için akademisyen ID 29 kullan
+            else if (User.IsInRole("Admin"))
+            {
+                akademisyenId = 19; // ID 29 olan akademisyen üzerinden yorum ekle
+            }
 
             await _projeService.AddCommentAsync(model.ProjeId, model.Icerik, model.YorumTipi, ogrenciId, akademisyenId);
             TempData["SuccessMessage"] = "Yorum başarıyla eklendi.";

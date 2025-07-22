@@ -90,9 +90,11 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     if (ogrenci != null)
                     {
                         proje.OgrenciId = ogrenci.Id;
-                        proje.Status = "Beklemede"; // Öğrenci oluşturduğunda durumu "Beklemede" olarak ayarla
                     }
                 }
+                
+                // Her zaman yeni projelerin durumunu "Beklemede" olarak ayarla
+                proje.Status = "Beklemede";
                 
                 await _projeService.AddAsync(proje);
                 return RedirectToAction(nameof(Index));

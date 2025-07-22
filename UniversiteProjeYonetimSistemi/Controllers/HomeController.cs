@@ -59,11 +59,8 @@ public class HomeController : Controller
                 ViewBag.TamamlananProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Tamamlandi");
                 ViewBag.IptalProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Iptal");
                 
-                // Son etkinlikler - örnek olarak son kayıt olan kullanıcılar
-                ViewBag.SonKullanicilar = await _context.Kullanicilar
-                    .OrderByDescending(k => k.CreatedAt)
-                    .Take(5)
-                    .ToListAsync();
+                // Son etkinlikler
+                ViewBag.SonEtkinlikler = await GetEtkinlikListesi(5);
                 
                 return View("AdminDashboard");
                 
@@ -169,5 +166,61 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+    
+    private async Task<List<dynamic>> GetEtkinlikListesi(int limit = 50)
+    {
+        var etkinlikler = new List<dynamic>();
+        
+        // Giriş bilgileri
+        var sonGirisler = await _context.Kullanicilar
+            .Where(k => k.SonGiris.HasValue)
+            .Select(k => new {
+                Id = k.Id,
+                Ad = k.Ad,
+                Soyad = k.Soyad,
+                Email = k.Email,
+                Rol = k.Rol,
+                Tarih = k.SonGiris.Value,
+                Tip = "Giriş"
+            })
+            .OrderByDescending(k => k.Tarih)
+            .Take(limit)
+            .ToListAsync();
+        
+        foreach (var giris in sonGirisler)
+        {
+            etkinlikler.Add(new {
+                KullaniciId = giris.Id,
+                KullaniciAdi = $"{giris.Ad} {giris.Soyad}",
+                KullaniciEmail = giris.Email,
+                KullaniciRol = giris.Rol,
+                Islem = "Sistem girişi yaptı",
+                Tarih = giris.Tarih,
+                Tip = "Giriş"
+            });
+        }
+        
+        // Proje oluşturma etkinlikleri
+        var projeler = await _context.Projeler
+            .Include(p => p.Ogrenci)
+            .ThenInclude(o => o.Kullanici)
+            .Select(p => new {
+                KullaniciId = p.Ogrenci.KullaniciId,
+                KullaniciAdi = $"{p.Ogrenci.Ad} {p.Ogrenci.Soyad}",
+                KullaniciEmail = p.Ogrenci.Email,
+                KullaniciRol = "Ogrenci",
+                Islem = $"\"{p.Ad}\" adlı projeyi oluşturdu",
+                Tarih = p.OlusturmaTarihi,
+                Tip = "Proje"
+            })
+            .OrderByDescending(p => p.Tarih)
+            .Take(limit)
+            .ToListAsync();
+            
+        etkinlikler.AddRange(projeler);
+        
+        // Tüm etkinlikleri tarihe göre sırala ve istenen sayıda döndür
+        return etkinlikler.OrderByDescending(e => (dynamic)e.Tarih).Take(limit).ToList();
     }
 }

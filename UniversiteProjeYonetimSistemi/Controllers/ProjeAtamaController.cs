@@ -78,6 +78,20 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             var ogrenciler = await _ogrenciService.GetAllAsync();
             var akademisyenler = await _akademisyenService.GetAllAsync();
 
+            // Mevcut kullanıcı projenin danışmanı mı kontrol et
+            ViewBag.IsCurrentUserMentor = await IsCurrentUserProjectMentor(id);
+
+            // Eğer akademisyen ise, kendi ID'sini ViewBag'e ekle
+            if (User.IsInRole("Akademisyen"))
+            {
+                var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+                if (akademisyen != null)
+                {
+                    ViewBag.CurrentAkademisyenId = akademisyen.Id;
+                    ViewBag.CurrentAkademisyenAd = $"{akademisyen.Unvan} {akademisyen.Ad} {akademisyen.Soyad}";
+                }
+            }
+
             ViewBag.Ogrenciler = new SelectList(ogrenciler.Select(o => new { Id = o.Id, AdSoyad = $"{o.Ad} {o.Soyad}" }), "Id", "AdSoyad");
             ViewBag.Akademisyenler = new SelectList(akademisyenler.Select(a => new { Id = a.Id, AdSoyad = $"{a.Unvan} {a.Ad} {a.Soyad}" }), "Id", "AdSoyad");
             

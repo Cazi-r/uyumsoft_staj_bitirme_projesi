@@ -52,7 +52,7 @@
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <span>Kayıtlı Öğrenciler</span>
-                    <a asp-controller="Admin" asp-action="Ogrenciler" class="text-white">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Ogrenci" class="text-white">
                         <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
@@ -69,48 +69,9 @@
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <span>Kayıtlı Akademisyenler</span>
-                    <a asp-controller="Admin" asp-action="Akademisyenler" class="text-white">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Akademisyen" class="text-white">
                         <i class="fas fa-arrow-circle-right"></i>
                     </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Hızlı Erişim Menüsü -->
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Hızlı Erişim</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-outline-primary w-100 py-3">
-                                <i class="fas fa-users mb-2 d-block fa-2x"></i>
-                                Kullanıcı Yönetimi
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a asp-controller="Admin" asp-action="Kategoriler" class="btn btn-outline-success w-100 py-3">
-                                <i class="fas fa-tags mb-2 d-block fa-2x"></i>
-                                Kategori Yönetimi
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a asp-controller="Proje" asp-action="Index" class="btn btn-outline-info w-100 py-3">
-                                <i class="fas fa-tasks mb-2 d-block fa-2x"></i>
-                                Proje Yönetimi
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a asp-controller="Admin" asp-action="Raporlar" class="btn btn-outline-warning w-100 py-3">
-                                <i class="fas fa-chart-bar mb-2 d-block fa-2x"></i>
-                                Raporlar
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -122,22 +83,22 @@
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Son Etkinlikler</h5>
-                    <a href="#" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+                    <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
-                        @if (ViewBag.SonKullanicilar != null && ViewBag.SonKullanicilar.Count > 0)
+                        @if (ViewBag.SonEtkinlikler != null && ViewBag.SonEtkinlikler.Count > 0)
                         {
-                            @foreach (var kullanici in ViewBag.SonKullanicilar)
+                            @foreach (var etkinlik in ViewBag.SonEtkinlikler)
                             {
-                                <a href="#" class="list-group-item list-group-item-action">
+                                <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" asp-route-kullaniciId="@etkinlik.KullaniciId" class="list-group-item list-group-item-action">
                                     <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">Yeni kullanıcı kaydı</h6>
-                                        <small>@((DateTime.Now - kullanici.CreatedAt).TotalDays < 1 ? 
-                                            $"{(int)(DateTime.Now - kullanici.CreatedAt).TotalHours} saat önce" : 
-                                            $"{(int)(DateTime.Now - kullanici.CreatedAt).TotalDays} gün önce")</small>
+                                        <h6 class="mb-1">@(etkinlik.Tip == "Giriş" ? "Sistem Girişi" : "Proje Oluşturuldu")</h6>
+                                        <small>@((DateTime.Now - etkinlik.Tarih).TotalDays < 1 ? 
+                                            $"{(int)(DateTime.Now - etkinlik.Tarih).TotalHours} saat önce" : 
+                                            $"{(int)(DateTime.Now - etkinlik.Tarih).TotalDays} gün önce")</small>
                                     </div>
-                                    <small class="text-muted">@kullanici.Ad @kullanici.Soyad (@kullanici.Rol) sisteme kayıt oldu.</small>
+                                    <small class="text-muted">@etkinlik.KullaniciAdi (@etkinlik.KullaniciRol) @etkinlik.Islem</small>
                                 </a>
                             }
                         }
