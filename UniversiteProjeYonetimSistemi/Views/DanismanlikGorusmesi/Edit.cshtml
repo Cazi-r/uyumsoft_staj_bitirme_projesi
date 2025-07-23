@@ -1,0 +1,134 @@
+@model UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi
+
+@{
+    ViewData["Title"] = "Görüşme Düzenle";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>@ViewData["Title"]</h2>
+            <p>Görüşme detaylarını düzenleyin.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="OgrenciId" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Proje</label>
+                            <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId"></select>
+                            <span asp-validation-for="ProjeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Baslik" class="form-label">Başlık</label>
+                            <input asp-for="Baslik" class="form-control" />
+                            <span asp-validation-for="Baslik" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GorusmeTarihi" class="form-label">Görüşme Tarihi</label>
+                            <input asp-for="GorusmeTarihi" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="GorusmeTarihi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GorusmeTipi" class="form-label">Görüşme Tipi</label>
+                            <select asp-for="GorusmeTipi" class="form-select">
+                                <option value="Online">Online</option>
+                                <option value="Yüz Yüze">Yüz Yüze</option>
+                            </select>
+                            <span asp-validation-for="GorusmeTipi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notlar" class="form-label">Notlar</label>
+                            <textarea asp-for="Notlar" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Notlar" class="text-danger"></span>
+                        </div>
+
+                        @if (User.IsInRole("Akademisyen"))
+                        {
+                            <div class="mb-3">
+                                <label asp-for="Durum" class="form-label">Durum</label>
+                                <select asp-for="Durum" class="form-select">
+                                    <option value="Beklemede">Beklemede</option>
+                                    <option value="Onaylandı">Onaylandı</option>
+                                    <option value="Reddedildi">Reddedildi</option>
+                                </select>
+                                <span asp-validation-for="Durum" class="text-danger"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" asp-for="Durum" />
+                        }
+
+                        <div class="mb-3">
+                            <input type="submit" value="Kaydet" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            @if (User.IsInRole("Ogrenci"))
+            {
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Bilgilendirme</h5>
+                        <p class="card-text">
+                            Sadece beklemede olan görüşme taleplerini düzenleyebilirsiniz.
+                        </p>
+                        <p class="card-text">
+                            Onaylanan veya reddedilen görüşme talepleri için yeni bir talep oluşturabilirsiniz.
+                        </p>
+                    </div>
+                </div>
+            }
+            @if (User.IsInRole("Akademisyen"))
+            {
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Akademisyen Bilgilendirme</h5>
+                        <p class="card-text">
+                            Görüşme talebini onaylayabilir, reddedebilir veya düzenleyebilirsiniz.
+                        </p>
+                        <p class="card-text">
+                            Görüşme tarihini değiştirip onayladığınızda öğrenciye otomatik bildirim gönderilecektir.
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Minimum bugünün tarihini ayarlama
+        document.addEventListener('DOMContentLoaded', function() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            var hh = String(today.getHours()).padStart(2, '0');
+            var min = String(today.getMinutes()).padStart(2, '0');
+            
+            today = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + min;
+            document.getElementById('GorusmeTarihi').setAttribute('min', today);
+        });
+    </script>
+} 

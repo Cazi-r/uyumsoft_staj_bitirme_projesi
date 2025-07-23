@@ -332,6 +332,155 @@
                     }
                 </div>
             </div>
+
+            <!-- Proje Kaynakları -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Proje Kaynakları</h5>
+                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addResourceModal">
+                        <i class="fas fa-plus"></i> Kaynak Ekle
+                    </button>
+                    
+                    <!-- Kaynak Ekleme Modal -->
+                    <div class="modal fade" id="addResourceModal" tabindex="-1" aria-labelledby="addResourceModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addResourceModalLabel">Kaynak Ekle</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form asp-controller="ProjeKaynagi" asp-action="Add" method="post">
+                                        <input type="hidden" name="ProjeId" value="@Model.Id" />
+                                        
+                                        <div class="mb-3">
+                                            <label for="KaynakAdi" class="form-label">Kaynak Adı</label>
+                                            <input class="form-control" type="text" id="KaynakAdi" name="KaynakAdi" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="KaynakTipi" class="form-label">Kaynak Tipi</label>
+                                            <select class="form-select" id="KaynakTipi" name="KaynakTipi">
+                                                <option value="Kitap">Kitap</option>
+                                                <option value="Makale">Makale</option>
+                                                <option value="Website">Website</option>
+                                                <option value="API">API</option>
+                                                <option value="Dokuman">Doküman</option>
+                                                <option value="Video">Video</option>
+                                                <option value="Diger">Diğer</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="Url" class="form-label">URL</label>
+                                            <input class="form-control" type="url" id="Url" name="Url" placeholder="https://">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="Yazar" class="form-label">Yazar</label>
+                                            <input class="form-control" type="text" id="Yazar" name="Yazar">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="YayinTarihi" class="form-label">Yayın Tarihi</label>
+                                            <input class="form-control" type="date" id="YayinTarihi" name="YayinTarihi">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="Aciklama" class="form-label">Açıklama</label>
+                                            <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3"></textarea>
+                                        </div>
+                                        
+                                        <div class="text-end">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Kaynaklar != null && Model.Kaynaklar.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Kaynak Adı</th>
+                                        <th>Tip</th>
+                                        <th>Yazar</th>
+                                        <th>Yayın Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kaynak in Model.Kaynaklar)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(kaynak.Url))
+                                                {
+                                                    <a href="@kaynak.Url" target="_blank">@kaynak.KaynakAdi</a>
+                                                }
+                                                else
+                                                {
+                                                    @kaynak.KaynakAdi
+                                                }
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var tipClass = kaynak.KaynakTipi switch
+                                                    {
+                                                        "Kitap" => "badge bg-primary",
+                                                        "Makale" => "badge bg-info",
+                                                        "Website" => "badge bg-success",
+                                                        "API" => "badge bg-warning",
+                                                        "Dokuman" => "badge bg-secondary",
+                                                        "Video" => "badge bg-danger",
+                                                        _ => "badge bg-dark"
+                                                    };
+                                                }
+                                                <span class="@tipClass">@kaynak.KaynakTipi</span>
+                                            </td>
+                                            <td>@(string.IsNullOrEmpty(kaynak.Yazar) ? "-" : kaynak.Yazar)</td>
+                                            <td>@(kaynak.YayinTarihi.HasValue ? kaynak.YayinTarihi.Value.ToShortDateString() : "-")</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    @if (!string.IsNullOrEmpty(kaynak.Url))
+                                                    {
+                                                        <a href="@kaynak.Url" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-external-link-alt"></i> Aç
+                                                        </a>
+                                                    }
+                                                    <button type="button" class="btn btn-sm btn-outline-info" 
+                                                            data-bs-toggle="popover" 
+                                                            title="Açıklama" 
+                                                            data-bs-content="@(string.IsNullOrEmpty(kaynak.Aciklama) ? "Açıklama bulunmamaktadır." : kaynak.Aciklama)">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </button>
+                                                    <form asp-controller="ProjeKaynagi" asp-action="Delete" method="post" class="d-inline">
+                                                        <input type="hidden" name="id" value="@kaynak.Id" />
+                                                        <input type="hidden" name="projeId" value="@Model.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bu kaynağı silmek istediğinizden emin misiniz?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz kaynak eklenmemiş.</p>
+                    }
+                </div>
+            </div>
         </div>
 
         <div class="col-md-4">
@@ -472,10 +621,27 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             });
             
+            // Bootstrap 5 popover aktivasyonu
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl, {
+                    html: true
+                })
+            });
+            
             // 5 saniye sonra alert mesajlarını otomatik kapat
             setTimeout(function() {
                 $('.alert').alert('close');
             }, 5000);
+            
+            // Proje oluşturma sonrası kaynak ekleme modalını aç
+            @if (TempData["OpenResourceModal"] != null && (bool)TempData["OpenResourceModal"] == true)
+            {
+                <text>
+                var resourceModal = new bootstrap.Modal(document.getElementById('addResourceModal'));
+                resourceModal.show();
+                </text>
+            }
         });
     </script>
 } 

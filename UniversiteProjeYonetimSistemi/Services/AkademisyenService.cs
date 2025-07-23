@@ -45,6 +45,19 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(a => a.KullaniciId == kullaniciId);
         }
 
+        public async Task<Akademisyen> GetAkademisyenByUserName(string userName)
+        {
+            var kullanici = await _context.Kullanicilar
+                .FirstOrDefaultAsync(k => k.Email == userName);
+            
+            if (kullanici == null)
+                return null;
+            
+            return await _context.Akademisyenler
+                .Include(a => a.Kullanici)
+                .FirstOrDefaultAsync(a => a.KullaniciId == kullanici.Id);
+        }
+
         public async Task<Akademisyen> AddAsync(Akademisyen akademisyen)
         {
             await _akademisyenRepository.AddAsync(akademisyen);

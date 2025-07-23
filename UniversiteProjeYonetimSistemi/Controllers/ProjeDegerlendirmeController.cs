@@ -14,13 +14,16 @@ namespace UniversiteProjeYonetimSistemi.Controllers
     {
         private readonly IProjeService _projeService;
         private readonly AuthService _authService;
+        private readonly IBildirimService _bildirimService;
 
         public ProjeDegerlendirmeController(
             IProjeService projeService,
-            AuthService authService)
+            AuthService authService,
+            IBildirimService bildirimService)
         {
             _projeService = projeService;
             _authService = authService;
+            _bildirimService = bildirimService;
         }
 
         // Helper method to check if current user is the mentor of the project
@@ -107,7 +110,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 return RedirectToAction("Details", "Proje", new { id = projeId });
             }
 
-            await _projeService.AddEvaluationAsync(projeId, puan, aciklama, degerlendirmeTipi, akademisyen.Id);
+            var degerlendirme = await _projeService.AddEvaluationAsync(projeId, puan, aciklama, degerlendirmeTipi, akademisyen.Id);
+            
+            // Değerlendirme yapıldığına dair bildirim gönder
+            if (degerlendirme != null)
+            {
+                await _bildirimService.DegerlendirmeYapildiBildirimiGonder(degerlendirme);
+            }
+            
             TempData["SuccessMessage"] = "Değerlendirme başarıyla eklendi.";
 
             return RedirectToAction("Details", "Proje", new { id = projeId });

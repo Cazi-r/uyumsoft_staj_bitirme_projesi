@@ -12,8 +12,8 @@ using UniversiteProjeYonetimSistemi.Data;
 namespace UniversiteProjeYonetimSistemi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250720190228_KendiKimlikDogrulamaSistemi")]
-    partial class KendiKimlikDogrulamaSistemi
+    [Migration("20250723085854_DanismanlikGorusmesiTalepEdenEklendi")]
+    partial class DanismanlikGorusmesiTalepEdenEklendi
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,7 +50,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Ofis")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -60,7 +59,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Telefon")
-                        .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
@@ -73,7 +71,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UzmanlikAlani")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -100,7 +97,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("BildirimTipi")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -135,6 +131,62 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AkademisyenId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Baslik")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Durum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("GorusmeTarihi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GorusmeTipi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notlar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OgrenciId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TalepEden")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AkademisyenId");
+
+                    b.HasIndex("OgrenciId");
+
+                    b.HasIndex("ProjeId");
+
+                    b.ToTable("DanismanlikGorusmeleri");
+                });
+
             modelBuilder.Entity("UniversiteProjeYonetimSistemi.Models.Degerlendirme", b =>
                 {
                     b.Property<int>("Id")
@@ -144,7 +196,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("AkademisyenId")
@@ -157,7 +208,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DegerlendirmeTipi")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -243,7 +293,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Adres")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -271,7 +320,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Telefon")
-                        .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
@@ -305,7 +353,7 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("KategoriId")
+                    b.Property<int?>("KategoriId")
                         .HasColumnType("int");
 
                     b.Property<int?>("MentorId")
@@ -318,7 +366,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -348,7 +395,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AsamaAdi")
@@ -407,7 +453,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("DosyaTipi")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -428,7 +473,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("YukleyenTipi")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -448,7 +492,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Ad")
@@ -460,7 +503,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Renk")
-                        .IsRequired()
                         .HasMaxLength(7)
                         .HasColumnType("nvarchar(7)");
 
@@ -481,7 +523,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Aciklama")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -496,7 +537,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("KaynakTipi")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -507,14 +547,12 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("YayinTarihi")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Yazar")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -556,7 +594,6 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("YorumTipi")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -600,6 +637,33 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                     b.Navigation("Ogrenci");
                 });
 
+            modelBuilder.Entity("UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi", b =>
+                {
+                    b.HasOne("UniversiteProjeYonetimSistemi.Models.Akademisyen", "Akademisyen")
+                        .WithMany()
+                        .HasForeignKey("AkademisyenId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("UniversiteProjeYonetimSistemi.Models.Ogrenci", "Ogrenci")
+                        .WithMany()
+                        .HasForeignKey("OgrenciId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("UniversiteProjeYonetimSistemi.Models.Proje", "Proje")
+                        .WithMany()
+                        .HasForeignKey("ProjeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Akademisyen");
+
+                    b.Navigation("Ogrenci");
+
+                    b.Navigation("Proje");
+                });
+
             modelBuilder.Entity("UniversiteProjeYonetimSistemi.Models.Degerlendirme", b =>
                 {
                     b.HasOne("UniversiteProjeYonetimSistemi.Models.Akademisyen", "Akademisyen")
@@ -635,8 +699,7 @@ namespace UniversiteProjeYonetimSistemi.Migrations
                     b.HasOne("UniversiteProjeYonetimSistemi.Models.ProjeKategori", "Kategori")
                         .WithMany("Projeler")
                         .HasForeignKey("KategoriId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("UniversiteProjeYonetimSistemi.Models.Akademisyen", "Mentor")
                         .WithMany("Projeler")

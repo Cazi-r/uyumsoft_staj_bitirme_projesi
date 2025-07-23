@@ -33,6 +33,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IProjeService, ProjeService>();
 builder.Services.AddScoped<IOgrenciService, OgrenciService>();
 builder.Services.AddScoped<IAkademisyenService, AkademisyenService>();
+builder.Services.AddScoped<IBildirimService, BildirimService>();
 
 builder.Services.AddControllersWithViews();
 

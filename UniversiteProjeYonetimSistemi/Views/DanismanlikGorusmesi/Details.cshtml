@@ -1,0 +1,175 @@
+@model UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi
+
+@{
+    ViewData["Title"] = "Görüşme Detayları";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>@ViewData["Title"]</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Görüşmeler</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detay</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="m-0">@Model.Baslik</h5>
+                    <span class="badge @(Model.Durum == "Beklemede" ? "bg-warning" : Model.Durum == "Onaylandı" ? "bg-success" : "bg-danger")">
+                        @Model.Durum
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Proje</h6>
+                            <p>@Model.Proje?.Ad</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Görüşme Tipi</h6>
+                            <p>@Model.GorusmeTipi</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Öğrenci</h6>
+                            <p>@Model.Ogrenci?.Ad @Model.Ogrenci?.Soyad</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Akademisyen</h6>
+                            <p>@Model.Akademisyen?.Unvan @Model.Akademisyen?.Ad @Model.Akademisyen?.Soyad</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Görüşme Tarihi</h6>
+                            <p>@Model.GorusmeTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Oluşturulma Tarihi</h6>
+                            <p>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="fw-bold">Notlar</h6>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <p class="card-text">@(string.IsNullOrEmpty(Model.Notlar) ? "Herhangi bir not girilmemiş." : Model.Notlar)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex gap-2">
+                                @if (User.IsInRole("Akademisyen") && Model.Durum == "Beklemede")
+                                {
+                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="durum" value="Onaylandı" />
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="bi bi-check-circle"></i> Onayla
+                                        </button>
+                                    </form>
+                                    
+                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="durum" value="Reddedildi" />
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-x-circle"></i> Reddet
+                                        </button>
+                                    </form>
+                                }
+                                
+                                @if ((User.IsInRole("Ogrenci") && Model.Durum == "Beklemede") || User.IsInRole("Akademisyen") && Model.Durum != "Onaylandı")
+                                {
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                        <i class="bi bi-pencil"></i> Düzenle
+                                    </a>
+                                }
+                                
+                                <a asp-action="Index" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Geri
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            @if (Model.Durum == "Onaylandı")
+            {
+                <div class="card border-success mb-3">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-calendar-check"></i> Görüşme Bilgileri
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Onaylanmış Görüşme</h5>
+                        <p class="card-text">
+                            Bu görüşme akademisyen tarafından onaylanmıştır.
+                        </p>
+                        <p class="card-text">
+                            <strong>Tarih:</strong> @Model.GorusmeTarihi.ToString("dd.MM.yyyy")<br />
+                            <strong>Saat:</strong> @Model.GorusmeTarihi.ToString("HH:mm")<br />
+                            <strong>Yer:</strong> @(Model.GorusmeTipi == "Online" ? "Online Görüşme" : "Yüz Yüze Görüşme")
+                        </p>
+                    </div>
+                </div>
+            }
+            else if (Model.Durum == "Reddedildi")
+            {
+                <div class="card border-danger mb-3">
+                    <div class="card-header bg-danger text-white">
+                        <i class="bi bi-x-circle"></i> Görüşme Bilgileri
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Reddedilmiş Görüşme</h5>
+                        <p class="card-text">
+                            Bu görüşme talebi akademisyen tarafından reddedilmiştir.
+                        </p>
+                        @if (User.IsInRole("Ogrenci"))
+                        {
+                            <p class="card-text">
+                                Yeni bir görüşme talebi oluşturabilirsiniz.
+                            </p>
+                            <a asp-action="Create" class="btn btn-outline-primary">
+                                <i class="bi bi-plus-circle"></i> Yeni Talep Oluştur
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card border-warning mb-3">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="bi bi-hourglass-split"></i> Görüşme Bilgileri
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Bekleyen Görüşme Talebi</h5>
+                        <p class="card-text">
+                            Bu görüşme talebi henüz akademisyen tarafından değerlendirilmemiştir.
+                        </p>
+                        <p class="card-text">
+                            Akademisyen yanıt verdiğinde bildirim alacaksınız.
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div> 

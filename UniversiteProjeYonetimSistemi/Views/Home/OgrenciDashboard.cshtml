@@ -189,4 +189,70 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tasks me-2"></i> Proje Bilgileri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Mevcut projeler bölümü -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0 d-flex justify-content-between">
+                        <span><i class="fas fa-comments me-2"></i> Danışman Görüşmeleri</span>
+                        <a asp-controller="DanismanlikGorusmesi" asp-action="Index" class="btn btn-sm btn-outline-light">Tümü</a>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Gorusmeler != null && ViewBag.Gorusmeler.Count > 0)
+                    {
+                        <div class="list-group">
+                            @foreach (var gorusme in ViewBag.Gorusmeler)
+                            {
+                                <a href="@Url.Action("Details", "DanismanlikGorusmesi", new { id = gorusme.Id })" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">@gorusme.Baslik</h6>
+                                        <small>
+                                            @if (gorusme.Durum == "Beklemede")
+                                            {
+                                                <span class="badge bg-warning text-dark">Beklemede</span>
+                                            }
+                                            else if (gorusme.Durum == "Onaylandı")
+                                            {
+                                                <span class="badge bg-success">Onaylandı</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Reddedildi</span>
+                                            }
+                                        </small>
+                                    </div>
+                                    <p class="mb-1 text-muted">@gorusme.Akademisyen.Unvan @gorusme.Akademisyen.Ad @gorusme.Akademisyen.Soyad</p>
+                                    <small>@gorusme.GorusmeTarihi.ToString("dd.MM.yyyy HH:mm")</small>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-3">Henüz hiç görüşme talebiniz bulunmamaktadır.</p>
+                            <a asp-controller="DanismanlikGorusmesi" asp-action="Create" class="btn btn-outline-primary">
+                                <i class="fas fa-plus-circle me-2"></i> Görüşme Talebi Oluştur
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div> 

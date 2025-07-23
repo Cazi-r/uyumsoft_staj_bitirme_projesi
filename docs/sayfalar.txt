@@ -69,3 +69,7 @@ admin yorum yapamıyo // 19 id li akademisyen üstünden yapıyo
 admin proje atama yapmadan geri çıkamıyor //
 admin yeni kullanıcı kaydı yaparken giriş sayfasına dön tuşu gözüküyo 
 admin proje kategorisi silmehye çalışırken hata //
+proje kaynakları tablosu eksik miş
+bildirimler eksik
+proje aşamaları proje görevlerine benzetilecek
+akademisyene ait proje bekleyendeyken proje ata yazısı değişmiyor

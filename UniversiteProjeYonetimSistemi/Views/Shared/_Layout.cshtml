@@ -28,6 +28,15 @@
                                 <i class="fas fa-home me-1"></i> Ana Sayfa
                             </a>
                         </li>
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link position-relative" asp-controller="Bildirim" asp-action="Index">
+                                    <i class="fas fa-bell me-1"></i> Bildirimler
+                                    @await Component.InvokeAsync("BildirimSayaci")
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Proje" asp-action="Index">
                                 <i class="fas fa-tasks me-1"></i> Projeler
@@ -71,16 +80,21 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Degerlendirme" asp-action="Index">
-                                    <i class="fas fa-star me-1"></i> Değerlendirmelerim
+                                <a class="nav-link" asp-area="" asp-controller="DanismanlikGorusmesi" asp-action="Index">
+                                    <i class="fas fa-calendar-check me-1"></i> Görüşme Talepleri
                                 </a>
                             </li>
                         }
                         @if (User.IsInRole("Ogrenci"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Ogrenci" asp-action="Projeler">
+                                <a class="nav-link" asp-area="" asp-controller="Proje" asp-action="Index">
                                     <i class="fas fa-book me-1"></i> Projelerim
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="DanismanlikGorusmesi" asp-action="Index">
+                                    <i class="fas fa-comments me-1"></i> Görüşmelerim
                                 </a>
                             </li>
                         }

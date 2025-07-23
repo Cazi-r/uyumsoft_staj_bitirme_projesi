@@ -13,13 +13,16 @@ namespace UniversiteProjeYonetimSistemi.Controllers
     {
         private readonly IProjeService _projeService;
         private readonly AuthService _authService;
+        private readonly IBildirimService _bildirimService;
 
         public ProjeYorumController(
             IProjeService projeService,
-            AuthService authService)
+            AuthService authService,
+            IBildirimService bildirimService)
         {
             _projeService = projeService;
             _authService = authService;
+            _bildirimService = bildirimService;
         }
 
         // POST: ProjeYorum/Add
@@ -59,7 +62,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 akademisyenId = 19; // ID 29 olan akademisyen üzerinden yorum ekle
             }
 
-            await _projeService.AddCommentAsync(model.ProjeId, model.Icerik, model.YorumTipi, ogrenciId, akademisyenId);
+            var yorum = await _projeService.AddCommentAsync(model.ProjeId, model.Icerik, model.YorumTipi, ogrenciId, akademisyenId);
+            
+            // Yorum yapıldığına dair bildirim gönder
+            if (yorum != null)
+            {
+                await _bildirimService.ProjeYorumYapildiBildirimiGonder(yorum, model.ProjeId);
+            }
+            
             TempData["SuccessMessage"] = "Yorum başarıyla eklendi.";
 
             return RedirectToAction("Details", "Proje", new { id = model.ProjeId });

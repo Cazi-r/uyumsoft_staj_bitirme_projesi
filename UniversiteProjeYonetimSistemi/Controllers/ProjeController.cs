@@ -18,19 +18,22 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         private readonly IAkademisyenService _akademisyenService;
         private readonly IRepository<ProjeKategori> _kategoriRepository;
         private readonly AuthService _authService;
+        private readonly IBildirimService _bildirimService;
 
         public ProjeController(
             IProjeService projeService,
             IOgrenciService ogrenciService,
             IAkademisyenService akademisyenService,
             IRepository<ProjeKategori> kategoriRepository,
-            AuthService authService)
+            AuthService authService,
+            IBildirimService bildirimService)
         {
             _projeService = projeService;
             _ogrenciService = ogrenciService;
             _akademisyenService = akademisyenService;
             _kategoriRepository = kategoriRepository;
             _authService = authService;
+            _bildirimService = bildirimService;
         }
 
         // GET: Proje
@@ -79,7 +82,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
-        public async Task<IActionResult> Create(Proje proje)
+        public async Task<IActionResult> Create(Proje proje, bool KaynakEklemekIstiyorum = false)
         {
             if (ModelState.IsValid)
             {
@@ -97,6 +100,18 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 proje.Status = "Beklemede";
                 
                 await _projeService.AddAsync(proje);
+
+                // Projenin oluşturulduğuna dair bildirim gönder
+                string olusturanRol = User.IsInRole("Akademisyen") ? "Akademisyen" : "Ogrenci";
+                await _bildirimService.ProjeOlusturulduBildirimiGonder(proje, olusturanRol);
+                
+                // Kaynak eklemek isteniyorsa, detay sayfasına yönlendir ve modal'ı aç
+                if (KaynakEklemekIstiyorum)
+                {
+                    TempData["OpenResourceModal"] = true;
+                    return RedirectToAction(nameof(Details), new { id = proje.Id });
+                }
+                
                 return RedirectToAction(nameof(Index));
             }
             
@@ -258,6 +273,11 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             if (proje.Status == "Atanmis")
             {
                 await _projeService.UpdateStatusAsync(id, "Devam");
+                
+                // Proje durumu değiştiği için bildirim gönder
+                proje.Status = "Devam"; // Bildirim servisi için durumu güncelle
+                await _bildirimService.ProjeIlerlemesiDegistiBildirimiGonder(proje);
+                
                 TempData["SuccessMessage"] = "Proje durumu 'Devam Ediyor' olarak güncellendi.";
             }
             else
@@ -291,6 +311,11 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             if (proje.Status == "Devam")
             {
                 await _projeService.UpdateStatusAsync(id, "Tamamlandi");
+                
+                // Proje durumu değiştiği için bildirim gönder
+                proje.Status = "Tamamlandi"; // Bildirim servisi için durumu güncelle
+                await _bildirimService.ProjeIlerlemesiDegistiBildirimiGonder(proje);
+                
                 TempData["SuccessMessage"] = "Proje başarıyla tamamlandı olarak işaretlendi.";
             }
             else
@@ -328,6 +353,11 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             else
             {
                 await _projeService.UpdateStatusAsync(id, "Iptal");
+                
+                // Proje durumu değiştiği için bildirim gönder
+                proje.Status = "Iptal"; // Bildirim servisi için durumu güncelle
+                await _bildirimService.ProjeIlerlemesiDegistiBildirimiGonder(proje);
+                
                 TempData["SuccessMessage"] = "Proje iptal edildi.";
             }
             

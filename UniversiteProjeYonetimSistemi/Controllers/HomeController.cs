@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using UniversiteProjeYonetimSistemi.Models;
 using UniversiteProjeYonetimSistemi.Services;
@@ -17,17 +19,23 @@ public class HomeController : Controller
     private readonly AuthService _authService;
     private readonly IProjeService _projeService;
     private readonly ApplicationDbContext _context;
+    private readonly IOgrenciService _ogrenciService;
+    private readonly IAkademisyenService _akademisyenService;
 
     public HomeController(
         ILogger<HomeController> logger,
         AuthService authService,
         IProjeService projeService,
-        ApplicationDbContext context)
+        ApplicationDbContext context,
+        IOgrenciService ogrenciService,
+        IAkademisyenService akademisyenService)
     {
         _logger = logger;
         _authService = authService;
         _projeService = projeService;
         _context = context;
+        _ogrenciService = ogrenciService;
+        _akademisyenService = akademisyenService;
     }
 
     public async Task<IActionResult> Index()
@@ -155,6 +163,89 @@ public class HomeController : Controller
             default:
                 return View();
         }
+    }
+
+    public async Task<IActionResult> AkademisyenDashboard()
+    {
+        var akademisyen = await _akademisyenService.GetAkademisyenByUserName(User.Identity.Name);
+
+        if (akademisyen == null)
+            return RedirectToAction("Index");
+
+        // Akademisyenin mentörlük yaptığı projeleri getir
+        var projeler = await _context.Projeler
+            .Include(p => p.Ogrenci)
+            .Include(p => p.Kategori)
+            .Where(p => p.MentorId == akademisyen.Id)
+            .ToListAsync();
+
+        // Son bildirimleri getir
+        var bildirimler = await _context.Bildirimler
+            .Where(b => b.AkademisyenId == akademisyen.Id)
+            .OrderByDescending(b => b.CreatedAt)
+            .Take(5)
+            .ToListAsync();
+        
+        // Bekleyen görüşme taleplerini getir
+        var bekleyenGorusmeler = await _context.DanismanlikGorusmeleri
+            .Include(g => g.Ogrenci)
+            .Include(g => g.Proje)
+            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede")
+            .OrderBy(g => g.GorusmeTarihi)
+            .Take(3)
+            .ToListAsync();
+        
+        // Onaylı görüşmeleri getir
+        var onayliGorusmeler = await _context.DanismanlikGorusmeleri
+            .Include(g => g.Ogrenci)
+            .Include(g => g.Proje)
+            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Onaylandı")
+            .OrderBy(g => g.GorusmeTarihi)
+            .Take(3)
+            .ToListAsync();
+
+        ViewBag.Projeler = projeler;
+        ViewBag.Bildirimler = bildirimler;
+        ViewBag.BekleyenGorusmeler = bekleyenGorusmeler;
+        ViewBag.OnayliGorusmeler = onayliGorusmeler;
+
+        return View();
+    }
+
+    public async Task<IActionResult> OgrenciDashboard()
+    {
+        var ogrenci = await _ogrenciService.GetOgrenciByUserName(User.Identity.Name);
+
+        if (ogrenci == null)
+            return RedirectToAction("Index");
+
+        // Öğrencinin projelerini getir
+        var projeler = await _context.Projeler
+            .Include(p => p.Mentor)
+            .Include(p => p.Kategori)
+            .Where(p => p.OgrenciId == ogrenci.Id)
+            .ToListAsync();
+
+        // Son bildirimleri getir
+        var bildirimler = await _context.Bildirimler
+            .Where(b => b.OgrenciId == ogrenci.Id)
+            .OrderByDescending(b => b.CreatedAt)
+            .Take(5)
+            .ToListAsync();
+
+        // Son görüşmeleri getir
+        var gorusmeler = await _context.DanismanlikGorusmeleri
+            .Include(g => g.Akademisyen)
+            .Where(g => g.OgrenciId == ogrenci.Id)
+            .OrderByDescending(g => g.GorusmeTarihi)
+            .Take(3)
+            .ToListAsync();
+
+        ViewBag.Projeler = projeler;
+        ViewBag.Bildirimler = bildirimler;
+        ViewBag.Gorusmeler = gorusmeler;
+
+        return View();
     }
 
     public IActionResult Privacy()

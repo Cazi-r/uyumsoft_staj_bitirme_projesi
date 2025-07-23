@@ -1,0 +1,272 @@
+@model IEnumerable<UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi>
+
+@{
+    ViewData["Title"] = "Görüşme Talepleri";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2>@ViewData["Title"]</h2>
+            <p>Öğrencilerin görüşme taleplerini bu sayfadan yönetebilirsiniz.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Yeni Görüşme Planla
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="bekleyen-tab" data-bs-toggle="tab" data-bs-target="#bekleyen" type="button" role="tab" aria-controls="bekleyen" aria-selected="true">
+                        Bekleyen Talepler
+                        <span class="badge bg-warning ms-2">@Model.Count(x => x.Durum == "Beklemede")</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="onaylanan-tab" data-bs-toggle="tab" data-bs-target="#onaylanan" type="button" role="tab" aria-controls="onaylanan" aria-selected="false">
+                        Onaylanan Görüşmeler
+                        <span class="badge bg-success ms-2">@Model.Count(x => x.Durum == "Onaylandı")</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reddedilen-tab" data-bs-toggle="tab" data-bs-target="#reddedilen" type="button" role="tab" aria-controls="reddedilen" aria-selected="false">
+                        Reddedilen Talepler
+                        <span class="badge bg-danger ms-2">@Model.Count(x => x.Durum == "Reddedildi")</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tab-content" id="myTabContent">
+        <!-- Bekleyen Talepler -->
+        <div class="tab-pane fade show active" id="bekleyen" role="tabpanel" aria-labelledby="bekleyen-tab">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Proje</th>
+                                    <th>Öğrenci</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>Talep Eden</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(x => x.Durum == "Beklemede"))
+                                {
+                                    <tr>
+                                        <td>@item.Proje?.Ad</td>
+                                        <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                        <td>@item.Baslik</td>
+                                        <td>@item.GorusmeTarihi.ToString("g")</td>
+                                        <td>@item.GorusmeTipi</td>
+                                        <td>
+                                            @if (item.TalepEden == "Ogrenci")
+                                            {
+                                                <span class="badge bg-info">Öğrenci Talebi</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Sizin Talebiniz</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i> Detay
+                                                </a>
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-pencil"></i> Düzenle
+                                                </a>
+                                                @if (item.TalepEden != "Akademisyen")
+                                                {
+                                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="@item.Id" />
+                                                        <input type="hidden" name="durum" value="Onaylandı" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                                            <i class="bi bi-check-circle"></i> Onayla
+                                                        </button>
+                                                    </form>
+                                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                                        <input type="hidden" name="id" value="@item.Id" />
+                                                        <input type="hidden" name="durum" value="Reddedildi" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-x-circle"></i> Reddet
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info ms-2">Öğrenci onayı bekliyor</span>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.Any(x => x.Durum == "Beklemede"))
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">Bekleyen görüşme talebi bulunmamaktadır.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onaylanan Görüşmeler -->
+        <div class="tab-pane fade" id="onaylanan" role="tabpanel" aria-labelledby="onaylanan-tab">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Proje</th>
+                                    <th>Öğrenci</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>Talep Eden</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(x => x.Durum == "Onaylandı"))
+                                {
+                                    <tr>
+                                        <td>@item.Proje?.Ad</td>
+                                        <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                        <td>@item.Baslik</td>
+                                        <td>@item.GorusmeTarihi.ToString("g")</td>
+                                        <td>@item.GorusmeTipi</td>
+                                        <td>
+                                            @if (item.TalepEden == "Ogrenci")
+                                            {
+                                                <span class="badge bg-info">Öğrenci Talebi</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Sizin Talebiniz</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i> Detay
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.Any(x => x.Durum == "Onaylandı"))
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">Onaylanmış görüşme bulunmamaktadır.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reddedilen Talepler -->
+        <div class="tab-pane fade" id="reddedilen" role="tabpanel" aria-labelledby="reddedilen-tab">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Proje</th>
+                                    <th>Öğrenci</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>Talep Eden</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Where(x => x.Durum == "Reddedildi"))
+                                {
+                                    <tr>
+                                        <td>@item.Proje?.Ad</td>
+                                        <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                        <td>@item.Baslik</td>
+                                        <td>@item.GorusmeTarihi.ToString("g")</td>
+                                        <td>@item.GorusmeTipi</td>
+                                        <td>
+                                            @if (item.TalepEden == "Ogrenci")
+                                            {
+                                                <span class="badge bg-info">Öğrenci Talebi</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Sizin Talebiniz</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i> Detay
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.Any(x => x.Durum == "Reddedildi"))
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">Reddedilmiş görüşme talebi bulunmamaktadır.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Bootstrap tab activation
+            $('a[data-toggle="tab"]').on('click', function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+        });
+    </script>
+} 

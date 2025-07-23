@@ -11,6 +11,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         Task<Ogrenci> GetByIdAsync(int id);
         Task<Ogrenci> GetByKullaniciIdAsync(int kullaniciId);
         Task<Ogrenci> GetByOgrenciNoAsync(string ogrenciNo);
+        Task<Ogrenci> GetOgrenciByUserName(string userName);
         Task<Ogrenci> AddAsync(Ogrenci ogrenci);
         Task UpdateAsync(Ogrenci ogrenci);
         Task DeleteAsync(int id);

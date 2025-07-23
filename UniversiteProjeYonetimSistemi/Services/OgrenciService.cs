@@ -52,6 +52,20 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(o => o.OgrenciNo == ogrenciNo);
         }
 
+        public async Task<Ogrenci> GetOgrenciByUserName(string userName)
+        {
+            // Direkt olarak _context kullanarak arama yapalım
+            var kullanici = await _context.Kullanicilar
+                .FirstOrDefaultAsync(k => k.Email == userName);
+            
+            if (kullanici == null)
+                return null;
+            
+            return await _context.Ogrenciler
+                .Include(o => o.Kullanici)
+                .FirstOrDefaultAsync(o => o.KullaniciId == kullanici.Id);
+        }
+
         public async Task<Ogrenci> AddAsync(Ogrenci ogrenci)
         {
             await _ogrenciRepository.AddAsync(ogrenci);

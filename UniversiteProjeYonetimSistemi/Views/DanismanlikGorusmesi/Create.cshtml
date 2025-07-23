@@ -1,0 +1,184 @@
+@model UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi
+
+@{
+    ViewData["Title"] = "Görüşme Talebi Oluştur";
+    var userRole = (string)ViewData["UserRole"];
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>@ViewData["Title"]</h2>
+            @if (userRole == "Ogrenci")
+            {
+                <p>Akademisyene görüşme talebi oluşturun.</p>
+            }
+            else
+            {
+                <p>Öğrenci ile görüşme planı oluşturun.</p>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        @if (userRole == "Ogrenci")
+                        {
+                            @if (ViewData["ProjeId"] != null)
+                            {
+                                <div class="mb-3">
+                                    <label asp-for="ProjeId" class="control-label">Proje</label>
+                                    <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId"></select>
+                                    <span asp-validation-for="ProjeId" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="AkademisyenId" class="control-label">Akademisyen</label>
+                                    <select asp-for="AkademisyenId" class="form-select" asp-items="ViewBag.AkademisyenId"></select>
+                                    <span asp-validation-for="AkademisyenId" class="text-danger"></span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Proje</label>
+                                    <input type="text" class="form-control" value="@ViewData["ProjeAd"]" readonly />
+                                    <input type="hidden" asp-for="ProjeId" />
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Akademisyen</label>
+                                    <input type="text" class="form-control" value="@ViewData["AkademisyenAd"]" readonly />
+                                    <input type="hidden" asp-for="AkademisyenId" />
+                                </div>
+                            }
+                        }
+                        else if (userRole == "Akademisyen")
+                        {
+                            @if (ViewData["ProjeId"] != null)
+                            {
+                                <div class="mb-3">
+                                    <label asp-for="ProjeId" class="control-label">Proje</label>
+                                    <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId"></select>
+                                    <span asp-validation-for="ProjeId" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="OgrenciId" class="control-label">Öğrenci</label>
+                                    <select asp-for="OgrenciId" class="form-select" asp-items="ViewBag.OgrenciId"></select>
+                                    <span asp-validation-for="OgrenciId" class="text-danger"></span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Proje</label>
+                                    <input type="text" class="form-control" value="@ViewData["ProjeAd"]" readonly />
+                                    <input type="hidden" asp-for="ProjeId" />
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Öğrenci</label>
+                                    <input type="text" class="form-control" value="@ViewData["OgrenciAd"]" readonly />
+                                    <input type="hidden" asp-for="OgrenciId" />
+                                </div>
+                            }
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="Baslik" class="form-label">Başlık</label>
+                            <input asp-for="Baslik" class="form-control" placeholder="Görüşme konusu başlığını girin" />
+                            <span asp-validation-for="Baslik" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GorusmeTarihi" class="form-label">Görüşme Tarihi</label>
+                            <input asp-for="GorusmeTarihi" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="GorusmeTarihi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GorusmeTipi" class="form-label">Görüşme Tipi</label>
+                            <select asp-for="GorusmeTipi" class="form-select">
+                                <option value="Online">Online</option>
+                                <option value="Yüz Yüze">Yüz Yüze</option>
+                            </select>
+                            <span asp-validation-for="GorusmeTipi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notlar" class="form-label">Notlar</label>
+                            <textarea asp-for="Notlar" class="form-control" rows="4" placeholder="Görüşmek istediğiniz konular hakkında kısa bilgi verin"></textarea>
+                            <span asp-validation-for="Notlar" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            @if (userRole == "Ogrenci")
+                            {
+                                <input type="submit" value="Görüşme Talebi Oluştur" class="btn btn-primary" />
+                            }
+                            else
+                            {
+                                <input type="submit" value="Görüşme Planla" class="btn btn-primary" />
+                            }
+                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Bilgilendirme</h5>
+                    @if (userRole == "Ogrenci")
+                    {
+                        <p class="card-text">
+                            Görüşme talebiniz akademisyen tarafından onaylanana kadar beklemede kalacaktır.
+                        </p>
+                        <p class="card-text">
+                            Talebinizi onaylanan veya reddedilen durumlarına göre takip edebilirsiniz.
+                        </p>
+                        <p class="card-text">
+                            Akademisyen, gerekirse görüşme saatini değiştirebilir.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="card-text">
+                            Oluşturduğunuz görüşme planı otomatik olarak onaylanmış olarak kaydedilecektir.
+                        </p>
+                        <p class="card-text">
+                            Öğrenciye görüşme planı hakkında otomatik bildirim gönderilecektir.
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Minimum bugünün tarihini ayarlama
+        document.addEventListener('DOMContentLoaded', function() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            var hh = String(today.getHours()).padStart(2, '0');
+            var min = String(today.getMinutes()).padStart(2, '0');
+            
+            today = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + min;
+            document.getElementById('GorusmeTarihi').setAttribute('min', today);
+        });
+    </script>
+} 

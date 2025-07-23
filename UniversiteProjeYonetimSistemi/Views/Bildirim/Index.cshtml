@@ -1,0 +1,95 @@
+@model IEnumerable<UniversiteProjeYonetimSistemi.Models.Bildirim>
+@{
+    ViewData["Title"] = "Bildirimlerim";
+}
+
+<div class="container mt-4">
+    <h1>Bildirimlerim</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Bildirimler</h6>
+            <div>
+                <form asp-action="TumunuOkunduYap" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-success">Tümünü Okundu İşaretle</button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <form asp-action="Index" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Bildirim Tipi</label>
+                        <select name="tip" class="form-select" onchange="this.form.submit()">
+                            <option value="">Tümü</option>
+                            @foreach (var tip in ViewBag.BildirimTipleri)
+                            {
+                                <option value="@tip" selected="@(ViewBag.SecilenTip == tip)">@tip</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Okunma Durumu</label>
+                        <select name="okundu" class="form-select" onchange="this.form.submit()">
+                            <option value="">Tümü</option>
+                            <option value="false" selected="@(ViewBag.SecilenOkundu == false)">Okunmamış</option>
+                            <option value="true" selected="@(ViewBag.SecilenOkundu == true)">Okunmuş</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Filtrele</button>
+                        <a asp-action="Index" class="btn btn-secondary ms-2">Temizle</a>
+                    </div>
+                </form>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    Görüntülenecek bildiriminiz bulunmamaktadır.
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var bildirim in Model)
+                    {
+                        <div class="list-group-item @(!bildirim.Okundu ? "list-group-item-light" : "")">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-1">
+                                    <span class="badge bg-@GetBildirimRengi(bildirim.BildirimTipi)">@bildirim.BildirimTipi</span>
+                                    @bildirim.Baslik
+                                </h6>
+                                <small>@bildirim.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</small>
+                            </div>
+                            <p class="mb-1">@bildirim.Icerik</p>
+                            <div class="d-flex justify-content-end mt-2">
+                                <form asp-action="OkunduDurumu" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@bildirim.Id" />
+                                    <input type="hidden" name="okundu" value="@(!bildirim.Okundu)" />
+                                    <button type="submit" class="btn btn-sm @(bildirim.Okundu ? "btn-outline-primary" : "btn-primary")">
+                                        @(bildirim.Okundu ? "Okunmadı Olarak İşaretle" : "Okundu Olarak İşaretle")
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    public string GetBildirimRengi(string bildirimTipi)
+    {
+        return bildirimTipi switch
+        {
+            "Bilgi" => "info",
+            "Uyari" => "warning",
+            "Hata" => "danger",
+            "Basari" => "success",
+            _ => "secondary"
+        };
+    }
+} 

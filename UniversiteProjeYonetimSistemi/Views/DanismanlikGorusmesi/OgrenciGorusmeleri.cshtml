@@ -1,0 +1,133 @@
+@model IEnumerable<UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi>
+
+@{
+    ViewData["Title"] = "Görüşmelerim";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2>@ViewData["Title"]</h2>
+            <p>Danışmanlık görüşme taleplerinizi bu sayfadan yönetebilirsiniz.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Yeni Görüşme Talebi
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Proje</th>
+                                    <th>Akademisyen</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>Talep Sahibi</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Proje?.Ad</td>
+                                        <td>@item.Akademisyen?.Ad @item.Akademisyen?.Soyad</td>
+                                        <td>@item.Baslik</td>
+                                        <td>@item.GorusmeTarihi.ToString("g")</td>
+                                        <td>@item.GorusmeTipi</td>
+                                        <td>
+                                            @if (item.TalepEden == "Ogrenci")
+                                            {
+                                                <span class="badge bg-info">Sizin Talebiniz</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Akademisyen Talebi</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.Durum == "Beklemede")
+                                            {
+                                                <span class="badge bg-warning">Beklemede</span>
+                                            }
+                                            else if (item.Durum == "Onaylandı")
+                                            {
+                                                <span class="badge bg-success">Onaylandı</span>
+                                            }
+                                            else if (item.Durum == "Reddedildi")
+                                            {
+                                                <span class="badge bg-danger">Reddedildi</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                
+                                                @if (item.Durum == "Beklemede")
+                                                {
+                                                    @if (item.TalepEden == "Ogrenci")
+                                                    {
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                            <input type="hidden" name="durum" value="Onaylandı" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                                <i class="bi bi-check-circle"></i> Onayla
+                                                            </button>
+                                                        </form>
+                                                        <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                            <input type="hidden" name="durum" value="Reddedildi" />
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-x-circle"></i> Reddet
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

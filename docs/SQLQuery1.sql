@@ -138,7 +138,7 @@ CREATE TABLE bildirimler (
     )
 );
 
--- 10. Proje Aşamaları Tablosu
+-- 10. Proje Aşamaları Tablosu proje görevleri denebilir
 CREATE TABLE proje_asamalari (
     id INT IDENTITY(1,1) PRIMARY KEY,
     proje_id INT FOREIGN KEY REFERENCES projeler(id) ON DELETE CASCADE,
@@ -168,6 +168,21 @@ CREATE TABLE proje_kaynaklari (
     updated_at DATETIME2 DEFAULT GETDATE()
 );
 
+-- 12. Danışmanlık Görüşmeleri Tablosu
+CREATE TABLE danismanlik_gorusmeleri (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    proje_id INT FOREIGN KEY REFERENCES projeler(id) ON DELETE CASCADE,
+    akademisyen_id INT FOREIGN KEY REFERENCES akademisyenler(id),
+    ogrenci_id INT FOREIGN KEY REFERENCES ogrenciler(id),
+    baslik NVARCHAR(100),
+    gorusme_tarihi DATETIME2 NOT NULL,
+    gorusme_tipi NVARCHAR(20) CHECK (gorusme_tipi IN ('Online', 'Yüz Yüze')),
+    notlar NVARCHAR(MAX),
+    created_at DATETIME2 DEFAULT GETDATE(),
+    updated_at DATETIME2 DEFAULT GETDATE()
+);
+
+
 -- Indexler (Performans i�in)
 CREATE INDEX idx_projeler_ogrenci ON projeler(ogrenci_id);
 CREATE INDEX idx_projeler_mentor ON projeler(mentor_id);
@@ -189,3 +204,9 @@ CREATE INDEX idx_kullanicilar_email ON kullanicilar(email);
 CREATE INDEX idx_kullanicilar_rol ON kullanicilar(rol);
 CREATE INDEX idx_ogrenciler_kullanici ON ogrenciler(kullanici_id);
 CREATE INDEX idx_akademisyenler_kullanici ON akademisyenler(kullanici_id);
+
+-- Danışmanlık Görüşmeleri tablosu için indexler
+CREATE INDEX idx_danismanlik_gorusmeleri_proje ON danismanlik_gorusmeleri(proje_id);
+CREATE INDEX idx_danismanlik_gorusmeleri_akademisyen ON danismanlik_gorusmeleri(akademisyen_id);
+CREATE INDEX idx_danismanlik_gorusmeleri_ogrenci ON danismanlik_gorusmeleri(ogrenci_id);
+CREATE INDEX idx_danismanlik_gorusmeleri_tarih ON danismanlik_gorusmeleri(gorusme_tarihi);

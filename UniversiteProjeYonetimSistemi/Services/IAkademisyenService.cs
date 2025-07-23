@@ -10,6 +10,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         Task<IEnumerable<Akademisyen>> GetAllAsync();
         Task<Akademisyen> GetByIdAsync(int id);
         Task<Akademisyen> GetByKullaniciIdAsync(int kullaniciId);
+        Task<Akademisyen> GetAkademisyenByUserName(string userName);
         Task<Akademisyen> AddAsync(Akademisyen akademisyen);
         Task UpdateAsync(Akademisyen akademisyen);
         Task DeleteAsync(int id);

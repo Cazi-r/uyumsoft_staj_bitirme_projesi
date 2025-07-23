@@ -21,6 +21,7 @@ namespace UniversiteProjeYonetimSistemi.Data
         public DbSet<Bildirim> Bildirimler { get; set; }
         public DbSet<ProjeAsamasi> ProjeAsamalari { get; set; }
         public DbSet<ProjeKaynagi> ProjeKaynaklari { get; set; }
+        public DbSet<DanismanlikGorusmesi> DanismanlikGorusmeleri { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,6 +69,25 @@ namespace UniversiteProjeYonetimSistemi.Data
             modelBuilder.Entity<Bildirim>()
                 .ToTable(tb => tb.HasCheckConstraint("CHK_BildirimAlici",
                     "(OgrenciId IS NOT NULL AND AkademisyenId IS NULL) OR (OgrenciId IS NULL AND AkademisyenId IS NOT NULL)"));
+
+            // DanismanlikGorusmesi için kısıtlamalar
+            modelBuilder.Entity<DanismanlikGorusmesi>()
+                .HasOne(d => d.Ogrenci)
+                .WithMany()
+                .HasForeignKey(d => d.OgrenciId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<DanismanlikGorusmesi>()
+                .HasOne(d => d.Akademisyen)
+                .WithMany()
+                .HasForeignKey(d => d.AkademisyenId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<DanismanlikGorusmesi>()
+                .HasOne(d => d.Proje)
+                .WithMany()
+                .HasForeignKey(d => d.ProjeId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

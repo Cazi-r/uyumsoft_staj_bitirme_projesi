@@ -216,3 +216,90 @@
         </div>
     </div>
 </div> 
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0 d-flex justify-content-between">
+                    <span><i class="fas fa-tasks me-2"></i> Danışmanlık Projelerim</span>
+                    <a asp-controller="Akademisyen" asp-action="Danismanliklar" class="btn btn-sm btn-outline-light">Tümü</a>
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Danışmanlık projeleri içeriği -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0 d-flex justify-content-between">
+                    <span><i class="fas fa-calendar-check me-2"></i> Bekleyen Görüşme Talepleri</span>
+                    <a asp-controller="DanismanlikGorusmesi" asp-action="Index" class="btn btn-sm btn-outline-dark">Tümü</a>
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.BekleyenGorusmeler != null && ViewBag.BekleyenGorusmeler.Count > 0)
+                {
+                    <div class="list-group">
+                        @foreach (var gorusme in ViewBag.BekleyenGorusmeler)
+                        {
+                            <a href="@Url.Action("Details", "DanismanlikGorusmesi", new { id = gorusme.Id })" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">@gorusme.Baslik</h6>
+                                    <small>
+                                        <span class="badge bg-warning text-dark">Beklemede</span>
+                                    </small>
+                                </div>
+                                <p class="mb-1">@gorusme.Ogrenci?.Ad @gorusme.Ogrenci?.Soyad</p>
+                                <small>@gorusme.GorusmeTarihi.ToString("dd.MM.yyyy HH:mm")</small>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center py-4 text-muted">Bekleyen görüşme talebiniz bulunmamaktadır.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-check-circle me-2"></i> Onaylanmış Görüşmelerim
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.OnayliGorusmeler != null && ViewBag.OnayliGorusmeler.Count > 0)
+                {
+                    <div class="list-group">
+                        @foreach (var gorusme in ViewBag.OnayliGorusmeler)
+                        {
+                            <a href="@Url.Action("Details", "DanismanlikGorusmesi", new { id = gorusme.Id })" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">@gorusme.Baslik</h6>
+                                    <small>
+                                        <span class="badge bg-success">@gorusme.GorusmeTarihi.ToString("dd.MM.yyyy")</span>
+                                    </small>
+                                </div>
+                                <p class="mb-1">@gorusme.Ogrenci?.Ad @gorusme.Ogrenci?.Soyad</p>
+                                <small>@gorusme.GorusmeTarihi.ToString("HH:mm")</small>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center py-4 text-muted">Onaylanmış görüşmeniz bulunmamaktadır.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div> 
