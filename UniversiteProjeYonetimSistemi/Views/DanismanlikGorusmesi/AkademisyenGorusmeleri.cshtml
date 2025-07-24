@@ -39,19 +39,31 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="bekleyen-tab" data-bs-toggle="tab" data-bs-target="#bekleyen" type="button" role="tab" aria-controls="bekleyen" aria-selected="true">
                         Bekleyen Talepler
-                        <span class="badge bg-warning ms-2">@Model.Count(x => x.Durum == "Beklemede")</span>
+                        <span class="badge bg-warning ms-2">@ViewBag.BekleyenTalepler.Count</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="onaylanan-tab" data-bs-toggle="tab" data-bs-target="#onaylanan" type="button" role="tab" aria-controls="onaylanan" aria-selected="false">
-                        Onaylanan Görüşmeler
-                        <span class="badge bg-success ms-2">@Model.Count(x => x.Durum == "Onaylandı")</span>
+                    <button class="nav-link" id="yakin-tab" data-bs-toggle="tab" data-bs-target="#yakin" type="button" role="tab" aria-controls="yakin" aria-selected="false">
+                        Yaklaşan Görüşmeler
+                        <span class="badge bg-primary ms-2">@ViewBag.YakinGorusmeler.Count</span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="reddedilen-tab" data-bs-toggle="tab" data-bs-target="#reddedilen" type="button" role="tab" aria-controls="reddedilen" aria-selected="false">
-                        Reddedilen Talepler
-                        <span class="badge bg-danger ms-2">@Model.Count(x => x.Durum == "Reddedildi")</span>
+                    <button class="nav-link" id="ilerideki-tab" data-bs-toggle="tab" data-bs-target="#ilerideki" type="button" role="tab" aria-controls="ilerideki" aria-selected="false">
+                        İlerideki Görüşmeler
+                        <span class="badge bg-info ms-2">@ViewBag.IleridekiGorusmeler.Count</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="gecmis-tab" data-bs-toggle="tab" data-bs-target="#gecmis" type="button" role="tab" aria-controls="gecmis" aria-selected="false">
+                        Geçmiş Görüşmeler
+                        <span class="badge bg-secondary ms-2">@ViewBag.GecmisGorusmeler.Count</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="iptal-tab" data-bs-toggle="tab" data-bs-target="#iptal" type="button" role="tab" aria-controls="iptal" aria-selected="false">
+                        İptal Edilenler
+                        <span class="badge bg-danger ms-2">@ViewBag.IptalGorusmeler.Count</span>
                     </button>
                 </li>
             </ul>
@@ -72,39 +84,28 @@
                                     <th>Başlık</th>
                                     <th>Görüşme Tarihi</th>
                                     <th>Görüşme Tipi</th>
-                                    <th>Talep Eden</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(x => x.Durum == "Beklemede"))
+                                @if (ViewBag.BekleyenTalepler.Count > 0)
                                 {
-                                    <tr>
-                                        <td>@item.Proje?.Ad</td>
-                                        <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
-                                        <td>@item.Baslik</td>
-                                        <td>@item.GorusmeTarihi.ToString("g")</td>
-                                        <td>@item.GorusmeTipi</td>
-                                        <td>
-                                            @if (item.TalepEden == "Ogrenci")
-                                            {
-                                                <span class="badge bg-info">Öğrenci Talebi</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-secondary">Sizin Talebiniz</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
-                                                    <i class="bi bi-eye"></i> Detay
-                                                </a>
-                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
-                                                    <i class="bi bi-pencil"></i> Düzenle
-                                                </a>
-                                                @if (item.TalepEden != "Akademisyen")
-                                                {
+                                    @foreach (var item in ViewBag.BekleyenTalepler)
+                                    {
+                                        <tr>
+                                            <td>@item.Proje?.Ad</td>
+                                            <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                            <td>@item.Baslik</td>
+                                            <td>@item.GorusmeTarihi.ToString("g")</td>
+                                            <td>@item.GorusmeTipi</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye"></i> Detay
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                                        <i class="bi bi-pencil"></i> Düzenle
+                                                    </a>
                                                     <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
                                                         <input type="hidden" name="id" value="@item.Id" />
                                                         <input type="hidden" name="durum" value="Onaylandı" />
@@ -119,16 +120,12 @@
                                                             <i class="bi bi-x-circle"></i> Reddet
                                                         </button>
                                                     </form>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-info ms-2">Öğrenci onayı bekliyor</span>
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
-                                @if (!Model.Any(x => x.Durum == "Beklemede"))
+                                else
                                 {
                                     <tr>
                                         <td colspan="6" class="text-center">Bekleyen görüşme talebi bulunmamaktadır.</td>
@@ -141,8 +138,8 @@
             </div>
         </div>
 
-        <!-- Onaylanan Görüşmeler -->
-        <div class="tab-pane fade" id="onaylanan" role="tabpanel" aria-labelledby="onaylanan-tab">
+        <!-- Yaklaşan Görüşmeler -->
+        <div class="tab-pane fade" id="yakin" role="tabpanel" aria-labelledby="yakin-tab">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -154,42 +151,46 @@
                                     <th>Başlık</th>
                                     <th>Görüşme Tarihi</th>
                                     <th>Görüşme Tipi</th>
-                                    <th>Talep Eden</th>
+                                    <th>Kalan Süre</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(x => x.Durum == "Onaylandı"))
+                                @if (ViewBag.YakinGorusmeler.Count > 0)
                                 {
-                                    <tr>
-                                        <td>@item.Proje?.Ad</td>
-                                        <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
-                                        <td>@item.Baslik</td>
-                                        <td>@item.GorusmeTarihi.ToString("g")</td>
-                                        <td>@item.GorusmeTipi</td>
-                                        <td>
-                                            @if (item.TalepEden == "Ogrenci")
-                                            {
-                                                <span class="badge bg-info">Öğrenci Talebi</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-secondary">Sizin Talebiniz</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
-                                                    <i class="bi bi-eye"></i> Detay
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @foreach (var item in ViewBag.YakinGorusmeler)
+                                    {
+                                        var kalanGun = (int)((item.GorusmeTarihi - DateTime.Now).TotalDays) + 1;
+                                        <tr>
+                                            <td>@item.Proje?.Ad</td>
+                                            <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                            <td>@item.Baslik</td>
+                                            <td>@item.GorusmeTarihi.ToString("g")</td>
+                                            <td>@item.GorusmeTipi</td>
+                                            <td>
+                                                @if (item.ZamanDurumu == "Bugun")
+                                                {
+                                                    <span class="badge bg-danger">Bugün</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary">@kalanGun gün kaldı</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye"></i> Detay
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
-                                @if (!Model.Any(x => x.Durum == "Onaylandı"))
+                                else
                                 {
                                     <tr>
-                                        <td colspan="6" class="text-center">Onaylanmış görüşme bulunmamaktadır.</td>
+                                        <td colspan="7" class="text-center">Yaklaşan görüşmeniz bulunmamaktadır.</td>
                                     </tr>
                                 }
                             </tbody>
@@ -199,8 +200,8 @@
             </div>
         </div>
 
-        <!-- Reddedilen Talepler -->
-        <div class="tab-pane fade" id="reddedilen" role="tabpanel" aria-labelledby="reddedilen-tab">
+        <!-- İlerideki Görüşmeler -->
+        <div class="tab-pane fade" id="ilerideki" role="tabpanel" aria-labelledby="ilerideki-tab">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -212,42 +213,139 @@
                                     <th>Başlık</th>
                                     <th>Görüşme Tarihi</th>
                                     <th>Görüşme Tipi</th>
-                                    <th>Talep Eden</th>
+                                    <th>Kalan Süre</th>
                                     <th>İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.Where(x => x.Durum == "Reddedildi"))
+                                @if (ViewBag.IleridekiGorusmeler.Count > 0)
+                                {
+                                    @foreach (var item in ViewBag.IleridekiGorusmeler)
+                                    {
+                                        var kalanGun = (int)(item.GorusmeTarihi - DateTime.Now).TotalDays;
+                                        <tr>
+                                            <td>@item.Proje?.Ad</td>
+                                            <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                            <td>@item.Baslik</td>
+                                            <td>@item.GorusmeTarihi.ToString("g")</td>
+                                            <td>@item.GorusmeTipi</td>
+                                            <td><span class="badge bg-info">@kalanGun gün sonra</span></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye"></i> Detay
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
                                 {
                                     <tr>
-                                        <td>@item.Proje?.Ad</td>
-                                        <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
-                                        <td>@item.Baslik</td>
-                                        <td>@item.GorusmeTarihi.ToString("g")</td>
-                                        <td>@item.GorusmeTipi</td>
-                                        <td>
-                                            @if (item.TalepEden == "Ogrenci")
-                                            {
-                                                <span class="badge bg-info">Öğrenci Talebi</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-secondary">Sizin Talebiniz</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
-                                                    <i class="bi bi-eye"></i> Detay
-                                                </a>
-                                            </div>
-                                        </td>
+                                        <td colspan="7" class="text-center">İlerideki planlanmış görüşmeniz bulunmamaktadır.</td>
                                     </tr>
                                 }
-                                @if (!Model.Any(x => x.Durum == "Reddedildi"))
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geçmiş Görüşmeler -->
+        <div class="tab-pane fade" id="gecmis" role="tabpanel" aria-labelledby="gecmis-tab">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Proje</th>
+                                    <th>Öğrenci</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.GecmisGorusmeler.Count > 0)
+                                {
+                                    @foreach (var item in ViewBag.GecmisGorusmeler)
+                                    {
+                                        <tr>
+                                            <td>@item.Proje?.Ad</td>
+                                            <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                            <td>@item.Baslik</td>
+                                            <td>@item.GorusmeTarihi.ToString("g")</td>
+                                            <td>@item.GorusmeTipi</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye"></i> Detay
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
                                 {
                                     <tr>
-                                        <td colspan="6" class="text-center">Reddedilmiş görüşme talebi bulunmamaktadır.</td>
+                                        <td colspan="6" class="text-center">Geçmiş görüşmeniz bulunmamaktadır.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- İptal Edilenler -->
+        <div class="tab-pane fade" id="iptal" role="tabpanel" aria-labelledby="iptal-tab">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Proje</th>
+                                    <th>Öğrenci</th>
+                                    <th>Başlık</th>
+                                    <th>Planlanmış Tarih</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>İptal Tarihi</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.IptalGorusmeler.Count > 0)
+                                {
+                                    @foreach (var item in ViewBag.IptalGorusmeler)
+                                    {
+                                        <tr>
+                                            <td>@item.Proje?.Ad</td>
+                                            <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
+                                            <td>@item.Baslik</td>
+                                            <td>@item.GorusmeTarihi.ToString("g")</td>
+                                            <td>@item.GorusmeTipi</td>
+                                            <td>@(item.UpdatedAt != default(DateTime) ? item.UpdatedAt.ToString("g") : "-")</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye"></i> Detay
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">İptal edilen görüşmeniz bulunmamaktadır.</td>
                                     </tr>
                                 }
                             </tbody>

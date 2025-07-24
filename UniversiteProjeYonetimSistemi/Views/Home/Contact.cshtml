@@ -1,0 +1,138 @@
+@{
+    ViewData["Title"] = "İletişim";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title h4 mb-4">
+                    <i class="fas fa-envelope text-primary me-2"></i>@ViewData["Title"] Formu
+                </h2>
+                
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="name" placeholder="Adınız">
+                                <label for="name">Adınız</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="email" placeholder="E-posta Adresiniz">
+                                <label for="email">E-posta Adresiniz</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="subject" placeholder="Konu">
+                        <label for="subject">Konu</label>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <textarea class="form-control" placeholder="Mesajınız" id="message" style="height: 150px"></textarea>
+                        <label for="message">Mesajınız</label>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Mesajı Gönder
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title h4 mb-4">
+                    <i class="fas fa-address-card text-primary me-2"></i>İletişim Bilgileri
+                </h2>
+                
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">Adres</h6>
+                                <p class="text-muted">
+                                    Çiftehavuzlar Mah. Yıldız Teknik Üniversitesi Davutpaşa Kampüsü Teknoparkı A1 Blok Kat: 2,<br>
+                                    34220 Esenler/İstanbul
+                                </p>
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-phone text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">Telefon</h6>
+                                <p class="text-muted">+90 (212) 467 33 33</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mb-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-envelope text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">E-posta</h6>
+                                <p class="text-muted">uyumakademi@uyumsoft.com</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-clock text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">Çalışma Saatleri</h6>
+                                <p class="text-muted mb-0">
+                                    Pazartesi - Cuma: 09:00 - 17:00<br>
+                                    Hafta sonu: Kapalı
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                
+                <hr class="my-4">
+                
+                <h6 class="mb-3">Bizi Takip Edin</h6>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-decoration-none fs-4">
+                        <i class="fab fa-facebook text-primary"></i>
+                    </a>
+                    <a href="#" class="text-decoration-none fs-4">
+                        <i class="fab fa-twitter text-info"></i>
+                    </a>
+                    <a href="#" class="text-decoration-none fs-4">
+                        <i class="fab fa-instagram text-danger"></i>
+                    </a>
+                    <a href="#" class="text-decoration-none fs-4">
+                        <i class="fab fa-linkedin text-primary"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body p-0">
+        <div class="ratio ratio-21x9">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12037.552137866529!2d28.95860411534477!3d41.03863617940301!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab7650656bd63%3A0x8ca058b28c20b6c3!2zVGFrc2ltIE1leWRhbsSxLCBHw7xtw7zFn3N1eXUsIDM0NDM1IEJleW_En2x1L8Swc3RhbmJ1bA!5e0!3m2!1str!2str!4v1659123456789!5m2!1str!2str" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</div> 

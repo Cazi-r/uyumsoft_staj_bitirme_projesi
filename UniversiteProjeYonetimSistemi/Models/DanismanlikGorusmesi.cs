@@ -51,5 +51,32 @@ namespace UniversiteProjeYonetimSistemi.Models
         
         [Display(Name = "Talep Eden")]
         public string TalepEden { get; set; } // "Ogrenci" veya "Akademisyen"
+
+        [Display(Name = "Zaman Durumu")]
+        public string ZamanDurumu { get; set; } // "Bugun", "YakinGelecek", "UzakGelecek", "Gecmis"
+        
+        // ZamanDurumu değerini otomatik ayarlayan metot
+        public void GuncelleZamanDurumu()
+        {
+            var bugun = DateTime.Today;
+            var birHaftaSonra = bugun.AddDays(7);
+            
+            if (GorusmeTarihi.Date == bugun)
+            {
+                ZamanDurumu = "Bugun";
+            }
+            else if (GorusmeTarihi.Date > bugun && GorusmeTarihi.Date <= birHaftaSonra)
+            {
+                ZamanDurumu = "YakinGelecek";
+            }
+            else if (GorusmeTarihi.Date > birHaftaSonra)
+            {
+                ZamanDurumu = "UzakGelecek";
+            }
+            else
+            {
+                ZamanDurumu = "Gecmis";
+            }
+        }
     }
 } 

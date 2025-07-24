@@ -179,6 +179,19 @@ public class HomeController : Controller
             .Where(p => p.MentorId == akademisyen.Id)
             .ToListAsync();
 
+        // Danışmanlık sayısını ViewBag'e ekle
+        ViewBag.DanismanlikSayisi = projeler.Count;
+        
+        // Değerlendirme sayıları
+        ViewBag.DegerlendirmeSayisi = await _context.Projeler
+            .Where(p => p.MentorId == akademisyen.Id)
+            .SelectMany(p => p.Degerlendirmeler)
+            .CountAsync();
+            
+        ViewBag.BekleyenDegerlendirmeSayisi = await _context.Projeler
+            .Where(p => p.MentorId == akademisyen.Id && p.Status == "Devam")
+            .CountAsync(p => !p.Degerlendirmeler.Any());
+
         // Son bildirimleri getir
         var bildirimler = await _context.Bildirimler
             .Where(b => b.AkademisyenId == akademisyen.Id)
@@ -186,28 +199,69 @@ public class HomeController : Controller
             .Take(5)
             .ToListAsync();
         
-        // Bekleyen görüşme taleplerini getir
-        var bekleyenGorusmeler = await _context.DanismanlikGorusmeleri
+        // Bugünün tarihini al
+        var bugun = DateTime.Now;
+        // Bir hafta sonrasını hesapla
+        var birHaftaSonra = bugun.AddDays(7);
+        
+        // Bekleyen görüşme taleplerini getir (öğrencilerden)
+        var bekleyenTalepler = await _context.DanismanlikGorusmeleri
             .Include(g => g.Ogrenci)
             .Include(g => g.Proje)
-            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede")
+            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede" && g.TalepEden == "Ogrenci")
             .OrderBy(g => g.GorusmeTarihi)
             .Take(3)
             .ToListAsync();
-        
-        // Onaylı görüşmeleri getir
-        var onayliGorusmeler = await _context.DanismanlikGorusmeleri
+            
+        // Tüm görüşmeleri getir ve ZamanDurumu'nu güncelle
+        var tumGorusmeler = await _context.DanismanlikGorusmeleri
             .Include(g => g.Ogrenci)
             .Include(g => g.Proje)
-            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Onaylandı")
+            .Where(g => g.AkademisyenId == akademisyen.Id)
+            .ToListAsync();
+            
+        foreach (var gorusme in tumGorusmeler)
+        {
+            gorusme.GuncelleZamanDurumu();
+        }
+            
+        // Yakın Görüşmeleri getir (onaylanmış ve bugün veya yakın gelecekte)
+        var yakinGorusmeler = tumGorusmeler
+            .Where(g => g.Durum == "Onaylandı" && (g.ZamanDurumu == "Bugun" || g.ZamanDurumu == "YakinGelecek"))
             .OrderBy(g => g.GorusmeTarihi)
+            .Take(3)
+            .ToList();
+            
+        // Uzak gelecek görüşmeleri getir (onaylanmış ve uzak gelecekte)
+        var gelecekGorusmeler = tumGorusmeler
+            .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "UzakGelecek")
+            .OrderBy(g => g.GorusmeTarihi)
+            .Take(3)
+            .ToList();
+            
+        // Geçmiş görüşmeleri getir (onaylanmış ve tarihi geçmiş)
+        var gecmisGorusmeler = tumGorusmeler
+            .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "Gecmis")
+            .OrderByDescending(g => g.GorusmeTarihi)
+            .Take(3)
+            .ToList();
+            
+        // İptal edilmiş görüşmeleri getir
+        var iptalGorusmeler = await _context.DanismanlikGorusmeleri
+            .Include(g => g.Ogrenci)
+            .Include(g => g.Proje)
+            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Reddedildi")
+            .OrderByDescending(g => g.GorusmeTarihi)
             .Take(3)
             .ToListAsync();
 
         ViewBag.Projeler = projeler;
         ViewBag.Bildirimler = bildirimler;
-        ViewBag.BekleyenGorusmeler = bekleyenGorusmeler;
-        ViewBag.OnayliGorusmeler = onayliGorusmeler;
+        ViewBag.BekleyenGorusmeler = bekleyenTalepler;
+        ViewBag.YakinGorusmeler = yakinGorusmeler;
+        ViewBag.GelecekGorusmeler = gelecekGorusmeler;
+        ViewBag.GecmisGorusmeler = gecmisGorusmeler;
+        ViewBag.IptalGorusmeler = iptalGorusmeler;
 
         return View();
     }
@@ -249,6 +303,16 @@ public class HomeController : Controller
     }
 
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    public IActionResult About()
+    {
+        return View();
+    }
+
+    public IActionResult Contact()
     {
         return View();
     }

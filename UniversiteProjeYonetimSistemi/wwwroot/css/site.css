@@ -1,22 +1,2571 @@
-html {
-  font-size: 14px;
+:root {
+  /* Base Colors */
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --info-color: #0dcaf0;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  
+  /* Theme colors - Default Blue */
+  --primary-color-rgb: 13, 110, 253;
+  --accent-color: #0dcaf0;
+  --accent-color-rgb: 13, 202, 240;
+  --body-bg: #f9fafc;
+  --body-color: #495057;
+  --card-bg: #fff;
+  --card-border: #e9ecef;
+  --card-header-bg: #fff;
+  --card-header-border: #e9ecef;
+  --input-bg: #fff;
+  --input-color: #212529;
+  --input-border: #ced4da;
+  --nav-link-color: #495057;
+  --nav-link-hover-color: #0d6efd;
+  --nav-link-active-bg: rgba(13, 110, 253, 0.05);
+  --dropdown-bg: #fff;
+  --dropdown-color: #212529;
+  --dropdown-border: rgba(0, 0, 0, 0.15);
+  --dropdown-link-hover-bg: #f8f9fa;
+  --dropdown-divider-bg: #e9ecef;
+  --table-bg: #fff;
+  --table-border: #dee2e6;
+  --table-hover-bg: rgba(0, 0, 0, 0.075);
+  --footer-bg: #fff;
+  --footer-color: #6c757d;
+  --avatar-bg: #0d6efd;
+  --avatar-color: #fff;
+  --sidebar-width: 240px;
+  --sidebar-bg: #f8f9fa;
+  --topbar-height: 70px;
+  --content-bg: #f9fafc;
+  --base-font-size: 1rem;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  /* Component Styles - Default */
+  --card-border-radius: 0.5rem;
+  --card-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  --button-border-radius: 0.25rem;
+  --badge-border-radius: 50rem;
+  --transition-speed: 0.3s;
+  --icon-style: normal;
+  --border-width: 1px;
+  --form-control-radius: 0.25rem;
+  --navbar-padding: 1rem 1.5rem;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Light Mode - Default Blue Theme */
+/* Default theme uses root variables */
+
+/* Dark Mode - Default Blue Theme */
+.dark-mode {
+  --primary-color: #3485fd;
+  --secondary-color: #8c959e;
+  --accent-color: #25b1d8;
+  --primary-color-rgb: 52, 133, 253;
+  --accent-color-rgb: 37, 177, 216;
+  
+  /* Dark theme colors */
+  --body-bg: #1e1e2d;
+  --body-color: #e9ecef;
+  --sidebar-bg: #1a1a27;
+  --content-bg: #151521;
+  --card-bg: #1e1e2d;
+  --card-border: #2b2b40;
+  --card-header-bg: #1a1a27;
+  --card-header-border: #2b2b40;
+  --input-bg: #2b2b40;
+  --input-color: #e9ecef;
+  --input-border: #404258;
+  --nav-link-color: #a2a3b7;
+  --nav-link-hover-color: #fff;
+  --nav-link-active-bg: rgba(255, 255, 255, 0.05);
+  --dropdown-bg: #1e1e2d;
+  --dropdown-color: #e9ecef;
+  --dropdown-border: #2b2b40;
+  --dropdown-link-hover-bg: #2b2b40;
+  --dropdown-divider-bg: #404258;
+  --table-bg: #1e1e2d;
+  --table-border: #2b2b40;
+  --table-hover-bg: rgba(255, 255, 255, 0.075);
+  --footer-bg: #1a1a27;
+  --footer-color: #a2a3b7;
+  --avatar-bg: #3485fd;
+  --avatar-color: #fff;
+  
+  /* Component Styles - Dark Mode */
+  --card-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Purple Theme */
+[data-color-palette="purple"] {
+  /* Base Colors */
+  --primary-color: #6f42c1;
+  --secondary-color: #8f7db1;
+  --accent-color: #e83e8c;
+  --primary-color-rgb: 111, 66, 193;
+  --accent-color-rgb: 232, 62, 140;
+  
+  /* Theme colors */
+  --avatar-bg: #6f42c1;
+  --nav-link-hover-color: #6f42c1;
+  --body-bg: #f9f7fc;
+  --sidebar-bg: #f6f3fa;
+  
+  /* Component Styles */
+  --card-border-radius: 0.75rem;
+  --button-border-radius: 0.5rem;
+  --form-control-radius: 0.5rem;
+  --card-box-shadow: 0 5px 15px rgba(111, 66, 193, 0.1);
+  --font-family: 'Poppins', sans-serif;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Dark Purple Theme */
+.dark-mode[data-color-palette="purple"] {
+  --primary-color: #8250df;
+  --secondary-color: #a993d8;
+  --accent-color: #ff49a4;
+  --primary-color-rgb: 130, 80, 223;
+  --accent-color-rgb: 255, 73, 164;
+  
+  /* Dark theme colors */
+  --body-bg: #1e1229;
+  --sidebar-bg: #231630;
+  --content-bg: #19101f;
+  --card-bg: #281a36;
+  --card-border: #321d42;
+  --card-header-bg: #321d42;
+  --card-header-border: #3b2252;
+  
+  /* Component Styles */
+  --card-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Teal Theme */
+[data-color-palette="teal"] {
+  /* Base Colors */
+  --primary-color: #20c997;
+  --secondary-color: #6fc1b0;
+  --accent-color: #0ea5e9;
+  --primary-color-rgb: 32, 201, 151;
+  --accent-color-rgb: 14, 165, 233;
+  
+  /* Theme colors */
+  --avatar-bg: #20c997;
+  --nav-link-hover-color: #20c997;
+  --body-bg: #f4fbf9;
+  --sidebar-bg: #eef9f6;
+  
+  /* Component Styles */
+  --card-border-radius: 0.25rem;
+  --button-border-radius: 0.125rem;
+  --form-control-radius: 0.125rem;
+  --card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --border-width: 2px;
+  --font-family: 'Roboto', sans-serif;
+  --navbar-padding: 0.75rem 1rem;
+}
+
+/* Dark Teal Theme */
+.dark-mode[data-color-palette="teal"] {
+  --primary-color: #2dd4a7;
+  --secondary-color: #89d2c4;
+  --accent-color: #4cb8f4;
+  --primary-color-rgb: 45, 212, 167;
+  --accent-color-rgb: 76, 184, 244;
+  
+  /* Dark theme colors */
+  --body-bg: #0e2522;
+  --sidebar-bg: #102c28;
+  --content-bg: #0a1c1a;
+  --card-bg: #102c28;
+  --card-border: #153b35;
+  --card-header-bg: #153b35;
+  --card-header-border: #184a43;
+  
+  /* Component Styles */
+  --card-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Indigo Theme */
+[data-color-palette="indigo"] {
+  /* Base Colors */
+  --primary-color: #6610f2;
+  --secondary-color: #8e68d9;
+  --accent-color: #fd7e14;
+  --primary-color-rgb: 102, 16, 242;
+  --accent-color-rgb: 253, 126, 20;
+  
+  /* Theme colors */
+  --avatar-bg: #6610f2;
+  --nav-link-hover-color: #6610f2;
+  --body-bg: #f7f5fe;
+  --sidebar-bg: #f1edfb;
+  
+  /* Component Styles */
+  --card-border-radius: 1rem;
+  --button-border-radius: 1rem;
+  --badge-border-radius: 0.25rem;
+  --form-control-radius: 1rem;
+  --card-box-shadow: 0 8px 20px rgba(102, 16, 242, 0.1);
+  --icon-style: bold;
+  --transition-speed: 0.4s;
+  --font-family: 'Inter', sans-serif;
+  --navbar-padding: 1.25rem 2rem;
+}
+
+/* Dark Indigo Theme */
+.dark-mode[data-color-palette="indigo"] {
+  --primary-color: #7f41ff;
+  --secondary-color: #a184dd;
+  --accent-color: #ff922b;
+  --primary-color-rgb: 127, 65, 255;
+  --accent-color-rgb: 255, 146, 43;
+  
+  /* Dark theme colors */
+  --body-bg: #100b25;
+  --sidebar-bg: #181236;
+  --content-bg: #0c0818;
+  --card-bg: #1b143c;
+  --card-border: #251a52;
+  --card-header-bg: #251a52;
+  --card-header-border: #312368;
+  
+  /* Component Styles */
+  --card-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Orange Theme */
+[data-color-palette="orange"] {
+  /* Base Colors */
+  --primary-color: #fd7e14;
+  --secondary-color: #f5a76c;
+  --accent-color: #0dcaf0;
+  --primary-color-rgb: 253, 126, 20;
+  --accent-color-rgb: 13, 202, 240;
+  
+  /* Theme colors */
+  --avatar-bg: #fd7e14;
+  --nav-link-hover-color: #fd7e14;
+  --body-bg: #fff9f5;
+  --sidebar-bg: #fff5ed;
+  
+  /* Component Styles */
+  --card-border-radius: 0.375rem;
+  --button-border-radius: 2rem;
+  --form-control-radius: 2rem;
+  --badge-border-radius: 0.125rem;
+  --card-box-shadow: 0 4px 12px rgba(253, 126, 20, 0.1);
+  --border-width: 1px;
+  --font-family: 'Nunito', sans-serif;
+  --icon-style: normal;
+  --transition-speed: 0.2s;
+  --navbar-padding: 0.875rem 1.25rem;
+}
+
+/* Dark Orange Theme */
+.dark-mode[data-color-palette="orange"] {
+  --primary-color: #ff922b;
+  --secondary-color: #ffb066;
+  --accent-color: #40d7f4;
+  --primary-color-rgb: 255, 146, 43;
+  --accent-color-rgb: 64, 215, 244;
+  
+  /* Dark theme colors */
+  --body-bg: #27170a;
+  --sidebar-bg: #33200f;
+  --content-bg: #1a0f06;
+  --card-bg: #33200f;
+  --card-border: #442a14;
+  --card-header-bg: #442a14;
+  --card-header-border: #5a3718;
+  
+  /* Component Styles */
+  --card-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 body {
-  margin-bottom: 60px;
+  font-size: var(--base-font-size);
+  font-family: var(--font-family);
+  background-color: var(--body-bg);
+  color: var(--body-color);
+  height: 100%;
+  overflow-x: hidden;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background-color: var(--sidebar-bg);
+  border-right: var(--border-width) solid var(--card-border);
+  box-shadow: var(--card-box-shadow);
+  z-index: 1000;
+  transition: all var(--transition-speed);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--navbar-padding);
+  border-bottom: var(--border-width) solid var(--card-border);
+  height: auto;
+  min-height: var(--topbar-height);
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  text-decoration: none;
+  width: 100%;
+}
+
+.logo-container {
+  margin-bottom: 0.5rem;
+  transition: transform calc(var(--transition-speed) * 0.8);
+}
+
+.sidebar-brand:hover .logo-container {
+  transform: scale(1.05);
+}
+
+.brand-text {
+  line-height: 1.2;
+  transition: color var(--transition-speed);
+}
+
+.brand-text .fw-bold {
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  color: var(--primary-color);
+}
+
+.brand-text .text-muted {
+  color: var(--nav-link-color) !important;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  transition: all var(--transition-speed);
+}
+
+.sidebar-header {
+  padding: 1rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--secondary-color);
+  margin-top: 0.75rem;
+}
+
+.sidebar-item {
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  color: var(--nav-link-color);
+  text-decoration: none;
+  transition: all var(--transition-speed);
+  border-left: 4px solid transparent;
+  border-radius: 0 var(--button-border-radius) var(--button-border-radius) 0;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background-color: var(--nav-link-active-bg);
+  color: var(--nav-link-hover-color);
+  border-left: 4px solid var(--primary-color);
+}
+
+.sidebar-icon {
+  margin-right: 0.75rem;
+  width: 1rem;
+  text-align: center;
+  transition: transform var(--transition-speed);
+}
+
+/* Icon styles based on theme */
+[data-color-palette="indigo"] .sidebar-icon {
+  font-weight: 900;
+}
+
+.sidebar-link:hover .sidebar-icon {
+  transform: translateX(3px);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--body-bg);
+  transition: background-color var(--transition-speed), margin-left var(--transition-speed);
+}
+
+/* App container */
+.app-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Footer Style */
+.footer {
+  padding: 1rem 0;
+  background-color: var(--footer-bg);
+  border-top: 1px solid var(--card-border);
+  color: var(--footer-color);
+  width: 100%;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  z-index: 1010; /* Sidebar'dan daha yüksek z-index */
+}
+
+.footer .text-md-start {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.footer a {
+  color: var(--footer-color);
+  transition: color var(--transition-speed) ease;
+  white-space: nowrap;
+  display: inline-block;
+  padding: 2px 4px;
+}
+
+.footer a:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* Footer Link Icons */
+.footer a i {
+  transition: transform 0.2s ease;
+}
+
+.footer a:hover i {
+  transform: translateY(-2px);
+}
+
+/* Media query for small screens */
+@media (max-width: 767px) {
+  .footer a {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    padding: 2px;
+  }
+  
+  .footer .text-md-end {
+    margin-top: 0.5rem;
+  }
+  
+  .footer .text-md-start {
+    font-size: 0.85rem;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: visible;
+  }
+}
+
+/* Main content container */
+.main-content {
+  min-height: 100vh;
+  padding-bottom: 60px; /* footer'ın yaklaşık yüksekliği */
+  margin-left: var(--sidebar-width); /* sidebar genişliği kadar margin */
+  width: calc(100% - var(--sidebar-width)); /* genişliği sidebar dışında kalan alan olarak ayarla */
+}
+
+/* Content container - grows to fill available space, pushing footer down */
+.container-fluid.px-4 {
+  flex: 1 0 auto;
+  padding-bottom: 1rem;
+}
+
+.topbar {
+  height: var(--topbar-height);
+  background-color: var(--card-bg);
+  border-bottom: var(--border-width) solid var(--card-border);
+  padding: var(--navbar-padding);
+  transition: all var(--transition-speed);
+}
+
+/* Avatar */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--avatar-bg);
+  color: var(--avatar-color);
+  border-radius: 50%;
+  transition: background-color var(--transition-speed);
+}
+
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  font-size: 0.875rem;
+}
+
+/* Cards */
+.card {
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-box-shadow);
+  margin-bottom: 1.5rem;
+  border: var(--border-width) solid var(--card-border);
+  overflow: hidden;
+  background-color: var(--card-bg);
+  transition: all var(--transition-speed);
+}
+
+.card-header {
+  background-color: var(--card-header-bg);
+  border-bottom: var(--border-width) solid var(--card-header-border);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color var(--transition-speed);
+}
+
+.card-body {
+  padding: 1.5rem;
+  transition: padding var(--transition-speed);
+}
+
+/* Forms */
+.form-control {
+  background-color: var(--input-bg);
+  color: var(--input-color);
+  border: var(--border-width) solid var(--input-border);
+  border-radius: var(--form-control-radius);
+  transition: all var(--transition-speed);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(var(--primary-color-rgb), 0.25);
+}
+
+.form-select {
+  background-color: var(--input-bg);
+  color: var(--input-color);
+  border: var(--border-width) solid var(--input-border);
+  border-radius: var(--form-control-radius);
+  transition: all var(--transition-speed);
+}
+
+.form-check-input {
+  background-color: var(--input-bg);
+  border: var(--border-width) solid var(--input-border);
+  transition: all var(--transition-speed);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Tables */
+.table {
+  margin-bottom: 0;
+  color: var(--body-color);
+  border-color: var(--table-border);
+  transition: color var(--transition-speed);
+}
+
+.table thead th {
+  border-top: 0;
+  border-bottom-width: var(--border-width);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: var(--secondary-color);
+  background-color: var(--card-header-bg);
+  letter-spacing: 0.5px;
+  border-color: var(--table-border);
+  transition: all var(--transition-speed);
+}
+
+.table td {
+  border-color: var(--table-border);
+  transition: border-color var(--transition-speed);
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(--table-hover-bg);
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--card-bg) !important;
+  border-bottom: var(--border-width) solid var(--card-border);
+  padding: var(--navbar-padding);
+  transition: all var(--transition-speed);
+}
+
+.navbar .nav-link {
+  color: var(--nav-link-color);
+  transition: color var(--transition-speed);
+}
+
+.navbar .text-dark {
+  color: var(--body-color) !important;
+  transition: color var(--transition-speed);
+}
+
+.navbar .text-gray-600 {
+  color: var(--nav-link-color) !important;
+  transition: color var(--transition-speed);
+}
+
+/* Dropdowns */
+.dropdown-menu {
+  background-color: var(--dropdown-bg);
+  border: var(--border-width) solid var(--dropdown-border);
+  border-radius: var(--card-border-radius);
+  transition: all var(--transition-speed);
+  box-shadow: var(--card-box-shadow);
+}
+
+.dropdown-item {
+  color: var(--dropdown-color);
+  transition: all var(--transition-speed);
+}
+
+.dropdown-item:hover {
+  background-color: var(--dropdown-link-hover-bg);
+  color: var(--primary-color);
+}
+
+.dropdown-divider {
+  border-top: var(--border-width) solid var(--dropdown-divider-bg);
+  transition: border-color var(--transition-speed);
+}
+
+/* Footer styles merged - see above */
+
+/* Buttons */
+.btn {
+  border-radius: var(--button-border-radius);
+  transition: all var(--transition-speed);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-falcon-primary {
+  color: var(--primary-color);
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  border-color: transparent;
+  transition: all var(--transition-speed);
+}
+
+.btn-falcon-primary:hover {
+  color: white;
+  background-color: var(--primary-color);
+}
+
+.btn-falcon-default {
+  color: var(--body-color);
+  background-color: var(--card-bg);
+  border: var(--border-width) solid var(--card-border);
+  transition: all var(--transition-speed);
+}
+
+.btn-falcon-default:hover {
+  background-color: var(--dropdown-link-hover-bg);
+}
+
+/* Colors */
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.text-muted, .small {
+  color: var(--secondary-color) !important;
+}
+
+/* Badge */
+.badge {
+  border-radius: var(--badge-border-radius);
+  transition: all var(--transition-speed);
+}
+
+/* Utils */
+.border {
+  border-color: var(--card-border) !important;
+  transition: border-color var(--transition-speed);
+}
+
+.border-top {
+  border-top-color: var(--card-border) !important;
+  transition: border-color var(--transition-speed);
+}
+
+.border-bottom {
+  border-bottom-color: var(--card-border) !important;
+  transition: border-color var(--transition-speed);
+}
+
+.bg-light {
+  background-color: var(--card-header-bg) !important;
+  transition: background-color var(--transition-speed);
+}
+
+.bg-white {
+  background-color: var(--card-bg) !important;
+  transition: background-color var(--transition-speed);
+}
+
+/* Stats Card */
+.stats-card {
+  position: relative;
+  padding: 1.5rem;
+  transition: padding var(--transition-speed);
+}
+
+.stats-card-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--body-color);
+  transition: color var(--transition-speed);
+}
+
+.stats-card-label {
+  color: var(--secondary-color);
+  font-size: 0.875rem;
+  transition: color var(--transition-speed);
+}
+
+.stats-card-icon {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  color: rgba(var(--primary-color-rgb), 0.2);
+  font-size: 2.5rem;
+  transition: color var(--transition-speed);
+}
+
+/* Chart containers */
+.chart-container {
+  position: relative;
+  height: 250px;
+}
+
+/* Project status indicators */
+.status-pending { color: var(--warning-color); }
+.status-active { color: var(--success-color); }
+.status-completed { color: var(--info-color); }
+.status-rejected { color: var(--danger-color); }
+
+/* Progress */
+.progress {
+  height: 0.5rem;
+  background-color: var(--dropdown-link-hover-bg);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: background-color var(--transition-speed);
+}
+
+/* Focus styles */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--primary-color);
+}
+
+/* Alerts */
+.alert {
+  border-radius: var(--card-border-radius);
+  transition: all var(--transition-speed);
+}
+
+.alert-success {
+  background-color: rgba(25, 135, 84, 0.1);
+  border-color: rgba(25, 135, 84, 0.2);
+  color: var(--success-color);
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: rgba(220, 53, 69, 0.2);
+  color: var(--danger-color);
+}
+
+/* Compact Layout */
+.compact-layout .card {
+  margin-bottom: 0.75rem;
+}
+
+.compact-layout .card-body {
+  padding: 1rem;
+}
+
+.compact-layout .container-fluid {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.compact-layout .row {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.compact-layout .col,
+.compact-layout [class*="col-"] {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Animasyon CSS Değişkenleri */
+:root {
+  --animate-duration: 0.3s;
+  --animate-delay: 0.1s;
+}
+
+/* Daha Yavaş Animasyonlar */
+.slow-animations {
+  --animate-duration: 0.5s;
+}
+
+/* Animasyonlar Devre Dışı */
+.no-animations * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Temel Geçiş Animasyonları */
+.animate-fade-in {
+  animation: fadeIn var(--animate-duration) ease-in;
+}
+
+.animate-fade-out {
+  animation: fadeOut var(--animate-duration) ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--animate-duration) ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown var(--animate-duration) ease-out;
+}
+
+.animate-slide-left {
+  animation: slideLeft var(--animate-duration) ease-out;
+}
+
+.animate-slide-right {
+  animation: slideRight var(--animate-duration) ease-out;
+}
+
+.animate-bounce {
+  animation: bounce calc(var(--animate-duration) * 1.5) ease infinite;
+}
+
+.animate-pulse {
+  animation: pulse calc(var(--animate-duration) * 2) ease infinite;
+}
+
+.animate-spin {
+  animation: spin calc(var(--animate-duration) * 2) linear infinite;
+}
+
+/* Hover Animasyonları */
+.hover-grow {
+  transition: transform var(--animate-duration) ease;
+}
+
+.hover-grow:hover {
+  transform: scale(1.05);
+}
+
+.hover-shadow {
+  transition: box-shadow var(--animate-duration) ease;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .hover-shadow:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hover-float {
+  transition: transform var(--animate-duration) ease;
+}
+
+.hover-float:hover {
+  transform: translateY(-5px);
+}
+
+/* Buton Animasyonları */
+.btn {
+  transition: all var(--animate-duration) ease;
+}
+
+.btn:active:not(.no-animation) {
+  transform: scale(0.95);
+}
+
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(0);
+  opacity: 0;
+  border-radius: inherit;
+}
+
+.btn-ripple:active:after {
+  transform: scale(2);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+/* Keyframe Animasyonları */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Animasyonlu Elementler */
+.card {
+  transition: transform var(--animate-duration) ease, box-shadow var(--animate-duration) ease;
+}
+
+.card:hover:not(.no-animation) {
+  transform: translateY(-3px);
+  box-shadow: var(--card-box-shadow), 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .card:hover:not(.no-animation) {
+  box-shadow: var(--card-box-shadow), 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Yükleme Animasyonları */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+.dark-mode .loading-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-left-color: var(--primary-color);
+}
+
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+}
+
+.loading-dots::after {
+  content: '...';
+  animation: dots 1.5s infinite;
+  width: 20px;
+  display: inline-block;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60% { content: '...'; }
+  80%, 100% { content: ''; }
+}
+
+/* Bildirim Animasyonu */
+.notification-badge {
+  animation: pulse calc(var(--animate-duration) * 3) ease infinite;
+}
+
+.sidebar-link .badge.bg-danger {
+  animation: pulse calc(var(--animate-duration) * 3) ease infinite;
+}
+
+/* Liste Animasyonları */
+.animate-list > * {
+  opacity: 0;
+  animation: slideRight var(--animate-duration) forwards;
+}
+
+/* Her bir öğe için gecikme ekleyelim */
+.animate-list > *:nth-child(1) { animation-delay: calc(var(--animate-delay) * 1); }
+.animate-list > *:nth-child(2) { animation-delay: calc(var(--animate-delay) * 2); }
+.animate-list > *:nth-child(3) { animation-delay: calc(var(--animate-delay) * 3); }
+.animate-list > *:nth-child(4) { animation-delay: calc(var(--animate-delay) * 4); }
+.animate-list > *:nth-child(5) { animation-delay: calc(var(--animate-delay) * 5); }
+.animate-list > *:nth-child(6) { animation-delay: calc(var(--animate-delay) * 6); }
+.animate-list > *:nth-child(7) { animation-delay: calc(var(--animate-delay) * 7); }
+.animate-list > *:nth-child(8) { animation-delay: calc(var(--animate-delay) * 8); }
+.animate-list > *:nth-child(9) { animation-delay: calc(var(--animate-delay) * 9); }
+.animate-list > *:nth-child(10) { animation-delay: calc(var(--animate-delay) * 10); }
+
+/* Sidebar Menu Animasyonu */
+.sidebar-menu > li {
+  transition: all var(--animate-duration) ease;
+}
+
+.sidebar-menu:hover > li:not(:hover) {
+  opacity: 0.7;
+}
+
+/* Form Kontrol Animasyonları */
+.form-control, .form-select {
+  transition: border-color var(--animate-duration) ease, box-shadow var(--animate-duration) ease;
+}
+
+.form-control:focus, .form-select:focus {
+  animation: pulse-border 1.5s ease-out;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(var(--primary-color-rgb), 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(var(--primary-color-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--primary-color-rgb), 0); }
+}
+
+/* Responsive styles */
+@media (max-width: 767.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Theme Transitions */
+*, *::before, *::after {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: var(--transition-speed);
+}
+
+/* Preview Box for Theme Settings */
+.preview-box {
+  background-color: var(--card-bg);
+  color: var(--body-color);
+  transition: all var(--transition-speed);
+  border-radius: var(--card-border-radius);
+  border: var(--border-width) solid var(--card-border);
+}
+
+.preview-dark {
+  background-color: var(--card-bg);
+  color: var(--body-color);
+}
+
+/* Color Options */
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.form-check-input:checked + .color-option {
+  transform: scale(1.2);
+  border-color: #fff;
+  box-shadow: 0 0 0 1px #000;
+}
+
+/* Import Google Fonts for Different Themes */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Dark Mode Text Fixes */
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4, .dark-mode h5, .dark-mode h6,
+.dark-mode p, .dark-mode span, .dark-mode div, .dark-mode li, .dark-mode a:not(.btn),
+.dark-mode label, .dark-mode td, .dark-mode th, .dark-mode small, .dark-mode strong,
+.dark-mode b, .dark-mode i, .dark-mode u, .dark-mode em {
+  color: var(--body-color) !important;
+}
+
+.dark-mode .text-dark,
+.dark-mode .text-black,
+.dark-mode .text-body {
+  color: var(--body-color) !important;
+}
+
+.dark-mode .text-muted,
+.dark-mode .text-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.dark-mode .text-primary {
+  color: var(--primary-color) !important;
+}
+
+/* Exception for badges, buttons and specific elements */
+.dark-mode .btn,
+.dark-mode .badge,
+.dark-mode .dropdown-item,
+.dark-mode .nav-link,
+.dark-mode .alert,
+.dark-mode .card-header h5,
+.dark-mode .bg-primary,
+.dark-mode .bg-secondary,
+.dark-mode .bg-success,
+.dark-mode .bg-info,
+.dark-mode .bg-warning,
+.dark-mode .bg-danger {
+  color: inherit !important;
+}
+
+.dark-mode .btn-primary,
+.dark-mode .btn-success,
+.dark-mode .btn-info,
+.dark-mode .btn-danger,
+.dark-mode .btn-warning,
+.dark-mode .bg-primary,
+.dark-mode .bg-success,
+.dark-mode .bg-info,
+.dark-mode .bg-danger,
+.dark-mode .bg-warning,
+.dark-mode .badge-primary,
+.dark-mode .badge-success,
+.dark-mode .badge-info,
+.dark-mode .badge-danger,
+.dark-mode .badge-warning {
+  color: #fff !important;
+}
+
+/* Form Input Text Color */
+.dark-mode .form-control,
+.dark-mode .form-select,
+.dark-mode .form-check-label {
+  color: var(--input-color) !important;
+}
+
+/* Table Styles */
+.dark-mode .table {
+  color: var(--body-color) !important;
+}
+
+.dark-mode .form-check-input:checked + .form-check-label,
+.dark-mode .form-select option,
+.dark-mode .form-select optgroup {
+  color: var(--input-color);
+}
+
+.dark-mode .form-control::placeholder {
+  color: rgba(233, 236, 239, 0.5);
+}
+
+/* Card Color Overrides */
+.dark-mode .card-title,
+.dark-mode .card-subtitle,
+.dark-mode .card-text {
+  color: var(--body-color) !important;
+}
+
+/* Links */
+.dark-mode a:not(.btn):not(.badge):not(.nav-link) {
+  color: var(--primary-color);
+}
+
+.dark-mode a:not(.btn):not(.badge):not(.nav-link):hover {
+  color: var(--accent-color);
+}
+
+/* Sabit Mavi Buton (tema değişikliğinden etkilenmez) */
+.btn-blue {
+  background-color: #0d6efd !important;
+  border-color: #0b5ed7 !important;
+  color: white !important;
+}
+
+.btn-blue:hover {
+  background-color: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+}
+
+.btn-blue:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Red Theme */
+[data-color-palette="red"] {
+  /* Base Colors */
+  --primary-color: #dc3545;
+  --secondary-color: #e57a85;
+  --accent-color: #ffc107;
+  --primary-color-rgb: 220, 53, 69;
+  --accent-color-rgb: 255, 193, 7;
+  
+  /* Theme colors */
+  --avatar-bg: #dc3545;
+  --nav-link-hover-color: #dc3545;
+  --body-bg: #fff5f6;
+  --sidebar-bg: #ffeff1;
+  
+  /* Component Styles */
+  --card-border-radius: 0.375rem;
+  --button-border-radius: 0.25rem;
+  --form-control-radius: 0.25rem;
+  --card-box-shadow: 0 4px 12px rgba(220, 53, 69, 0.1);
+  --font-family: 'Segoe UI', sans-serif;
+  --transition-speed: 0.2s;
+}
+
+/* Dark Red Theme */
+.dark-mode[data-color-palette="red"] {
+  --primary-color: #f55a6a;
+  --secondary-color: #ff8c96;
+  --accent-color: #ffd54f;
+  --primary-color-rgb: 245, 90, 106;
+  --accent-color-rgb: 255, 213, 79;
+  
+  /* Dark theme colors */
+  --body-bg: #2a0b0e;
+  --sidebar-bg: #350d12;
+  --content-bg: #1e080a;
+  --card-bg: #350d12;
+  --card-border: #4a1219;
+  --card-header-bg: #4a1219;
+  --card-header-border: #5c161f;
+  
+  /* Component Styles */
+  --card-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Green Theme */
+[data-color-palette="green"] {
+  /* Base Colors */
+  --primary-color: #198754;
+  --secondary-color: #5cb085;
+  --accent-color: #0dcaf0;
+  --primary-color-rgb: 25, 135, 84;
+  --accent-color-rgb: 13, 202, 240;
+  
+  /* Theme colors */
+  --avatar-bg: #198754;
+  --nav-link-hover-color: #198754;
+  --body-bg: #f4faf7;
+  --sidebar-bg: #ecf8f3;
+  
+  /* Component Styles */
+  --card-border-radius: 0.5rem;
+  --button-border-radius: 0.375rem;
+  --form-control-radius: 0.375rem;
+  --card-box-shadow: 0 3px 10px rgba(25, 135, 84, 0.1);
+  --font-family: 'Inter', sans-serif;
+}
+
+/* Dark Green Theme */
+.dark-mode[data-color-palette="green"] {
+  --primary-color: #29bb76;
+  --secondary-color: #67c996;
+  --accent-color: #42dbff;
+  --primary-color-rgb: 41, 187, 118;
+  --accent-color-rgb: 66, 219, 255;
+  
+  /* Dark theme colors */
+  --body-bg: #071f15;
+  --sidebar-bg: #0a2a1d;
+  --content-bg: #05180f;
+  --card-bg: #0a2a1d;
+  --card-border: #0e3a28;
+  --card-header-bg: #0e3a28;
+  --card-header-border: #124a33;
+  
+  /* Component Styles */
+  --card-box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Pink Theme */
+[data-color-palette="pink"] {
+  /* Base Colors */
+  --primary-color: #d63384;
+  --secondary-color: #e685b5;
+  --accent-color: #0dcaf0;
+  --primary-color-rgb: 214, 51, 132;
+  --accent-color-rgb: 13, 202, 240;
+  
+  /* Theme colors */
+  --avatar-bg: #d63384;
+  --nav-link-hover-color: #d63384;
+  --body-bg: #fef4f9;
+  --sidebar-bg: #fdeef6;
+  
+  /* Component Styles */
+  --card-border-radius: 1rem;
+  --button-border-radius: 2rem;
+  --form-control-radius: 1rem;
+  --card-box-shadow: 0 5px 15px rgba(214, 51, 132, 0.1);
+  --font-family: 'Poppins', sans-serif;
+  --icon-style: normal;
+}
+
+/* Dark Pink Theme */
+.dark-mode[data-color-palette="pink"] {
+  --primary-color: #e7559b;
+  --secondary-color: #f38cc4;
+  --accent-color: #4dddfb;
+  --primary-color-rgb: 231, 85, 155;
+  --accent-color-rgb: 77, 221, 251;
+  
+  /* Dark theme colors */
+  --body-bg: #240c1a;
+  --sidebar-bg: #2e0e22;
+  --content-bg: #1a0813;
+  --card-bg: #2e0e22;
+  --card-border: #411332;
+  --card-header-bg: #411332;
+  --card-header-border: #551943;
+  
+  /* Component Styles */
+  --card-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --body-color: #000000;
+  --body-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #000000;
+  --card-header-bg: #f8f9fa;
+  --card-header-border: #000000;
+  --input-border: #000000;
+  --input-bg: #ffffff;
+  --input-color: #000000;
+  --nav-link-color: #000000;
+  --nav-link-hover-color: #0d6efd;
+  --primary-color: #0d6efd;
+  --secondary-color: #000000;
+  --table-border: #000000;
+  --dropdown-border: #000000;
+  --footer-color: #000000;
+}
+
+/* Koyu tema ve yüksek kontrast modları çakışma düzeltmeleri */
+/* NOT: Artık koyu tema ile yüksek kontrast birlikte kullanılmayacağı için
+   .dark-mode.high-contrast { ... } sınıfı CSS'ten kaldırıldı */
+
+/* High Contrast Mode (Sadece Açık Tema İçin) */
+.high-contrast {
+  /* Temel CSS değişkenleri */
+  --body-color: #000000;
+  --body-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #000000;
+  --card-header-bg: #f8f9fa;
+  --card-header-border: #000000;
+  --input-border: #000000;
+  --input-bg: #ffffff;
+  --input-color: #000000;
+  --nav-link-color: #000000;
+  --nav-link-hover-color: #0d6efd;
+  --primary-color: #0d6efd;
+  --secondary-color: #000000;
+  --table-border: #000000;
+  --dropdown-border: #000000;
+  --dropdown-bg: #ffffff;
+  --dropdown-color: #000000;
+  --dropdown-link-hover-bg: #f1f1f1;
+  --footer-bg: #ffffff;
+  --footer-color: #000000;
+  --sidebar-bg: #ffffff;
+  --content-bg: #ffffff;
+  --card-box-shadow: 0 0 0 1px #000000;
+  /* Diğer renk değişkenleri */
+  --accent-color: #0d6efd;
+  --nav-link-active-bg: rgba(13, 110, 253, 0.15);
+}
+
+/* Form Elementleri İçin Düzeltmeler */
+.high-contrast .form-control,
+.high-contrast .form-select,
+.high-contrast select,
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast .dropdown-menu,
+.high-contrast .list-group-item {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* Kartlar ve Kutular İçin Düzeltmeler */
+.high-contrast .card,
+.high-contrast .modal-content,
+.high-contrast .toast,
+.high-contrast .alert,
+.high-contrast .preview-box {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #000000 !important;
+}
+
+/* Tablo ve Kenarlıklar İçin Düzeltmeler */
+.high-contrast .table,
+.high-contrast .table td,
+.high-contrast .table th,
+.high-contrast .border,
+.high-contrast .border-top,
+.high-contrast .border-end,
+.high-contrast .border-bottom,
+.high-contrast .border-start {
+  border-color: #000000 !important;
+}
+
+/* Arka Planlar İçin Düzeltmeler */
+.high-contrast .bg-white,
+.high-contrast .bg-light,
+.high-contrast .bg-light-fixed,
+.high-contrast [class*="bg-light-"],
+.high-contrast .badge.bg-light-fixed {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Buton ve Simgeler İçin Düzeltmeler */
+.high-contrast .btn:not(.btn-blue) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.high-contrast .btn:not(.btn-blue):hover {
+  background-color: #f1f1f1 !important;
+}
+
+/* Başlık Alanları İçin Düzeltmeler */
+.high-contrast .card-header,
+.high-contrast .modal-header,
+.high-contrast .toast-header {
+  border-bottom-color: #000000 !important;
+}
+
+/* Form Kontrolleri İçin Özel Düzeltmeler */
+.high-contrast .form-check-input {
+  background-color: #ffffff;
+  border-color: #000000;
+}
+
+.high-contrast .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Slider İçin Düzeltmeler */
+.high-contrast .form-range::-webkit-slider-thumb {
+  background-color: #0d6efd;
+}
+
+.high-contrast .form-range::-moz-range-thumb {
+  background-color: #0d6efd;
+}
+
+.high-contrast .form-range::-webkit-slider-runnable-track {
+  background-color: #cccccc;
+}
+
+.high-contrast .form-range::-moz-range-track {
+  background-color: #cccccc;
+}
+
+/* Önizleme Kutuları İçin Düzeltmeler */
+.high-contrast .preview-dark,
+.high-contrast .preview-box {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* Renk Paleti İçin Düzeltmeler */
+.high-contrast .color-option {
+  border-color: #000000 !important;
+  box-shadow: 0 0 0 1px #000000 !important;
+}
+
+/* Bağlantılar İçin Düzeltmeler */
+.high-contrast a:not(.btn):not(.badge):not(.nav-link) {
+  color: #0d6efd !important;
+  text-decoration: underline;
+}
+
+/* Yan Menü Düzeltmeleri */
+.high-contrast .sidebar,
+.high-contrast .sidebar-header,
+.high-contrast .sidebar-nav {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+/* Avatar ve Diğer Yuvarlak Elementler */
+.high-contrast .avatar,
+.high-contrast .rounded-circle {
+  background-color: #0d6efd !important;
+  border: 1px solid #000000 !important;
+}
+
+/* Border Radius Variations */
+.border-radius-0 .card,
+.border-radius-0 .btn,
+.border-radius-0 .form-control,
+.border-radius-0 .form-select,
+.border-radius-0 .alert,
+.border-radius-0 .badge,
+.border-radius-0 .dropdown-menu,
+.border-radius-0 .avatar,
+.border-radius-0 .list-group,
+.border-radius-0 .progress {
+  border-radius: 0 !important;
+}
+
+.border-radius-1 {
+  --card-border-radius: 0.25rem;
+  --button-border-radius: 0.25rem;
+  --form-control-radius: 0.25rem;
+  --badge-border-radius: 0.25rem;
+}
+
+.border-radius-2 {
+  --card-border-radius: 0.5rem;
+  --button-border-radius: 0.5rem;
+  --form-control-radius: 0.375rem;
+  --badge-border-radius: 0.5rem;
+}
+
+.border-radius-3 {
+  --card-border-radius: 1rem;
+  --button-border-radius: 1rem;
+  --form-control-radius: 0.75rem;
+  --badge-border-radius: 1rem;
+}
+
+.border-radius-4 {
+  --card-border-radius: 2rem;
+  --button-border-radius: 2rem;
+  --form-control-radius: 1rem;
+  --badge-border-radius: 2rem;
+}
+
+/* Sidebar Width Variations */
+.sidebar-narrow .sidebar {
+  --sidebar-width: 180px;
+}
+
+.sidebar-default .sidebar {
+  --sidebar-width: 240px;
+}
+
+.sidebar-wide .sidebar {
+  --sidebar-width: 300px;
+}
+
+/* Icon Size Variations */
+.icon-small .sidebar-icon,
+.icon-small .nav-link i,
+.icon-small .card-header i {
+  font-size: 0.85em;
+}
+
+.icon-normal .sidebar-icon,
+.icon-normal .nav-link i,
+.icon-normal .card-header i {
+  font-size: 1em;
+}
+
+.icon-large .sidebar-icon,
+.icon-large .nav-link i,
+.icon-large .card-header i {
+  font-size: 1.25em;
+}
+
+/* Dark Mode Comprehensive Fixes */
+.dark-mode .preview-box,
+.dark-mode .form-control,
+.dark-mode .form-select,
+.dark-mode select,
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode .card,
+.dark-mode .modal-content,
+.dark-mode .bg-white,
+.dark-mode .bg-light,
+.dark-mode .bg-light-fixed,
+.dark-mode .dropdown-menu,
+.dark-mode .list-group-item {
+  background-color: var(--card-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .form-range::-webkit-slider-thumb {
+  background-color: var(--primary-color);
+}
+
+.dark-mode .form-range::-moz-range-thumb {
+  background-color: var(--primary-color);
+}
+
+.dark-mode .form-range::-webkit-slider-runnable-track {
+  background-color: var(--card-border);
+}
+
+.dark-mode .form-range::-moz-range-track {
+  background-color: var(--card-border);
+}
+
+.dark-mode .radius-preview,
+.dark-mode .badge.bg-light-fixed {
+  background-color: var(--card-bg) !important;
+  color: var(--body-color) !important;
+  border: 1px solid var(--card-border);
+}
+
+.dark-mode .form-check-input {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+}
+
+.dark-mode .form-switch .form-check-input {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+.dark-mode .form-switch .form-check-input:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* Additional Dark Mode Fixes */
+.dark-mode .color-option {
+  box-shadow: 0 0 0 1px var(--card-border);
+}
+
+.dark-mode .form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.dark-mode .bg-light-fixed {
+  background-color: var(--card-bg) !important;
+  color: var(--body-color) !important;
+}
+
+/* Fix radio buttons and checkboxes */
+.dark-mode .form-check-input[type="radio"] {
+  background-color: var(--input-bg);
+}
+
+.dark-mode .form-check-input[type="radio"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+  background-color: var(--primary-color);
+}
+
+.dark-mode .form-check-input[type="checkbox"] {
+  background-color: var(--input-bg);
+}
+
+.dark-mode .form-check-input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+  background-color: var(--primary-color);
+}
+
+/* Preview box in settings page */
+.dark-mode .preview-box {
+  background-color: var(--card-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--card-border) !important;
+}
+
+/* Radio buttons in color palette */
+.dark-mode .form-check-input:checked + .color-option {
+  border-color: var(--body-color) !important;
+  box-shadow: 0 0 0 1px var(--body-color) !important;
+}
+
+/* Form range track and thumb */
+.dark-mode .form-range {
+  background-color: transparent;
+}
+
+/* Badges and buttons with light colors */
+.dark-mode .badge.text-dark {
+  color: var(--body-color) !important;
+}
+
+/* Fix for dropdown options in dark mode */
+.dark-mode select option,
+.dark-mode datalist option,
+.dark-mode .form-select option {
+  background-color: var(--card-bg);
+  color: var(--body-color);
+}
+
+/* Fix for labels and small text in dark mode */
+.dark-mode label,
+.dark-mode small,
+.dark-mode .small {
+  color: var(--body-color);
+}
+
+/* Fix for slider tracks */
+.dark-mode input[type="range"] {
+  background-color: transparent;
+}
+
+/* Fix for tables and borders */
+.dark-mode .table,
+.dark-mode .table td,
+.dark-mode .table th,
+.dark-mode .border,
+.dark-mode .border-top,
+.dark-mode .border-end,
+.dark-mode .border-bottom,
+.dark-mode .border-start {
+  border-color: var(--card-border) !important;
+}
+
+/* Override any Bootstrap default backgrounds that might be causing issues */
+.dark-mode .bg-white,
+.dark-mode .bg-light,
+.dark-mode .bg-light-fixed,
+.dark-mode [class*="bg-light-"] {
+  background-color: var(--card-bg) !important;
+}
+
+/* Fix for alert backgrounds */
+.dark-mode .alert {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+/* Specific fix for the settings page preview box */
+.dark-mode .preview-dark {
+  background-color: var(--card-bg) !important;
+  color: var(--body-color) !important;
+}
+
+/* Ensure proper contrast for card headers */
+.dark-mode .card-header,
+.dark-mode .modal-header,
+.dark-mode .toast-header {
+  background-color: var(--card-header-bg) !important;
+  border-color: var(--card-header-border) !important;
+  color: var(--body-color) !important;
+}
+
+/* Sayfa Geçiş Animasyonu */
+.page-transition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(var(--body-bg-rgb), 0.6);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.page-transition:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.page-transition.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.transition-content {
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.single-icon-spinner {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(var(--primary-color-rgb), 0.3);
+}
+
+.single-icon-spinner i {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  animation: icon-pulse 2s infinite ease-in-out;
+}
+
+@keyframes icon-pulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.dark-mode .single-icon-spinner {
+  background-color: rgba(var(--primary-color-rgb), 0.15);
+}
+
+.dark-mode .single-icon-spinner i {
+  filter: drop-shadow(0 0 5px rgba(var(--primary-color-rgb), 0.5));
+}
+
+.spinner-text {
+  color: var(--body-color);
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Sayfa geçişi için ana içeriğe hafif blur efekti */
+.page-transitioning .main-content {
+  filter: blur(3px);
+  transition: filter 0.3s ease;
+  pointer-events: none;
+}
+
+/* Yüksek kontrast modunda geçiş animasyonu */
+.high-contrast .page-transition {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+.high-contrast .single-icon-spinner {
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.high-contrast .single-icon-spinner i {
+  color: #000000;
+  filter: none;
+}
+
+.high-contrast .spinner-text {
+  color: #000000;
+}
+
+/* Sidebar Animasyonları */
+.sidebar-item, .sidebar-header {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  will-change: opacity, transform;
+}
+
+/* No animations sınıfı için sidebar öğelerinin animasyonlarını devre dışı bırak */
+.no-animations .sidebar-item, 
+.no-animations .sidebar-header {
+  transition: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Sidebar animasyon başlangıç durumu */
+.sidebar-menu > li.animate-sidebar-item {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* Sidebar animasyon bitişi */
+.sidebar-menu > li.animate-sidebar-item.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Sidebar logo ve marka animasyonu */
+.sidebar-brand {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: opacity, transform;
+}
+
+/* No animations sınıfı için sidebar logo animasyonunu devre dışı bırak */
+.no-animations .sidebar-brand {
+  transition: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Minimal Stat Kartları */
+.minimal-stat-card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(var(--card-shadow-rgb), 0.05);
+  transition: all 0.2s ease;
+}
+
+.minimal-stat-card:hover {
+  box-shadow: 0 4px 12px rgba(var(--card-shadow-rgb), 0.12);
+}
+
+.minimal-stat-card .card-body {
+  padding: 1.25rem;
+}
+
+.mini-chart {
+  height: 80px;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-success-soft {
+  background-color: rgba(var(--success-color-rgb), 0.15);
+  color: var(--success-color);
+}
+
+/* Dark Mode için uyarlama */
+.dark-mode .minimal-stat-card {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+.dark-mode .mini-chart canvas {
+  filter: brightness(0.9);
+}
+
+/* High Contrast Mode için uyarlama */
+.high-contrast .minimal-stat-card {
+  border: 1px solid #000;
+}
+
+/* Çok Daha Küçük Kartlar */
+.tiny-stat-card {
+  border: none;
+  border-radius: calc(var(--border-radius) - 2px);
+  box-shadow: 0 1px 3px rgba(var(--card-shadow-rgb), 0.05);
+  transition: all 0.2s ease;
+}
+
+.tiny-stat-card:hover {
+  box-shadow: 0 2px 6px rgba(var(--card-shadow-rgb), 0.1);
+}
+
+.tiny-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0.1rem;
+  font-weight: 500;
+}
+
+.tiny-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text-color);
+}
+
+.tiny-badge {
+  font-size: 0.65rem;
+  color: var(--success-color);
+  background-color: rgba(var(--success-color-rgb), 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tiny-chart {
+  width: 45px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tiny-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  font-size: 1rem;
+}
+
+.bg-info-soft {
+  background-color: rgba(var(--info-color-rgb), 0.15);
+  color: var(--info-color);
+}
+
+.bg-warning-soft {
+  background-color: rgba(var(--warning-color-rgb), 0.15);
+  color: var(--warning-color);
+}
+
+/* Dark Mode için uyarlama */
+.dark-mode .tiny-stat-card {
+  background-color: var(--card-bg);
+}
+
+.dark-mode .tiny-chart canvas {
+  filter: brightness(0.9);
+}
+
+/* Ultra Minimal Kartlar */
+.micro-card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 6px rgba(var(--card-shadow-rgb), 0.08);
+  transition: all 0.25s;
+  margin-bottom: 0.5rem;
+}
+
+.micro-card:hover {
+  box-shadow: 0 4px 12px rgba(var(--card-shadow-rgb), 0.15);
+  transform: translateY(-3px);
+}
+
+.micro-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.micro-title {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.micro-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-color);
+}
+
+.micro-chart {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.micro-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bg-info {
+  background-color: #36A2EB;
+  color: white;
+}
+
+.bg-warning {
+  background-color: #FFCD56;
+  color: white;
+}
+
+/* Dark mode uyarlaması */
+.dark-mode .micro-card {
+  background-color: var(--card-bg);
+}
+
+/* Dashboard Kartları */
+.dashboard-card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(var(--card-shadow-rgb), 0.08);
+  transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 15px rgba(var(--card-shadow-rgb), 0.1);
+  transform: translateY(-2px);
+}
+
+.details-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 50px;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Dış çizgi efekti */
+.details-link:before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  z-index: -1;
+}
+
+/* Hover efekti için arkaplan */
+.details-link:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: -1;
+  border-radius: 50px;
+}
+
+.details-link:hover {
+  color: var(--text-color);
+  border-color: transparent;
+}
+
+.details-link:hover:after {
+  opacity: 1;
+}
+
+.details-link i {
+  transition: transform 0.2s ease;
+}
+
+.details-link:hover i {
+  transform: translateX(5px);
+}
+
+/* Dark mode için hover durumu */
+.dark-mode .details-link:after {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .details-link:hover {
+  color: white;
+}
+
+/* Köşe yumuşatma ayarına bağlı kartlar */
+.border-radius-0 .dashboard-card {
+  border-radius: 0;
+}
+
+.border-radius-1 .dashboard-card {
+  border-radius: 0.25rem;
+}
+
+.border-radius-2 .dashboard-card {
+  border-radius: 0.5rem;
+}
+
+.border-radius-3 .dashboard-card {
+  border-radius: 0.75rem;
+}
+
+.border-radius-4 .dashboard-card {
+  border-radius: 1rem;
+}
+
+/* Dark Mode Uyarlamaları */
+.dark-mode .dashboard-card {
+  background-color: var(--card-bg);
+}
+
+.dark-mode .details-link {
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+.dark-mode .details-link:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* High Contrast Uyarlamaları */
+.high-contrast .dashboard-card {
+  border: 2px solid #000;
+  box-shadow: none;
+}
+
+.high-contrast .details-link {
+  border: 2px solid #000;
+}
+
+/* Footer Styling */
+.footer {
+  padding: 1rem 0;
+  background-color: var(--footer-bg);
+  border-top: 1px solid var(--card-border);
+  color: var(--footer-color);
+  width: 100%;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.footer .text-md-start {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.footer a {
+  color: var(--footer-color);
+  transition: color var(--transition-speed) ease;
+  white-space: nowrap;
+  display: inline-block;
+  padding: 2px 4px;
+}
+
+.footer a:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* Footer Link Icons */
+.footer a i {
+  transition: transform 0.2s ease;
+}
+
+.footer a:hover i {
+  transform: translateY(-2px);
+}
+
+/* Media query for small screens */
+@media (max-width: 767px) {
+  .footer a {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    padding: 2px;
+  }
+  
+  .footer .text-md-end {
+    margin-top: 0.5rem;
+  }
+  
+  .footer .text-md-start {
+    font-size: 0.85rem;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: visible;
+  }
+}
+
+/* Dark Mode Footer */
+.dark-mode .footer {
+  background-color: var(--footer-bg);
+  border-color: var(--card-border);
+}
+
+/* High Contrast Footer */
+.high-contrast .footer {
+  background-color: #000;
+  border-color: #fff;
+  color: #fff;
+}
+
+.high-contrast .footer a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.high-contrast .footer a:hover {
+  color: #ffff00;
+}
+
+.high-contrast .footer hr {
+  border-color: #fff;
+}
+
+/* Proje listesi sayfası için stiller */
+.avatar-sm {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+#projectsTable td {
+  vertical-align: middle;
+  padding: 0.75rem 1rem;
+}
+
+#projectsTable thead th {
+  font-weight: 600;
+  color: var(--text-muted);
+  border-top: none;
+  border-bottom: 1px solid var(--card-border);
+  padding: 0.75rem 1rem;
+}
+
+#projectsTable tbody tr {
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid var(--card-border);
+}
+
+#projectsTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.project-row:hover {
+  cursor: pointer;
+}
+
+.project-icon i {
+  font-size: 1.25rem;
+}
+
+/* Durum badge'leri için hover efekti */
+#projectsTable .badge {
+  padding: 0.4em 0.7em;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+}
+
+#projectsTable .badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Arama ve filtre bölümü için stiller */
+#searchInput, #statusFilter, #categoryFilter {
+  box-shadow: none;
+  transition: all 0.25s ease;
+}
+
+#searchInput:focus, #statusFilter:focus, #categoryFilter:focus {
+  box-shadow: 0 0 0 0.15rem rgba(var(--primary-color-rgb), 0.15);
+}
+
+/* No results mesajı için animasyon */
+#noDataMessage {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Dark mode için projeler tablosu stillleri */
+.dark-mode #projectsTable thead th {
+  color: var(--body-color);
+  border-bottom: 1px solid var(--card-border);
+  background-color: var(--card-header-bg);
+}
+
+.dark-mode #projectsTable tbody tr {
+  border-bottom: 1px solid var(--card-border);
+}
+
+.dark-mode #projectsTable .badge.bg-light {
+  background-color: var(--card-header-bg) !important;
+  color: var(--body-color) !important;
+}
+
+.dark-mode .project-row:hover {
+  background-color: var(--card-header-bg) !important;
+}
+
+.dark-mode .avatar-sm.bg-light {
+  background-color: var(--card-header-bg) !important;
+}
+
+/* İşlem butonları için stiller */
+#projectsTable .d-flex.flex-column {
+  min-width: 120px;
+}
+
+#projectsTable .d-flex.flex-column .btn {
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+#projectsTable .d-flex.flex-column .btn:hover {
+  transform: translateX(5px);
+  background-color: var(--input-bg);
+}
+
+/* Dark mode için işlem butonları stilleri */
+.dark-mode #projectsTable .d-flex.flex-column .btn {
+  color: var(--body-color);
+  border-color: var(--card-border);
+}
+
+.dark-mode #projectsTable .d-flex.flex-column .btn:hover {
+  background-color: var(--input-bg);
+}
+
+/* Proje Filtreleri İçin Stiller */
+.card-header .input-group {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+  border-radius: 0.25rem;
+}
+
+/* Mobil görünüm düzenlemeleri */
+@media (max-width: 767px) {
+  .card-header .d-flex.flex-wrap.gap-2 {
+    width: 100%;
+  }
+  
+  .card-header .form-select {
+    width: 100%;
+    margin-bottom: 0;
+  }
+}
+
+/* Arama ve filtreleme animasyonları */
+.input-group .form-control:focus,
+.input-group .form-control:active {
+  box-shadow: none;
+  border-color: var(--primary-color);
+}
+
+.card-header .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.1rem rgba(var(--primary-color-rgb), 0.25);
+}
+
+#projectsTable td .badge {
+  display: inline-block;
+  margin-bottom: 3px;
+  font-size: 0.8rem;
+  padding: 0.35em 0.65em;
+}
+
+#projectsTable td.text-end .badge {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  transition: all 0.2s ease;
+}
+
+#projectsTable td.text-end .badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+/* Dark mode için uyarlamalar */
+.dark-mode #projectsTable td.text-end .badge {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using UniversiteProjeYonetimSistemi.Data;
 using UniversiteProjeYonetimSistemi.Services;
+using UniversiteProjeYonetimSistemi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IProjeService, ProjeService>();
 builder.Services.AddScoped<IOgrenciService, OgrenciService>();
 builder.Services.AddScoped<IAkademisyenService, AkademisyenService>();
 builder.Services.AddScoped<IBildirimService, BildirimService>();
+builder.Services.AddScoped<ZamanDurumuService>();
 
 builder.Services.AddControllersWithViews();
 
@@ -58,6 +60,9 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// ZamanDurumu güncelleyen middleware'i ekleyelim
+app.UseZamanDurumuUpdate();
 
 app.MapControllerRoute(
     name: "default",

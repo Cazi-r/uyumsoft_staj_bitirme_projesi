@@ -54,12 +54,47 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             else if (kullanici.IsInRole("Akademisyen"))
             {
                 var akademisyen = await _akademisyenService.GetAkademisyenByUserName(kullanici.Identity.Name);
+                
+                // Tüm görüşmeleri çek ve ZamanDurumu güncellemesini yap
                 var akademisyenGorusmeleri = await _context.DanismanlikGorusmeleri
                     .Include(d => d.Ogrenci)
                     .Include(d => d.Proje)
                     .Where(d => d.AkademisyenId == akademisyen.Id)
                     .OrderByDescending(d => d.CreatedAt)
                     .ToListAsync();
+                
+                // Tüm görüşmelerin ZamanDurumu değerlerini güncelle
+                foreach (var gorusme in akademisyenGorusmeleri)
+                {
+                    gorusme.GuncelleZamanDurumu();
+                }
+                
+                // ViewBag'e farklı görüşme türlerini ekle
+                ViewBag.BekleyenTalepler = akademisyenGorusmeleri
+                    .Where(g => g.Durum == "Beklemede" && g.TalepEden == "Ogrenci")
+                    .OrderBy(g => g.GorusmeTarihi)
+                    .ToList();
+                
+                ViewBag.YakinGorusmeler = akademisyenGorusmeleri
+                    .Where(g => g.Durum == "Onaylandı" && (g.ZamanDurumu == "Bugun" || g.ZamanDurumu == "YakinGelecek"))
+                    .OrderBy(g => g.GorusmeTarihi)
+                    .ToList();
+                    
+                ViewBag.IleridekiGorusmeler = akademisyenGorusmeleri
+                    .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "UzakGelecek")
+                    .OrderBy(g => g.GorusmeTarihi)
+                    .ToList();
+                    
+                ViewBag.GecmisGorusmeler = akademisyenGorusmeleri
+                    .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "Gecmis")
+                    .OrderByDescending(g => g.GorusmeTarihi)
+                    .ToList();
+                
+                ViewBag.IptalGorusmeler = akademisyenGorusmeleri
+                    .Where(g => g.Durum == "Reddedildi")
+                    .OrderByDescending(g => g.GorusmeTarihi)
+                    .ToList();
+                
                 return View("AkademisyenGorusmeleri", akademisyenGorusmeleri);
             }
             else if (kullanici.IsInRole("Admin"))
@@ -333,11 +368,15 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 
                 var gorusme = new DanismanlikGorusmesi
                 {
-                    ProjeId = proje.Id,
-                    AkademisyenId = proje.MentorId ?? 0,
+                    ProjeId = projeId.Value,
                     OgrenciId = ogrenci.Id,
-                    GorusmeTipi = "Online"
+                    AkademisyenId = proje.MentorId ?? 0, // Add null-coalescing operator to handle nullable int
+                    Baslik = "Danışmanlık Görüşmesi",
+                    TalepEden = "Ogrenci",
+                    Durum = "Beklemede"
                 };
+                
+                gorusme.GuncelleZamanDurumu();
                 
                 ViewData["ProjeAd"] = proje.Ad;
                 ViewData["AkademisyenAd"] = proje.Mentor?.Ad + " " + proje.Mentor?.Soyad;
@@ -369,11 +408,15 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 
                 var gorusme = new DanismanlikGorusmesi
                 {
-                    ProjeId = proje.Id,
+                    ProjeId = projeId.Value,
+                    OgrenciId = proje.OgrenciId ?? 0, // Add null-coalescing operator to handle nullable int
                     AkademisyenId = akademisyen.Id,
-                    OgrenciId = proje.OgrenciId ?? 0,
-                    GorusmeTipi = "Online"
+                    Baslik = "Danışmanlık Görüşmesi",
+                    TalepEden = "Akademisyen",
+                    Durum = "Beklemede"
                 };
+                
+                gorusme.GuncelleZamanDurumu();
                 
                 ViewData["ProjeAd"] = proje.Ad;
                 ViewData["OgrenciAd"] = proje.Ogrenci?.Ad + " " + proje.Ogrenci?.Soyad;
@@ -395,6 +438,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             danismanlikGorusmesi.Durum = "Beklemede";
             danismanlikGorusmesi.TalepEden = "Ogrenci";
             
+            // Zaman durumu güncellemesi
+            danismanlikGorusmesi.GuncelleZamanDurumu();
+            
             if (ModelState.IsValid)
             {
                 _context.Add(danismanlikGorusmesi);
@@ -415,6 +461,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             danismanlikGorusmesi.AkademisyenId = akademisyen.Id;
             danismanlikGorusmesi.Durum = "Beklemede";
             danismanlikGorusmesi.TalepEden = "Akademisyen";
+            
+            // Zaman durumu güncellemesi
+            danismanlikGorusmesi.GuncelleZamanDurumu();
             
             if (ModelState.IsValid)
             {
@@ -546,6 +595,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             {
                 danismanlikGorusmesi.Durum = mevcutGorusme.Durum;
             }
+            
+            // Zaman durumu güncellemesi
+            danismanlikGorusmesi.GuncelleZamanDurumu();
             
             _context.Update(danismanlikGorusmesi);
             await _context.SaveChangesAsync();

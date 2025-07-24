@@ -4,161 +4,157 @@
     ViewData["Title"] = "Profil Düzenle";
 }
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Profil Bilgilerini Düzenle</h5>
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-edit text-primary me-2"></i>@ViewData["Title"]
+        </h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Rol" />
+            
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3 p-2 text-danger" role="alert"></div>
+            
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Temel Bilgiler</h6>
                 </div>
-                <div class="card-body p-4">
-                    <form asp-action="Edit" method="post">
-                        <input type="hidden" asp-for="Id" />
-                        <input type="hidden" asp-for="Rol" />
-
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="Ad" class="form-label"></label>
-                                    <input asp-for="Ad" class="form-control" />
-                                    <span asp-validation-for="Ad" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="Soyad" class="form-label"></label>
-                                    <input asp-for="Soyad" class="form-control" />
-                                    <span asp-validation-for="Soyad" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="Email" class="form-label"></label>
-                                    <input asp-for="Email" class="form-control" />
-                                    <span asp-validation-for="Email" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label class="form-label">Rol</label>
-                                    <input type="text" class="form-control" value="@(Model.Rol)" disabled />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="NewPassword" class="form-label"></label>
-                                    <input asp-for="NewPassword" class="form-control" />
-                                    <span asp-validation-for="NewPassword" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                                    <input asp-for="ConfirmPassword" class="form-control" />
-                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        @* Rol bazlı ek alanlar *@
-                        @if (Model.Rol == "Ogrenci")
-                        {
-                            <hr />
-                            <h5 class="mb-3">Öğrenci Bilgileri</h5>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label asp-for="OgrenciNo" class="form-label"></label>
-                                        <input asp-for="OgrenciNo" class="form-control" readonly />
-                                        <span asp-validation-for="OgrenciNo" class="text-danger"></span>
-                                        <small class="text-muted">Öğrenci numarası değiştirilemez.</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label asp-for="Telefon" class="form-label"></label>
-                                        <input asp-for="Telefon" class="form-control" placeholder="0XXX XXX XX XX" />
-                                        <span asp-validation-for="Telefon" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label asp-for="Adres" class="form-label"></label>
-                                <textarea asp-for="Adres" class="form-control" rows="3"></textarea>
-                                <span asp-validation-for="Adres" class="text-danger"></span>
-                            </div>
-                        }
-                        else if (Model.Rol == "Akademisyen")
-                        {
-                            <hr />
-                            <h5 class="mb-3">Akademisyen Bilgileri</h5>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label asp-for="Unvan" class="form-label"></label>
-                                        <select asp-for="Unvan" class="form-select">
-                                            <option value="">-- Seçiniz --</option>
-                                            <option value="Prof. Dr.">Prof. Dr.</option>
-                                            <option value="Doç. Dr.">Doç. Dr.</option>
-                                            <option value="Dr. Öğr. Üyesi">Dr. Öğr. Üyesi</option>
-                                            <option value="Arş. Gör.">Arş. Gör.</option>
-                                            <option value="Öğr. Gör.">Öğr. Gör.</option>
-                                        </select>
-                                        <span asp-validation-for="Unvan" class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label asp-for="Ofis" class="form-label"></label>
-                                        <input asp-for="Ofis" class="form-control" placeholder="Ofis bilgisi (örn: A-203)" />
-                                        <span asp-validation-for="Ofis" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label asp-for="Telefon" class="form-label"></label>
-                                        <input asp-for="Telefon" class="form-control" placeholder="0XXX XXX XX XX" />
-                                        <span asp-validation-for="Telefon" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label asp-for="UzmanlikAlani" class="form-label"></label>
-                                <textarea asp-for="UzmanlikAlani" class="form-control" rows="3"></textarea>
-                                <span asp-validation-for="UzmanlikAlani" class="text-danger"></span>
-                            </div>
-                        }
-
-                        <div class="d-flex justify-content-between mt-4">
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Geri Dön
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Kaydet
-                            </button>
-                        </div>
-                    </form>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Ad" class="form-control" placeholder="Ad" />
+                        <label asp-for="Ad"></label>
+                    </div>
+                    <span asp-validation-for="Ad" class="text-danger small"></span>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Soyad" class="form-control" placeholder="Soyad" />
+                        <label asp-for="Soyad"></label>
+                    </div>
+                    <span asp-validation-for="Soyad" class="text-danger small"></span>
+                </div>
+                
+                <div class="col-md-12 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Email" class="form-control" placeholder="E-posta" />
+                        <label asp-for="Email"></label>
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger small"></span>
                 </div>
             </div>
-        </div>
+            
+            @if (Model.Rol == "Ogrenci")
+            {
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-3">Öğrenci Bilgileri</h6>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input asp-for="OgrenciNo" class="form-control" placeholder="Öğrenci Numarası" />
+                            <label asp-for="OgrenciNo"></label>
+                        </div>
+                        <span asp-validation-for="OgrenciNo" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Telefon" class="form-control" placeholder="Telefon" />
+                            <label asp-for="Telefon"></label>
+                        </div>
+                        <span asp-validation-for="Telefon" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="col-md-12 mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Adres" class="form-control" placeholder="Adres" />
+                            <label asp-for="Adres"></label>
+                        </div>
+                        <span asp-validation-for="Adres" class="text-danger small"></span>
+                    </div>
+                </div>
+            }
+            
+            @if (Model.Rol == "Akademisyen")
+            {
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-3">Akademisyen Bilgileri</h6>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Unvan" class="form-control" placeholder="Unvan" />
+                            <label asp-for="Unvan"></label>
+                        </div>
+                        <span asp-validation-for="Unvan" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Telefon" class="form-control" placeholder="Telefon" />
+                            <label asp-for="Telefon"></label>
+                        </div>
+                        <span asp-validation-for="Telefon" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Ofis" class="form-control" placeholder="Ofis" />
+                            <label asp-for="Ofis"></label>
+                        </div>
+                        <span asp-validation-for="Ofis" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <input asp-for="UzmanlikAlani" class="form-control" placeholder="Uzmanlık Alanı" />
+                            <label asp-for="UzmanlikAlani"></label>
+                        </div>
+                        <span asp-validation-for="UzmanlikAlani" class="text-danger small"></span>
+                    </div>
+                </div>
+            }
+            
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Şifre Değiştirme (İsteğe Bağlı)</h6>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="NewPassword" class="form-control" placeholder="Yeni Şifre" />
+                        <label asp-for="NewPassword"></label>
+                    </div>
+                    <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Yeni Şifre Tekrar" />
+                        <label asp-for="ConfirmPassword"></label>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 } 

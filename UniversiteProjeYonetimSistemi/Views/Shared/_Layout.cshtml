@@ -3,127 +3,363 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Üniversite Proje Yönetim Sistemi</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <title>@ViewData["Title"] - Proje Yönetim Sistemi</title>
+    <script>
+        // Sayfa DOM yüklenmeden önce tema ayarlarını uygula
+        (function() {
+            // Theme mode (dark/light)
+            const rootElement = document.documentElement;
+            
+            // Apply theme mode
+            const themeMode = localStorage.getItem('themeMode');
+            if (themeMode === 'dark') {
+                rootElement.classList.add('dark-mode');
+            } else if (themeMode === 'auto') {
+                const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDarkMode) {
+                    rootElement.classList.add('dark-mode');
+                }
+            }
+            
+            // Apply color palette
+            const colorPalette = localStorage.getItem('colorPalette');
+            if (colorPalette && colorPalette !== 'default') {
+                rootElement.setAttribute('data-color-palette', colorPalette);
+            }
+            
+            // Apply font size
+            const fontSize = localStorage.getItem('fontSize');
+            if (fontSize) {
+                rootElement.style.setProperty('--base-font-size', (fontSize / 100) + 'rem');
+            }
+            
+            // Apply font family
+            const fontFamily = localStorage.getItem('fontFamily');
+            if (fontFamily) {
+                rootElement.style.setProperty('--font-family', fontFamily);
+            }
+            
+            // Prepare classes to be applied after DOM is loaded
+            const applyClasses = [];
+            
+            // Prepare compact layout
+            const compactLayout = localStorage.getItem('compactLayout') === 'true';
+            if (compactLayout) {
+                applyClasses.push('compact-layout');
+            }
+            
+            // Prepare animations setting
+            const animations = localStorage.getItem('animations') !== 'false';
+            if (!animations) {
+                applyClasses.push('no-animations');
+            }
+            
+            // Prepare high contrast mode
+            const highContrast = localStorage.getItem('highContrast') === 'true';
+            if (highContrast) {
+                applyClasses.push('high-contrast');
+            }
+            
+            // Prepare border radius class
+            const borderRadius = localStorage.getItem('borderRadius') || '2';
+            applyClasses.push('border-radius-' + borderRadius);
+            
+            // Prepare sidebar width class
+            const sidebarWidth = localStorage.getItem('sidebarWidth') || 'default';
+            applyClasses.push('sidebar-' + sidebarWidth);
+            
+            // Prepare icon size class
+            const iconSize = localStorage.getItem('iconSize') || 'normal';
+            applyClasses.push('icon-' + iconSize);
+            
+            // Apply all classes when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                if (applyClasses.length > 0) {
+                    document.body.classList.add(...applyClasses);
+                }
+            });
+        })();
+    </script>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Chart.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/UniversiteProjeYonetimSistemi.styles.css" asp-append-version="true" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/favicon.ico" type="image/x-icon">
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
-            <div class="container">
-                <span class="navbar-brand disabled" style="pointer-events: none; cursor: default;">
-                    <i class="fas fa-graduation-cap me-2"></i>
-                    Proje Yönetim Sistemi
-                </span>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+    <!-- Sayfa Geçiş Animasyonu -->
+    <div id="pageTransition" class="page-transition">
+        <div class="transition-content">
+            <div class="single-icon-spinner">
+                <i id="transitionIcon" class="fas fa-project-diagram"></i>
+            </div>
+            <div class="spinner-text">Yükleniyor...</div>
+        </div>
+    </div>
+    
+    <div class="app-container d-flex flex-column min-vh-100">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand d-flex flex-column align-items-center text-center">
+                    <div class="logo-container mb-2">
+                        <i class="fas fa-graduation-cap text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="fw-bold text-primary">Proje Yönetim</span>
+                        <span class="d-block small text-muted">Sistemi</span>
+                    </div>
+                </div>
+                <button id="sidebarToggler" class="btn d-md-none">
+                    <i class="fas fa-bars"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="fas fa-home me-1"></i> Ana Sayfa
+            </div>
+            <div class="sidebar-nav d-flex flex-column justify-content-between" style="height: calc(100% - var(--topbar-height));">
+                <div>
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-header">MENÜ</li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home sidebar-icon"></i>
+                                <span>Ana Sayfa</span>
                             </a>
                         </li>
+                        
                         @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link position-relative" asp-controller="Bildirim" asp-action="Index">
-                                    <i class="fas fa-bell me-1"></i> Bildirimler
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="Bildirim" asp-action="Index">
+                                    <i class="fas fa-bell sidebar-icon"></i>
+                                    <span>Bildirimler</span>
+                                    <span class="badge bg-danger rounded-pill ms-auto">
                                     @await Component.InvokeAsync("BildirimSayaci")
+                                    </span>
                                 </a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Proje" asp-action="Index">
-                                <i class="fas fa-tasks me-1"></i> Projeler
+                        
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Proje" asp-action="Index">
+                                <i class="fas fa-tasks sidebar-icon"></i>
+                                <span>Tüm Projeler</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Kategori" asp-action="Index">
-                                <i class="fas fa-tags me-1"></i> Kategoriler
+                        
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Kategori" asp-action="Index">
+                                <i class="fas fa-tags sidebar-icon"></i>
+                                <span>Proje Kategorileri</span>
                             </a>
                         </li>
+
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-cogs me-1"></i> Yönetim
+                            <li class="sidebar-header">YÖNETİCİ PANELİ</li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="Admin" asp-action="Dashboard">
+                                    <i class="fas fa-chart-line sidebar-icon"></i>
+                                    <span>Dashboard</span>
+                                        </a>
+                                    </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="Admin" asp-action="Kullanicilar">
+                                    <i class="fas fa-users sidebar-icon"></i>
+                                    <span>Kayıtlı Kullanıcılar</span>
+                                        </a>
+                                    </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="Admin" asp-action="KullaniciEtkinlikleri">
+                                    <i class="fas fa-history sidebar-icon"></i>
+                                    <span>Etkinlik Logları</span>
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">
-                                            <i class="fas fa-chart-line me-2"></i> Dashboard
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Kullanicilar">
-                                            <i class="fas fa-users me-2"></i> Kullanıcılar
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="KullaniciEtkinlikleri">
-                                            <i class="fas fa-history me-2"></i> Etkinlik Geçmişi
-                                        </a>
-                                    </li>
-                               </ul>
                             </li>
                         }
+
                         @if (User.IsInRole("Akademisyen"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Akademisyen" asp-action="Danismanliklar">
-                                    <i class="fas fa-chalkboard-teacher me-1"></i> Danışmanlıklarım
+                            <li class="sidebar-header">AKADEMİSYEN</li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="Akademisyen" asp-action="Danismanliklar">
+                                    <i class="fas fa-chalkboard-teacher sidebar-icon"></i>
+                                    <span>Danışmanlıklarım</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="DanismanlikGorusmesi" asp-action="Index">
-                                    <i class="fas fa-calendar-check me-1"></i> Görüşme Talepleri
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="DanismanlikGorusmesi" asp-action="Index">
+                                    <i class="fas fa-calendar-check sidebar-icon"></i>
+                                    <span>Görüşme Talepleri</span>
                                 </a>
                             </li>
                         }
+
                         @if (User.IsInRole("Ogrenci"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Proje" asp-action="Index">
-                                    <i class="fas fa-book me-1"></i> Projelerim
+                            <li class="sidebar-header">ÖĞRENCİ</li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="Proje" asp-action="Index">
+                                    <i class="fas fa-book sidebar-icon"></i>
+                                    <span>Projelerim</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="DanismanlikGorusmesi" asp-action="Index">
-                                    <i class="fas fa-comments me-1"></i> Görüşmelerim
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" asp-controller="DanismanlikGorusmesi" asp-action="Index">
+                                    <i class="fas fa-comments sidebar-icon"></i>
+                                    <span>Görüşmelerim</span>
                                 </a>
                             </li>
                         }
                     </ul>
-                    <partial name="_LoginPartial" />
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted bg-dark text-light">
-        <div class="container">
-            <div class="row py-3">
-                <div class="col-md-6">
-                    &copy; @DateTime.Now.Year - Üniversite Proje Yönetim Sistemi
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <a class="text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+                
+                <!-- Ayarlar butonu alt kısım -->
+                <div class="mt-auto border-top pt-2">
+                    <ul class="sidebar-menu mb-2">
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" asp-controller="Profile" asp-action="Ayarlar">
+                                <i class="fas fa-cogs sidebar-icon"></i>
+                                <span>Sistem Ayarları</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Main Content -->
+        <div class="main-content d-flex flex-column flex-grow-1">
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow-sm">
+                <div class="container-fluid">
+                    <button id="mobileSidebarToggler" class="btn d-md-none me-3">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="d-md-none">
+                        <span class="fw-bold text-primary">Proje Yönetim</span>
+    </div>
+
+                    <div class="d-none d-md-flex align-items-center">
+                        <span class="text-dark h5 mb-0">@ViewData["Title"]</span>
+                    </div>
+
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                        </li>
+                        
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="d-none d-lg-inline text-gray-600 small me-2">
+                                        @User.Claims.FirstOrDefault(c => c.Type == "Ad")?.Value
+                                        @User.Claims.FirstOrDefault(c => c.Type == "Soyad")?.Value
+                                    </span>
+                                    <div class="avatar avatar-sm bg-primary rounded-circle text-white">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+                                    <div class="dropdown-item-text">
+                                        <span class="badge bg-primary rounded-pill">
+                                            @User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value
+                                        </span>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-controller="Profile" asp-action="Index">
+                                        <i class="fas fa-user fa-sm fa-fw text-gray-400 me-2"></i>Profilim
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Profile" asp-action="Edit">
+                                        <i class="fas fa-edit fa-sm fa-fw text-gray-400 me-2"></i>Profili Düzenle
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <form class="form-inline" asp-controller="Auth" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt fa-sm fa-fw text-gray-400 me-2"></i>Çıkış Yap
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item me-2">
+                                <a class="nav-link btn btn-sm btn-outline-primary px-3" asp-controller="Auth" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-sm btn-primary px-3 text-white" asp-controller="Auth" asp-action="Register">
+                                    <i class="fas fa-user-plus me-1"></i>Kayıt Ol
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <div class="container-fluid px-4 flex-grow-1">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible alert-permanent fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible alert-permanent fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @RenderBody()
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer mt-auto w-100">
+                <div class="container-fluid px-3">
+                    <div class="row">
+                        <div class="col-12 col-md-5 text-center text-md-start text-muted small mb-2 mb-md-0">
+							<i class="fas fa-graduation-cap me-1"></i> Proje Yönetim Sistemi &copy; @DateTime.Now.Year - Tüm hakları saklıdır.
+                        </div>
+                        <div class="col-12 col-md-7 text-center text-md-end small">
+                            <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none me-2">
+                                <i class="fas fa-shield-alt me-1"></i>Gizlilik
+                            </a>
+                            <a asp-controller="Home" asp-action="About" class="text-decoration-none me-2">
+                                <i class="fas fa-info-circle me-1"></i>Hakkımızda
+                            </a>
+                            <a asp-controller="Home" asp-action="Contact" class="text-decoration-none me-2">
+                                <i class="fas fa-envelope me-1"></i>İletişim
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                <i class="fas fa-question-circle me-1"></i>Destek
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
