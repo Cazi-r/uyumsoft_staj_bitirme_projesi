@@ -107,12 +107,40 @@ public class HomeController : Controller
                         .ToListAsync();
                     
                     // Son yorumlar
-                    ViewBag.SonYorumlar = await _context.ProjeYorumlari
-                        .Where(y => y.AkademisyenId == akademisyen.Id)
-                        .Include(y => y.Proje)
-                        .OrderByDescending(y => y.OlusturmaTarihi)
-                        .Take(3)
+                    var akademisyenProjeleri = await _context.Projeler
+                        .Where(p => p.MentorId == akademisyen.Id)
+                        .Select(p => p.Id)
                         .ToListAsync();
+                        
+                    ViewBag.SonYorumlar = await _context.ProjeYorumlari
+                        .Where(y => akademisyenProjeleri.Contains(y.ProjeId))
+                        .Include(y => y.Proje)
+                        .Include(y => y.Ogrenci)
+                        .Include(y => y.Akademisyen)
+                        .OrderByDescending(y => y.OlusturmaTarihi)
+                        .Take(5)
+                        .ToListAsync();
+                        
+                    // Bekleyen görüşme taleplerini getir (Index metodu için)
+                    var bekleyenGorusmeler = await _context.DanismanlikGorusmeleri
+                        .Include(g => g.Ogrenci)
+                        .Include(g => g.Proje)
+                        .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede")
+                        .OrderBy(g => g.GorusmeTarihi)
+                        .ToListAsync();
+                    
+                    ViewBag.BekleyenGorusmeler = bekleyenGorusmeler;
+                    
+                    // Danışmanlık projelerini de Index metodu için set edelim
+                    var danismanlikProjeleri = await _context.Projeler
+                        .Include(p => p.Ogrenci)
+                        .Include(p => p.Kategori)
+                        .Where(p => p.MentorId == akademisyen.Id)
+                        .OrderByDescending(p => p.OlusturmaTarihi)
+                        .Take(5)
+                        .ToListAsync();
+                    
+                    ViewBag.DanismanlikProjeleri = danismanlikProjeleri;
                 }
                 return View("AkademisyenDashboard");
                 
@@ -188,9 +216,27 @@ public class HomeController : Controller
             .SelectMany(p => p.Degerlendirmeler)
             .CountAsync();
             
-        ViewBag.BekleyenDegerlendirmeSayisi = await _context.Projeler
+        // Bekleyen değerlendirmeleri hesapla
+        var projeDeğerlendirmeSayisi = await _context.Projeler
             .Where(p => p.MentorId == akademisyen.Id && p.Status == "Devam")
             .CountAsync(p => !p.Degerlendirmeler.Any());
+                
+        // Tamamlanmış ama değerlendirilmemiş aşama sayısını getir
+        var degerlendirilmeyenAsamaSayisi = await _projeService.GetDegerlendirilmeyenAsamaSayisiByMentorIdAsync(akademisyen.Id);
+            
+        // Toplam bekleyen değerlendirme sayısı (proje + aşama)
+        ViewBag.BekleyenDegerlendirmeSayisi = projeDeğerlendirmeSayisi + degerlendirilmeyenAsamaSayisi;
+            
+        // Değerlendirilmemiş aşamalar listesini getir
+        var degerlendirilmeyenAsamalar = await _context.ProjeAsamalari
+            .Include(a => a.Proje)
+            .ThenInclude(p => p.Ogrenci)
+            .Where(a => a.Proje.MentorId == akademisyen.Id && a.Tamamlandi && !a.Degerlendirildi)
+            .OrderByDescending(a => a.TamamlanmaTarihi)
+            .Take(5)
+            .ToListAsync();
+                
+        ViewBag.DegerlendirilmeyenAsamalar = degerlendirilmeyenAsamalar;
 
         // Son bildirimleri getir
         var bildirimler = await _context.Bildirimler
@@ -204,14 +250,13 @@ public class HomeController : Controller
         // Bir hafta sonrasını hesapla
         var birHaftaSonra = bugun.AddDays(7);
         
-        // Bekleyen görüşme taleplerini getir (öğrencilerden)
+        // Bekleyen görüşme taleplerini getir (tümünü, sadece öğrencilerden değil)
         var bekleyenTalepler = await _context.DanismanlikGorusmeleri
             .Include(g => g.Ogrenci)
             .Include(g => g.Proje)
-            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede" && g.TalepEden == "Ogrenci")
+            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede")
             .OrderBy(g => g.GorusmeTarihi)
-            .Take(3)
-            .ToListAsync();
+            .ToListAsync(); // Limit kaldırıldı, tümünü getiriyoruz
             
         // Tüm görüşmeleri getir ve ZamanDurumu'nu güncelle
         var tumGorusmeler = await _context.DanismanlikGorusmeleri

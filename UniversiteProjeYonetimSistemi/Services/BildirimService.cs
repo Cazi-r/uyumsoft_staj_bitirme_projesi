@@ -153,6 +153,29 @@ namespace UniversiteProjeYonetimSistemi.Services
                 akademisyenId: gorusme.AkademisyenId);
         }
 
+        // 6. Proje aşaması tamamlandığında bildirim gönder
+        public async Task ProjeAsamasiTamamlandiBildirimiGonder(ProjeAsamasi projeAsamasi)
+        {
+            if (projeAsamasi == null)
+                return;
+
+            var proje = await _context.Projeler
+                .Include(p => p.Ogrenci)
+                .Include(p => p.Mentor)
+                .FirstOrDefaultAsync(p => p.Id == projeAsamasi.ProjeId);
+
+            if (proje == null || !proje.MentorId.HasValue)
+                return;
+
+            string ogrenciAd = await GetOgrenciAdSoyad(proje.OgrenciId.Value);
+
+            await BildirimOlustur(
+                $"Proje aşaması tamamlandı: {projeAsamasi.AsamaAdi}",
+                $"{ogrenciAd} '{proje.Ad}' projesinde '{projeAsamasi.AsamaAdi}' aşamasını tamamladı. Değerlendirmeniz gerekiyor.",
+                "Uyari",
+                akademisyenId: proje.MentorId.Value);
+        }
+
         // Okunmamış bildirim sayısını getir
         public async Task<int> OkunmamisBildirimSayisiniGetir(string kullaniciId, string rol)
         {

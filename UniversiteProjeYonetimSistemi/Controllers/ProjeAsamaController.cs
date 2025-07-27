@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UniversiteProjeYonetimSistemi.Models;
 using UniversiteProjeYonetimSistemi.Services;
+using System.Linq;
 
 namespace UniversiteProjeYonetimSistemi.Controllers
 {
@@ -12,13 +13,16 @@ namespace UniversiteProjeYonetimSistemi.Controllers
     {
         private readonly IProjeService _projeService;
         private readonly AuthService _authService;
+        private readonly IBildirimService _bildirimService;
 
         public ProjeAsamaController(
             IProjeService projeService,
-            AuthService authService)
+            AuthService authService,
+            IBildirimService bildirimService)
         {
             _projeService = projeService;
             _authService = authService;
+            _bildirimService = bildirimService;
         }
 
         // Helper method to check if current user is the mentor of the project
@@ -115,6 +119,21 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         public async Task<IActionResult> UpdateStatus(int id, int projeId, bool tamamlandi)
         {
             await _projeService.UpdateStageStatusAsync(id, tamamlandi);
+            
+            // Eğer aşama tamamlandı olarak işaretlendiyse ve öğrenci veya admin tarafından yapıldıysa bildirim gönder
+            if (tamamlandi && (User.IsInRole("Ogrenci") || User.IsInRole("Admin")))
+            {
+                // Aşamayı getir
+                var asamalar = await _projeService.GetStagesByProjeIdAsync(projeId);
+                var asama = asamalar.FirstOrDefault(a => a.Id == id);
+                
+                if (asama != null)
+                {
+                    // Bildirim gönder
+                    await _bildirimService.ProjeAsamasiTamamlandiBildirimiGonder(asama);
+                }
+            }
+            
             TempData["SuccessMessage"] = tamamlandi ? "Aşama tamamlandı olarak işaretlendi." : "Aşama devam ediyor olarak işaretlendi.";
             return RedirectToAction("Details", "Proje", new { id = projeId });
         }

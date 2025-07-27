@@ -26,5 +26,10 @@ namespace UniversiteProjeYonetimSistemi.Models
         
         [Required]
         public int SiraNo { get; set; }
+        
+        // Akademisyen tarafından değerlendirilip değerlendirilmediği
+        public bool Degerlendirildi { get; set; } = false;
+        
+        public DateTime? DegerlendirmeTarihi { get; set; }
     }
 } 

@@ -72,27 +72,226 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Liste animasyonlarını başlat
-    initListAnimations();
-
+    // Ana animasyon sistemini başlat
+    initializePageAnimations();
+    
     // Hover animasyonları için sınıflar ekleyelim
     applyHoverEffects();
-    
-    // Kart animasyonları için sınıflar ekleyelim
-    applyCardAnimations();
-    
-    // Sayfa geçiş animasyonu
-    animatePageTransition();
     
     // Veri yükleme animasyonlarını otomatik ekleyelim
     convertLoadingElements();
     
-    // Tablo satır animasyonları
-    animateTableRows();
-    
     // Bildirim rozetlerini canlandıralım
     animateNotifications();
 });
+
+// =====================================================
+// YENİ: KAPSAMLI SAYFA ANIMASYON SİSTEMİ
+// =====================================================
+
+// Ana animasyon sistemi - tüm sayfalarda çalışır
+function initializePageAnimations() {
+    // Animasyonlar kapalıysa hiçbir şey yapma
+    if (document.body.classList.contains('no-animations')) {
+        // Animasyonlar kapalıysa tüm elementleri görünür yap
+        makeAllElementsVisible();
+        return;
+    }
+
+    // Sayfa elementlerini otomatik tespit et ve animasyon sınıfları ekle
+    categorizeAndAnimateElements();
+    
+    // Animasyonları sırasıyla başlat
+    startStaggeredAnimations();
+}
+
+// Animasyonlar kapalıysa elementleri görünür yap
+function makeAllElementsVisible() {
+    const allElements = document.querySelectorAll('.page-header, .stat-card, .dashboard-card, .main-table, .card, form, .btn');
+    allElements.forEach(element => {
+        element.style.opacity = '1';
+        element.style.transform = 'none';
+    });
+}
+
+// Sayfa elementlerini kategorilere ayır ve animasyon sınıfları ekle
+function categorizeAndAnimateElements() {
+    // Animasyon sırasını belirlemek için tüm elementleri topla
+    const animationSequence = [];
+    
+    // 1. Sayfa başlıkları (en üstte) - Sadece .page-header div'lerini seç - AkademisyenDashboard hariç tutuyoruz
+    const pageHeaders = document.querySelectorAll('.page-header:not(.no-animation)');
+    pageHeaders.forEach(header => {
+        if (!header.classList.contains('animate-header')) {
+            header.classList.add('animate-header');
+            animationSequence.push({ element: header, type: 'header', delay: 0 });
+        }
+    });
+
+    // 2. İstatistik kartları (dashboard)
+    const statCards = document.querySelectorAll('.stat-card, .dashboard-card, .card.shadow-sm.h-100');
+    statCards.forEach(card => {
+        if (!card.classList.contains('animate-stat')) {
+            card.classList.add('animate-stat');
+            animationSequence.push({ element: card, type: 'stat', delay: 100 });
+        }
+    });
+
+    // 3. Ana tablolar ve içerik kartları
+    const mainTables = document.querySelectorAll('.main-table, .card.shadow-sm.mb-4, table.table, .table-responsive');
+    mainTables.forEach(table => {
+        if (!table.classList.contains('animate-table')) {
+            table.classList.add('animate-table');
+            animationSequence.push({ element: table, type: 'table', delay: 200 });
+        }
+    });
+
+    // 4. Genel kartlar
+    const cards = document.querySelectorAll('.card:not(.stat-card):not(.dashboard-card):not(.main-table)');
+    cards.forEach(card => {
+        if (!card.classList.contains('animate-card')) {
+            card.classList.add('animate-card');
+            animationSequence.push({ element: card, type: 'card', delay: 300 });
+        }
+    });
+
+    // 5. Alt bölüm kartları (bottom-section)
+    const bottomCards = document.querySelectorAll('.bottom-section .card');
+    bottomCards.forEach(card => {
+        if (!card.classList.contains('animate-card')) {
+            card.classList.add('animate-card');
+            animationSequence.push({ element: card, type: 'bottom-card', delay: 400 });
+        }
+    });
+
+    // 6. Formlar
+    const forms = document.querySelectorAll('form, .form-container');
+    forms.forEach(form => {
+        if (!form.classList.contains('animate-form')) {
+            form.classList.add('animate-form');
+            animationSequence.push({ element: form, type: 'form', delay: 350 });
+        }
+    });
+
+    // 7. Butonlar (en son)
+    const buttons = document.querySelectorAll('.btn:not(.animate-button), .details-btn');
+    buttons.forEach(button => {
+        if (!button.classList.contains('animate-button')) {
+            button.classList.add('animate-button');
+            animationSequence.push({ element: button, type: 'button', delay: 500 });
+        }
+    });
+
+    // Tablo satırlarını ayrı olarak canlandır
+    animateTableRows();
+    
+    // Liste öğelerini ayrı olarak canlandır
+    animateListItems();
+
+    return animationSequence;
+}
+
+// Sıralı animasyonları başlat
+function startStaggeredAnimations() {
+    // Ana elementler için delay'ler
+    const delays = {
+        header: 0,
+        stat: 150,
+        table: 300,
+        card: 450,
+        'bottom-card': 600,
+        form: 400,
+        button: 750
+    };
+
+    // Elementleri DOM sırasına göre topla ve animasyonlarını başlat
+    setTimeout(() => {
+        // Başlıklar - no-animation sınıfına sahip olanları hariç tut
+        document.querySelectorAll('.animate-header:not(.no-animation)').forEach((element, index) => {
+            // Ebeveyn elementi no-animation sınıfına sahipse bu elementi atla
+            if (element.closest('.no-animation')) return;
+            
+            setTimeout(() => {
+                element.classList.add('animate-in');
+            }, delays.header + (index * 100));
+        });
+    }, 50);
+
+    setTimeout(() => {
+        // İstatistik kartları
+        document.querySelectorAll('.animate-stat').forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('animate-in');
+            }, delays.stat + (index * 80));
+        });
+    }, 100);
+
+    setTimeout(() => {
+        // Tablolar
+        document.querySelectorAll('.animate-table').forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('animate-in');
+            }, delays.table + (index * 120));
+        });
+    }, 150);
+
+    setTimeout(() => {
+        // Normal kartlar
+        document.querySelectorAll('.animate-card').forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('animate-in');
+            }, delays.card + (index * 100));
+        });
+    }, 200);
+
+    setTimeout(() => {
+        // Formlar
+        document.querySelectorAll('.animate-form').forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('animate-in');
+            }, delays.form + (index * 90));
+        });
+    }, 250);
+
+    setTimeout(() => {
+        // Butonlar
+        document.querySelectorAll('.animate-button').forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('animate-in');
+            }, delays.button + (index * 50));
+        });
+    }, 300);
+}
+
+// Tablo satırlarını canlandır
+function animateTableRows() {
+    const tables = document.querySelectorAll('table.table:not(.no-animation) tbody');
+    
+    tables.forEach(tbody => {
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach((row, index) => {
+            row.classList.add('animate-table-row');
+            setTimeout(() => {
+                row.classList.add('animate-in');
+            }, 800 + (index * 50)); // Tablolar canlandıktan sonra satırlar
+        });
+    });
+}
+
+// Liste öğelerini canlandır
+function animateListItems() {
+    const listContainers = document.querySelectorAll('.list-group, .nav-pills, .nav-tabs');
+    
+    listContainers.forEach(container => {
+        const items = container.querySelectorAll('.list-group-item, .nav-item, .nav-link');
+        items.forEach((item, index) => {
+            item.classList.add('animate-list-item');
+            setTimeout(() => {
+                item.classList.add('animate-in');
+            }, 600 + (index * 40));
+        });
+    });
+}
 
 // Sayfa geçiş animasyonu
 function animatePageTransition() {
@@ -109,14 +308,8 @@ function animatePageTransition() {
 
 // Liste animasyonlarını başlat
 function initListAnimations() {
-    // Tablo, liste ve kart gruplarında animasyon efektleri
-    const listContainers = document.querySelectorAll('.table tbody, .list-group, .card-deck, .row.g-3');
-    
-    listContainers.forEach(container => {
-        if (!container.classList.contains('no-animation')) {
-            container.classList.add('animate-list');
-        }
-    });
+    // Bu fonksiyon artık initializePageAnimations içinde entegre edildi
+    // Eski implementasyon yerine yeni sistem kullanılıyor
 }
 
 // Hover efektlerini uygula
@@ -183,6 +376,17 @@ function animateCounter(element, start, end) {
     requestAnimationFrame(animate);
 }
 
+// Bildirim rozetlerini canlandır
+function animateNotifications() {
+    const badges = document.querySelectorAll('.badge.bg-danger');
+    
+    badges.forEach(badge => {
+        if (!badge.classList.contains('no-animation')) {
+            badge.classList.add('notification-badge');
+        }
+    });
+}
+
 // Loading durumu göstergeleri oluştur
 function convertLoadingElements() {
     // Loading metni olan öğelere animasyonlu spinner ekle
@@ -215,33 +419,127 @@ function convertLoadingElements() {
     });
 }
 
-// Tablo satır animasyonları
-function animateTableRows() {
-    const tables = document.querySelectorAll('table.table:not(.no-animation)');
+// Dashboard specific animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Count-up animasyonu için fonksiyon
+    function animateCounter(element) {
+        const target = parseInt(element.getAttribute('data-count'));
+        if (isNaN(target) || target === 0) return;
+        
+        const duration = 2000; // 2 saniye
+        const increment = target / (duration / 16); // 60fps
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 16);
+    }
     
-    tables.forEach(table => {
-        const tbody = table.querySelector('tbody');
-        if (tbody) {
-            const rows = tbody.querySelectorAll('tr');
-            rows.forEach((row, index) => {
-                row.style.opacity = '0';
-                setTimeout(() => {
-                    row.classList.add('animate-slide-up');
-                    row.style.opacity = '1';
-                    row.style.animationDelay = `${index * 0.05}s`;
-                }, 100);
-            });
-        }
+    // Intersection Observer ile görünür olduğunda animasyonu başlat
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counters = entry.target.querySelectorAll('.stat-number[data-count]');
+                counters.forEach(counter => {
+                    if (!counter.classList.contains('animated')) {
+                        animateCounter(counter);
+                        counter.classList.add('animated');
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+    
+    // İstatistik kartlarını gözlemle
+    document.querySelectorAll('.stat-card').forEach(card => {
+        observer.observe(card);
     });
-}
-
-// Bildirim rozetlerini canlandır
-function animateNotifications() {
-    const badges = document.querySelectorAll('.badge.bg-danger');
     
-    badges.forEach(badge => {
-        if (!badge.classList.contains('no-animation')) {
-            badge.classList.add('notification-badge');
+    // Detay butonları için ripple efekti
+    document.querySelectorAll('.details-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Animasyon kapalıysa ripple efekti yapma
+            if (document.body.classList.contains('no-animations')) return;
+            
+            const ripple = document.createElement('span');
+            const size = Math.max(this.offsetWidth, this.offsetHeight);
+            const rect = this.getBoundingClientRect();
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.backgroundColor = 'rgba(255,255,255,0.6)';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple-effect 0.6s linear';
+            ripple.style.pointerEvents = 'none';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+    
+    // Dashboard'da enhanced hover efektleri
+    initializeDashboardHoverEffects();
+});
+
+// Dashboard hover efektlerini başlat
+function initializeDashboardHoverEffects() {
+    // Project row hover efektleri
+    document.querySelectorAll('.project-row').forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            if (!document.body.classList.contains('no-animations')) {
+                this.style.backgroundColor = 'rgba(var(--primary-color-rgb), 0.02)';
+            }
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+    
+    // Comment ve meeting item hover efektleri - tam olarak tablo satırları gibi
+    document.querySelectorAll('.comment-item, .meeting-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            if (!document.body.classList.contains('no-animations')) {
+                this.style.backgroundColor = 'var(--table-hover-bg)';
+                this.style.transform = 'translateX(3px)';
+            }
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+            this.style.transform = '';
+        });
+    });
+    
+    // Stat icon pulse efekti (hover üzerine)
+    document.querySelectorAll('.stat-card').forEach(card => {
+        const icon = card.querySelector('.stat-icon');
+        if (icon) {
+            card.addEventListener('mouseenter', function() {
+                if (!document.body.classList.contains('no-animations')) {
+                    icon.style.animation = 'pulse 2s infinite';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                icon.style.animation = '';
+            });
         }
     });
 }

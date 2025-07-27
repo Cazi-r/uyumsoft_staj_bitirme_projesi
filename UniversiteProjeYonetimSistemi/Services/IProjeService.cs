@@ -43,5 +43,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         Task<IEnumerable<ProjeAsamasi>> GetStagesByProjeIdAsync(int projeId);
         Task UpdateStageStatusAsync(int asamaId, bool tamamlandi);
         Task DeleteStageAsync(int asamaId);
+        Task<int> GetDegerlendirilmeyenAsamaSayisiByMentorIdAsync(int mentorId);
+        Task UpdateStageEvaluatedStatusAsync(int asamaId, bool degerlendirildi);
     }
 } 

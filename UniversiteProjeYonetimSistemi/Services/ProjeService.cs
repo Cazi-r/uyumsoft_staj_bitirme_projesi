@@ -355,5 +355,34 @@ namespace UniversiteProjeYonetimSistemi.Services
                 await _context.SaveChangesAsync();
             }
         }
+        
+        public async Task<int> GetDegerlendirilmeyenAsamaSayisiByMentorIdAsync(int mentorId)
+        {
+            return await _context.ProjeAsamalari
+                .Include(a => a.Proje)
+                .Where(a => a.Proje.MentorId == mentorId && a.Tamamlandi && !a.Degerlendirildi)
+                .CountAsync();
+        }
+        
+        public async Task UpdateStageEvaluatedStatusAsync(int asamaId, bool degerlendirildi)
+        {
+            var asama = await _context.ProjeAsamalari.FindAsync(asamaId);
+            if (asama != null)
+            {
+                asama.Degerlendirildi = degerlendirildi;
+                if (degerlendirildi)
+                {
+                    asama.DegerlendirmeTarihi = DateTime.Now;
+                }
+                else
+                {
+                    asama.DegerlendirmeTarihi = null;
+                }
+                asama.UpdatedAt = DateTime.Now;
+
+                _context.ProjeAsamalari.Update(asama);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 } 
