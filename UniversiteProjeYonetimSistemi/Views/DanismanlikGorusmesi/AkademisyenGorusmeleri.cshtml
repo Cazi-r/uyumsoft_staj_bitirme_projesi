@@ -5,13 +5,13 @@
 }
 
 <div class="container mt-4">
-    <div class="row mb-3">
+    <div class="row mb-3 animate-header">
         <div class="col-md-8">
             <h2>@ViewData["Title"]</h2>
             <p>Öğrencilerin görüşme taleplerini bu sayfadan yönetebilirsiniz.</p>
         </div>
         <div class="col-md-4 text-end">
-            <a asp-action="Create" class="btn btn-primary">
+            <a asp-action="Create" class="btn btn-primary animate-button">
                 <i class="bi bi-plus-circle"></i> Yeni Görüşme Planla
             </a>
         </div>
@@ -35,7 +35,7 @@
 
     <div class="row mb-4">
         <div class="col-12">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <ul class="nav nav-tabs animate-nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="bekleyen-tab" data-bs-toggle="tab" data-bs-target="#bekleyen" type="button" role="tab" aria-controls="bekleyen" aria-selected="true">
                         Bekleyen Talepler
@@ -73,10 +73,10 @@
     <div class="tab-content" id="myTabContent">
         <!-- Bekleyen Talepler -->
         <div class="tab-pane fade show active" id="bekleyen" role="tabpanel" aria-labelledby="bekleyen-tab">
-            <div class="card">
+            <div class="card animate-card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped animate-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Proje</th>
@@ -92,7 +92,7 @@
                                 {
                                     @foreach (var item in ViewBag.BekleyenTalepler)
                                     {
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>@item.Proje?.Ad</td>
                                             <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
                                             <td>@item.Baslik</td>
@@ -100,23 +100,23 @@
                                             <td>@item.GorusmeTipi</td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary animate-button">
                                                         <i class="bi bi-eye"></i> Detay
                                                     </a>
-                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary animate-button">
                                                         <i class="bi bi-pencil"></i> Düzenle
                                                     </a>
                                                     <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
                                                         <input type="hidden" name="id" value="@item.Id" />
                                                         <input type="hidden" name="durum" value="Onaylandı" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                                        <button type="submit" class="btn btn-sm btn-outline-success animate-button">
                                                             <i class="bi bi-check-circle"></i> Onayla
                                                         </button>
                                                     </form>
                                                     <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
                                                         <input type="hidden" name="id" value="@item.Id" />
                                                         <input type="hidden" name="durum" value="Reddedildi" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger animate-button">
                                                             <i class="bi bi-x-circle"></i> Reddet
                                                         </button>
                                                     </form>
@@ -140,10 +140,10 @@
 
         <!-- Yaklaşan Görüşmeler -->
         <div class="tab-pane fade" id="yakin" role="tabpanel" aria-labelledby="yakin-tab">
-            <div class="card">
+            <div class="card animate-card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped animate-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Proje</th>
@@ -161,7 +161,7 @@
                                     @foreach (var item in ViewBag.YakinGorusmeler)
                                     {
                                         var kalanGun = (int)((item.GorusmeTarihi - DateTime.Now).TotalDays) + 1;
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>@item.Proje?.Ad</td>
                                             <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
                                             <td>@item.Baslik</td>
@@ -179,7 +179,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary animate-button">
                                                         <i class="bi bi-eye"></i> Detay
                                                     </a>
                                                 </div>
@@ -202,10 +202,10 @@
 
         <!-- İlerideki Görüşmeler -->
         <div class="tab-pane fade" id="ilerideki" role="tabpanel" aria-labelledby="ilerideki-tab">
-            <div class="card">
+            <div class="card animate-card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped animate-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Proje</th>
@@ -223,7 +223,7 @@
                                     @foreach (var item in ViewBag.IleridekiGorusmeler)
                                     {
                                         var kalanGun = (int)(item.GorusmeTarihi - DateTime.Now).TotalDays;
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>@item.Proje?.Ad</td>
                                             <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
                                             <td>@item.Baslik</td>
@@ -232,7 +232,7 @@
                                             <td><span class="badge bg-info">@kalanGun gün sonra</span></td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary animate-button">
                                                         <i class="bi bi-eye"></i> Detay
                                                     </a>
                                                 </div>
@@ -255,10 +255,10 @@
 
         <!-- Geçmiş Görüşmeler -->
         <div class="tab-pane fade" id="gecmis" role="tabpanel" aria-labelledby="gecmis-tab">
-            <div class="card">
+            <div class="card animate-card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped animate-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Proje</th>
@@ -274,7 +274,7 @@
                                 {
                                     @foreach (var item in ViewBag.GecmisGorusmeler)
                                     {
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>@item.Proje?.Ad</td>
                                             <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
                                             <td>@item.Baslik</td>
@@ -282,7 +282,7 @@
                                             <td>@item.GorusmeTipi</td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary animate-button">
                                                         <i class="bi bi-eye"></i> Detay
                                                     </a>
                                                 </div>
@@ -305,10 +305,10 @@
 
         <!-- İptal Edilenler -->
         <div class="tab-pane fade" id="iptal" role="tabpanel" aria-labelledby="iptal-tab">
-            <div class="card">
+            <div class="card animate-card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped animate-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Proje</th>
@@ -325,7 +325,7 @@
                                 {
                                     @foreach (var item in ViewBag.IptalGorusmeler)
                                     {
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>@item.Proje?.Ad</td>
                                             <td>@item.Ogrenci?.Ad @item.Ogrenci?.Soyad</td>
                                             <td>@item.Baslik</td>
@@ -334,7 +334,7 @@
                                             <td>@(item.UpdatedAt != default(DateTime) ? item.UpdatedAt.ToString("g") : "-")</td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary animate-button">
                                                         <i class="bi bi-eye"></i> Detay
                                                     </a>
                                                 </div>
@@ -359,12 +359,14 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            // Bootstrap tab activation
-            $('a[data-toggle="tab"]').on('click', function (e) {
-                e.preventDefault();
-                $(this).tab('show');
-            });
+        $(document).ready(function() {
+            setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
+            setTimeout(function() { $('.animate-nav-tabs').addClass('animate-in'); }, 150);
+            setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
+            setTimeout(function() { $('.animate-form').addClass('animate-in'); }, 300);
+            setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 400);
+            setTimeout(function() { $('.table-hover-item').addClass('animate-in'); }, 500);
+            setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 600);
         });
     </script>
 } 

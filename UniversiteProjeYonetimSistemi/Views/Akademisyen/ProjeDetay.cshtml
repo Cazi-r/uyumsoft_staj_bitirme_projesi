@@ -15,7 +15,7 @@
 }
 
 <div class="container py-4">
-    <div class="row align-items-center mb-4">
+    <div class="row align-items-center mb-4 animate-header">
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
@@ -28,10 +28,10 @@
         </div>
         <div class="col-auto">
             <div class="d-flex">
-                <a asp-action="DegerlendirmeOlustur" asp-route-projeId="@Model.Id" class="btn btn-primary me-2">
+                <a asp-action="DegerlendirmeOlustur" asp-route-projeId="@Model.Id" class="btn btn-primary me-2 animate-button">
                     <i class="fas fa-star me-1"></i> Değerlendir
                 </a>
-                <a asp-action="Danismanliklar" class="btn btn-outline-secondary">
+                <a asp-action="Danismanliklar" class="btn btn-outline-secondary animate-button">
                     <i class="fas fa-arrow-left me-1"></i> Listeye Dön
                 </a>
             </div>
@@ -41,9 +41,9 @@
     <div class="row">
         <!-- Ana İçerik -->
         <div class="col-md-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" id="projeTab" role="tablist">
+            <div class="card shadow-sm mb-4 animate-card">
+                <div class="card-header animate-header">
+                    <ul class="nav nav-tabs card-header-tabs animate-nav-tabs" id="projeTab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Genel Bakış</button>
                         </li>
@@ -64,7 +64,7 @@
                         <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
                             <h5 class="card-title">Proje Bilgileri</h5>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
+                                <table class="table table-bordered table-striped animate-table">
                                     <tr>
                                         <th style="width: 200px;">Proje Adı</th>
                                         <td>@Model.Ad</td>
@@ -149,7 +149,7 @@
                             </div>
                             
                             <h5 class="mt-4">Proje Açıklaması</h5>
-                            <div class="card">
+                            <div class="card animate-card">
                                 <div class="card-body">
                                     <p style="white-space: pre-line;">@Model.Aciklama</p>
                                 </div>
@@ -161,7 +161,7 @@
                             @if (ViewBag.Dosyalar != null && ViewBag.Dosyalar.Count > 0)
                             {
                                 <div class="table-responsive">
-                                    <table class="table table-hover">
+                                    <table class="table table-hover animate-table">
                                         <thead>
                                             <tr>
                                                 <th>Dosya Adı</th>
@@ -175,7 +175,7 @@
                                         <tbody>
                                             @foreach (var dosya in ViewBag.Dosyalar)
                                             {
-                                                <tr>
+                                                <tr class="table-hover-item">
                                                     <td>@dosya.DosyaAdi</td>
                                                     <td>@dosya.Aciklama</td>
                                                     <td>@(dosya.DosyaBoyutu / 1024) KB</td>
@@ -231,7 +231,7 @@
                                             <option value="Genel">Genel</option>
                                         </select>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-primary animate-button">
                                         <i class="fas fa-comment me-1"></i> Yorum Ekle
                                     </button>
                                 </form>
@@ -244,7 +244,7 @@
                             {
                                 foreach (var yorum in siraliYorumlar)
                                 {
-                                    <div class="card mb-3">
+                                    <div class="card mb-3 animate-card">
                                         <div class="card-header d-flex justify-content-between align-items-center @(yorum.AkademisyenId.HasValue ? "bg-light" : "")">
                                             <div>
                                                 @if (yorum.OgrenciId.HasValue && yorum.Ogrenci != null)
@@ -279,7 +279,7 @@
                         <!-- Değerlendirmeler -->
                         <div class="tab-pane fade" id="evaluations" role="tabpanel" aria-labelledby="evaluations-tab">
                             <div class="mb-3">
-                                <a asp-action="DegerlendirmeOlustur" asp-route-projeId="@Model.Id" class="btn btn-primary">
+                                <a asp-action="DegerlendirmeOlustur" asp-route-projeId="@Model.Id" class="btn btn-primary animate-button">
                                     <i class="fas fa-plus-circle me-1"></i> Yeni Değerlendirme Ekle
                                 </a>
                             </div>
@@ -288,7 +288,7 @@
                             {
                                 foreach (var degerlendirme in siraliDegerlendirmeler)
                                 {
-                                    <div class="card mb-3">
+                                    <div class="card mb-3 animate-card">
                                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                             <div>
                                                 <span class="fw-bold">@degerlendirme.Akademisyen.Unvan @degerlendirme.Akademisyen.Ad @degerlendirme.Akademisyen.Soyad</span>
@@ -323,8 +323,8 @@
             <!-- Öğrenci Bilgileri -->
             @if (Model.Ogrenci != null)
             {
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
+                <div class="card shadow-sm mb-4 animate-card">
+                    <div class="card-header bg-light animate-header">
                         <h5 class="mb-0">Öğrenci Bilgileri</h5>
                     </div>
                     <div class="card-body">
@@ -347,8 +347,8 @@
             }
             
             <!-- Proje Aşamaları -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-light">
+            <div class="card shadow-sm animate-card">
+                <div class="card-header bg-light animate-header">
                     <h5 class="mb-0">Proje Aşamaları</h5>
                 </div>
                 <div class="card-body">
@@ -387,7 +387,7 @@
                         <div class="text-center py-4">
                             <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
                             <p>Bu proje için henüz aşama tanımlanmamış.</p>
-                            <a asp-controller="ProjeAsama" asp-action="Create" asp-route-projeId="@Model.Id" class="btn btn-primary">
+                            <a asp-controller="ProjeAsama" asp-action="Create" asp-route-projeId="@Model.Id" class="btn btn-primary animate-button">
                                 <i class="fas fa-plus-circle me-1"></i> Aşama Ekle
                             </a>
                         </div>
@@ -397,3 +397,16 @@
         </div>
     </div>
 </div> 
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
+            setTimeout(function() { $('.animate-nav-tabs').addClass('animate-in'); }, 150);
+            setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
+            setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 300);
+            setTimeout(function() { $('.table-hover-item').addClass('animate-in'); }, 400);
+            setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 500);
+        });
+    </script>
+} 

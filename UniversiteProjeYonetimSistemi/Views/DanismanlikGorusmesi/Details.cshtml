@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-4">
-    <div class="row mb-3">
+    <div class="row mb-3 animate-header">
         <div class="col">
             <h2>@ViewData["Title"]</h2>
             <nav aria-label="breadcrumb">
@@ -19,7 +19,7 @@
 
     <div class="row">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="m-0">@Model.Baslik</h5>
                     <span class="badge @(Model.Durum == "Beklemede" ? "bg-warning" : Model.Durum == "Onaylandı" ? "bg-success" : "bg-danger")">
@@ -79,7 +79,7 @@
                                     <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
                                         <input type="hidden" name="id" value="@Model.Id" />
                                         <input type="hidden" name="durum" value="Onaylandı" />
-                                        <button type="submit" class="btn btn-success">
+                                        <button type="submit" class="btn btn-success animate-button">
                                             <i class="bi bi-check-circle"></i> Onayla
                                         </button>
                                     </form>
@@ -87,7 +87,7 @@
                                     <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
                                         <input type="hidden" name="id" value="@Model.Id" />
                                         <input type="hidden" name="durum" value="Reddedildi" />
-                                        <button type="submit" class="btn btn-danger">
+                                        <button type="submit" class="btn btn-danger animate-button">
                                             <i class="bi bi-x-circle"></i> Reddet
                                         </button>
                                     </form>
@@ -95,12 +95,12 @@
                                 
                                 @if ((User.IsInRole("Ogrenci") && Model.Durum == "Beklemede") || User.IsInRole("Akademisyen") && Model.Durum != "Onaylandı")
                                 {
-                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
                                         <i class="bi bi-pencil"></i> Düzenle
                                     </a>
                                 }
                                 
-                                <a asp-action="Index" class="btn btn-outline-secondary">
+                                <a asp-action="Index" class="btn btn-outline-secondary animate-button">
                                     <i class="bi bi-arrow-left"></i> Geri
                                 </a>
                             </div>
@@ -113,7 +113,7 @@
         <div class="col-md-4">
             @if (Model.Durum == "Onaylandı")
             {
-                <div class="card border-success mb-3">
+                <div class="card border-success mb-3 animate-card">
                     <div class="card-header bg-success text-white">
                         <i class="bi bi-calendar-check"></i> Görüşme Bilgileri
                     </div>
@@ -132,7 +132,7 @@
             }
             else if (Model.Durum == "Reddedildi")
             {
-                <div class="card border-danger mb-3">
+                <div class="card border-danger mb-3 animate-card">
                     <div class="card-header bg-danger text-white">
                         <i class="bi bi-x-circle"></i> Görüşme Bilgileri
                     </div>
@@ -146,7 +146,7 @@
                             <p class="card-text">
                                 Yeni bir görüşme talebi oluşturabilirsiniz.
                             </p>
-                            <a asp-action="Create" class="btn btn-outline-primary">
+                            <a asp-action="Create" class="btn btn-outline-primary animate-button">
                                 <i class="bi bi-plus-circle"></i> Yeni Talep Oluştur
                             </a>
                         }
@@ -155,7 +155,7 @@
             }
             else
             {
-                <div class="card border-warning mb-3">
+                <div class="card border-warning mb-3 animate-card">
                     <div class="card-header bg-warning text-dark">
                         <i class="bi bi-hourglass-split"></i> Görüşme Bilgileri
                     </div>
@@ -173,3 +173,16 @@
         </div>
     </div>
 </div> 
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
+            setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
+            setTimeout(function() { $('.animate-form').addClass('animate-in'); }, 300);
+            setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 400);
+            setTimeout(function() { $('.table-hover-item').addClass('animate-in'); }, 500);
+            setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 600);
+        });
+    </script>
+} 

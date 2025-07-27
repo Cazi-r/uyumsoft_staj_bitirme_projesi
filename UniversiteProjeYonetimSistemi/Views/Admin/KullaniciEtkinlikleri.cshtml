@@ -9,7 +9,7 @@
 }
 
 <div class="container py-4">
-    <div class="row align-items-center mb-4">
+    <div class="row align-items-center mb-4 animate-header">
         <div class="col">
             <h1 class="mb-0">Kullanıcı Etkinlikleri</h1>
         </div>
@@ -17,12 +17,12 @@
         </div>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm mb-4 animate-card">
         <div class="card-header bg-light">
             <h5 class="mb-0">Etkinlik Filtresi</h5>
         </div>
         <div class="card-body">
-            <form method="get" asp-action="KullaniciEtkinlikleri" class="row align-items-end">
+            <form method="get" asp-action="KullaniciEtkinlikleri" class="row align-items-end animate-form">
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Kullanıcı</label>
                     <!-- Kullanıcı seçimi dropdown menüsü -->
@@ -60,7 +60,7 @@
                     </select>
                 </div>
                 <div class="col-md-4 mb-3 d-grid">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary animate-button">
                         <i class="fas fa-filter me-2"></i> Filtrele
                     </button>
                 </div>
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm animate-card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
                 @if (Model.Count() == 0)
@@ -83,7 +83,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover table-striped mb-0">
+                <table class="table table-hover table-striped mb-0 animate-table">
                     <thead class="table-light">
                         <tr>
                             <th style="width: 180px;">Tarih</th>
@@ -97,10 +97,10 @@
                     <tbody>
                         @foreach (var etkinlik in Model)
                         {
-                            <tr>
+                            <tr class="table-hover-item">
                                 <td>@(((DateTime)etkinlik.Tarih).ToString("dd.MM.yyyy HH:mm"))</td>
                                 <td>
-                                    <a href="javascript:void(0);" onclick="filterByUser(@etkinlik.KullaniciId)">
+                                    <a href="javascript:void(0);" onclick="filterByUser(@etkinlik.KullaniciId)" class="animate-button">
                                         @etkinlik.KullaniciAdi
                                     </a>
                                 </td>
@@ -113,7 +113,7 @@
                                     {
                                         if (etkinlik.ProjeId.HasValue && etkinlik.ProjeId > 0)
                                         {
-                                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@etkinlik.ProjeId" class="text-decoration-none">
+                                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@etkinlik.ProjeId" class="text-decoration-none animate-button">
                                                 <small><i class="fas fa-external-link-alt me-1"></i>@etkinlik.Detay</small>
                                             </a>
                                         }
@@ -154,16 +154,16 @@
                 <nav aria-label="Sayfalama">
                     <ul class="pagination justify-content-center mb-0">
                         <li class="page-item @(suankiSayfa == 1 ? "disabled" : "")">
-                            <a class="page-link" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = suankiSayfa - 1 })">Önceki</a>
+                            <a class="page-link animate-button" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = suankiSayfa - 1 })">Önceki</a>
                         </li>
                         @for (int i = 1; i <= toplamSayfa; i++)
                         {
                             <li class="page-item @(suankiSayfa == i ? "active" : "")">
-                                <a class="page-link" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = i })">@i</a>
+                                <a class="page-link animate-button" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = i })">@i</a>
                             </li>
                         }
                         <li class="page-item @(suankiSayfa == toplamSayfa ? "disabled" : "")">
-                            <a class="page-link" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = suankiSayfa + 1 })">Sonraki</a>
+                            <a class="page-link animate-button" href="@Url.Action("KullaniciEtkinlikleri", new { kullaniciId = secilenKullaniciId, tip = secilenTip, sayfa = suankiSayfa + 1 })">Sonraki</a>
                         </li>
                     </ul>
                 </nav>
@@ -174,6 +174,33 @@
 
 @section Scripts {
     <script>
+        $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-table').addClass('animate-in');
+            }, 400);
+            
+            setTimeout(function() {
+                $('.table-hover-item').addClass('animate-in');
+            }, 500);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 600);
+        });
+        
         function filterByUser(userId) {
             window.location.href = '@Url.Action("KullaniciEtkinlikleri")' + '?kullaniciId=' + userId;
         }

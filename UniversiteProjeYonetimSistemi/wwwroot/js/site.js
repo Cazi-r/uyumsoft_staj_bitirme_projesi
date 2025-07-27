@@ -98,11 +98,13 @@ function initializePageAnimations() {
         return;
     }
 
+
     // Sayfa elementlerini otomatik tespit et ve animasyon sınıfları ekle
     categorizeAndAnimateElements();
     
     // Animasyonları sırasıyla başlat
     startStaggeredAnimations();
+    
 }
 
 // Animasyonlar kapalıysa elementleri görünür yap

@@ -6,22 +6,22 @@
     bool isFromProjeDegerlendirme = Context.Request.Path.Value.Contains("ProjeDegerlendirme");
 }
 
-<div class="container py-4">
+<div class="container py-4 animate-header">
     <div class="row">
         <div class="col-md-8 mx-auto">
-            <div class="card shadow">
+            <div class="card shadow animate-card">
                 <div class="card-header bg-light">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Proje Değerlendirme</h4>
                         @if (isFromProjeDegerlendirme)
                         {
-                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-outline-secondary btn-sm">
+                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-outline-secondary btn-sm animate-button">
                                 <i class="fas fa-arrow-left me-1"></i> Proje Detayına Dön
                             </a>
                         }
                         else
                         {
-                            <a asp-controller="Akademisyen" asp-action="ProjeDetay" asp-route-id="@proje.Id" class="btn btn-outline-secondary btn-sm">
+                            <a asp-controller="Akademisyen" asp-action="ProjeDetay" asp-route-id="@proje.Id" class="btn btn-outline-secondary btn-sm animate-button">
                                 <i class="fas fa-arrow-left me-1"></i> Proje Detayına Dön
                             </a>
                         }
@@ -31,7 +31,7 @@
                     <div class="mb-4">
                         <h5>Proje Bilgileri</h5>
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover-item">
                                 <tr>
                                     <th style="width: 150px;">Proje Adı</th>
                                     <td>@proje.Ad</td>
@@ -67,7 +67,7 @@
 
                     @if (isFromProjeDegerlendirme)
                     {
-                        <form asp-controller="ProjeDegerlendirme" asp-action="Add" method="post">
+                        <form asp-controller="ProjeDegerlendirme" asp-action="Add" method="post" class="animate-form">
                             <input type="hidden" name="projeId" value="@proje.Id" />
 
                             <div class="mb-4">
@@ -107,7 +107,7 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary animate-button">
                                     <i class="fas fa-save me-1"></i> Değerlendirmeyi Kaydet
                                 </button>
                             </div>
@@ -115,7 +115,7 @@
                     }
                     else
                     {
-                        <form asp-controller="Akademisyen" asp-action="DegerlendirmeOlustur" method="post">
+                        <form asp-controller="Akademisyen" asp-action="DegerlendirmeOlustur" method="post" class="animate-form">
                             <input type="hidden" name="projeId" value="@proje.Id" />
 
                             <div class="mb-4">
@@ -155,7 +155,7 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary animate-button">
                                     <i class="fas fa-save me-1"></i> Değerlendirmeyi Kaydet
                                 </button>
                             </div>
@@ -169,6 +169,29 @@
 
 @section Scripts {
     <script>
+        // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+        $(document).ready(function() {
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+            
+            setTimeout(function() {
+                $('.table-hover-item').addClass('animate-in');
+            }, 500);
+        });
+        
         // Puan slider değerini göster
         document.getElementById('puanSlider').addEventListener('input', function() {
             document.getElementById('puanDisplay').textContent = this.value;

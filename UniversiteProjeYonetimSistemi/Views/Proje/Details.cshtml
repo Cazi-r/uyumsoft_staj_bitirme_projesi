@@ -21,17 +21,17 @@
         </div>
     }
 
-    <div class="row mb-3">
+    <div class="row mb-3 page-header animate-header">
         <div class="col">
             <h1>@Model.Ad</h1>
         </div>
         <div class="col-auto">
-            <a asp-action="Index" class="btn btn-secondary">
+            <a asp-action="Index" class="btn btn-secondary animate-button">
                 <i class="fas fa-arrow-left"></i> Listeye Dön
             </a>
             @if (User.IsInRole("Admin"))
             {
-                <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
+                <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
                     <i class="fas fa-user-edit"></i> Danışman Değiştir
                 </a>
             }
@@ -39,13 +39,13 @@
             {
                 @if (ViewBag.IsCurrentUserMentor)
                 {
-                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
                         <i class="fas fa-user-edit"></i> Danışman Değiştir
                     </a>
                 }
                 else if (Model.Status == "Beklemede")
                 {
-                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-success">
+                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-success animate-button">
                         <i class="fas fa-check-circle"></i> Projeyi Kabul Et
                     </a>
                 }
@@ -56,12 +56,12 @@
     <div class="row">
         <div class="col-md-8">
             <!-- Proje Detayları -->
-            <div class="card mb-4">
+            <div class="card mb-4 animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Proje Detayları</h5>
                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                     {
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning animate-button">
                             <i class="fas fa-edit"></i> Düzenle
                         </a>
                     }
@@ -89,7 +89,7 @@
                                     @if (Model.Status == "Atanmis")
                                     {
                                         <form asp-action="UpdateStatusToInProgress" asp-route-id="@Model.Id" method="post" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Bu projeyi devam ediyor olarak işaretlemek istiyor musunuz?')">
+                                            <button type="submit" class="btn btn-sm btn-primary animate-button" onclick="return confirm('Bu projeyi devam ediyor olarak işaretlemek istiyor musunuz?')">
                                                 <i class="fas fa-play"></i> Projeyi Başlat
                                             </button>
                                         </form>
@@ -97,7 +97,7 @@
                                     else if (Model.Status == "Devam")
                                     {
                                         <form asp-action="CompleteProject" asp-route-id="@Model.Id" method="post" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Bu projeyi tamamlanmış olarak işaretlemek istiyor musunuz?')">
+                                            <button type="submit" class="btn btn-sm btn-success animate-button" onclick="return confirm('Bu projeyi tamamlanmış olarak işaretlemek istiyor musunuz?')">
                                                 <i class="fas fa-check-circle"></i> Projeyi Tamamla
                                             </button>
                                         </form>
@@ -106,7 +106,7 @@
                                     @if (Model.Status != "Tamamlandi" && Model.Status != "Iptal")
                                     {
                                         <form asp-action="CancelProject" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu projeyi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')">
+                                            <button type="submit" class="btn btn-sm btn-danger animate-button" onclick="return confirm('Bu projeyi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')">
                                                 <i class="fas fa-times-circle"></i> Projeyi İptal Et
                                             </button>
                                         </form>
@@ -143,12 +143,12 @@
             </div>
 
             <!-- Proje Aşamaları -->
-                <div class="card mb-4">
+                <div class="card mb-4 animate-card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5>Proje Aşamaları</h5>
                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                         {
-                        <a asp-controller="ProjeAsama" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
+                        <a asp-controller="ProjeAsama" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary animate-button">
                                 <i class="fas fa-plus"></i> Aşama Ekle
                         </a>
                         }
@@ -170,7 +170,7 @@
                                 <tbody>
                                     @foreach (var asama in Model.Asamalar.OrderBy(a => a.SiraNo))
                                     {
-                                        <tr>
+                                        <tr class="no-animation">
                                             <td>
                                                 <strong>@asama.AsamaAdi</strong>
                                                 @if (!string.IsNullOrEmpty(asama.Aciklama))
@@ -198,7 +198,7 @@
                                                             <input type="hidden" name="id" value="@asama.Id" />
                                                             <input type="hidden" name="projeId" value="@Model.Id" />
                                                             <input type="hidden" name="tamamlandi" value="true" />
-                                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                            <button type="submit" class="btn btn-sm btn-outline-success animate-button">
                                                                 <i class="fas fa-check"></i> Tamamlandı İşaretle
                                                             </button>
                                                         </form>
@@ -209,7 +209,7 @@
                                                             <input type="hidden" name="id" value="@asama.Id" />
                                                             <input type="hidden" name="projeId" value="@Model.Id" />
                                                             <input type="hidden" name="tamamlandi" value="false" />
-                                                            <button type="submit" class="btn btn-sm btn-outline-warning">
+                                                            <button type="submit" class="btn btn-sm btn-outline-warning animate-button">
                                                                 <i class="fas fa-undo"></i> Geri Al
                                                             </button>
                                                         </form>
@@ -220,7 +220,7 @@
                                                         <form asp-controller="ProjeAsama" asp-action="Delete" method="post" class="d-inline ms-2">
                                                             <input type="hidden" name="id" value="@asama.Id" />
                                                             <input type="hidden" name="projeId" value="@Model.Id" />
-                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu aşamayı silmek istediğinizden emin misiniz?')">
+                                                            <button type="submit" class="btn btn-sm btn-danger animate-button" onclick="return confirm('Bu aşamayı silmek istediğinizden emin misiniz?')">
                                                                 <i class="fas fa-trash"></i>
                                                 </button>
                                                         </form>
@@ -241,11 +241,11 @@
             </div>
             
             <!-- Proje Dosyaları -->
-            <div class="card mb-4">
+            <div class="card mb-4 animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Proje Dosyaları</h5>
                     <!-- Dosya Yükleme Butonu -->
-                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
+                    <button type="button" class="btn btn-primary mb-3 animate-button" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
                         <i class="fas fa-cloud-upload-alt"></i> Dosya Yükle
                     </button>
 
@@ -298,14 +298,14 @@
                                 <tbody>
                                     @foreach (var dosya in Model.Dosyalar)
                                     {
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>@dosya.DosyaAdi</td>
                                             <td>@(dosya.DosyaBoyutu / 1024) KB</td>
                                             <td>@dosya.DosyaTipi</td>
                                             <td>@dosya.YuklemeTarihi.ToShortDateString()</td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <a href="@Url.Action("Download", "ProjeDosya", new { id = dosya.Id })" class="btn btn-sm btn-success">
+                                                    <a href="@Url.Action("Download", "ProjeDosya", new { id = dosya.Id })" class="btn btn-sm btn-success animate-button">
                                                         <i class="fas fa-download"></i> İndir
                                                     </a>
                                                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
@@ -313,7 +313,7 @@
                                                         <form asp-controller="ProjeDosya" asp-action="Delete" method="post" class="d-inline">
                                                             <input type="hidden" name="id" value="@dosya.Id" />
                                                             <input type="hidden" name="projeId" value="@Model.Id" />
-                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu dosyayı silmek istediğinizden emin misiniz?')">
+                                                            <button type="submit" class="btn btn-sm btn-danger animate-button" onclick="return confirm('Bu dosyayı silmek istediğinizden emin misiniz?')">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
@@ -334,10 +334,10 @@
             </div>
 
             <!-- Proje Kaynakları -->
-            <div class="card mb-4">
+            <div class="card mb-4 animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Proje Kaynakları</h5>
-                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addResourceModal">
+                    <button type="button" class="btn btn-primary mb-3 animate-button" data-bs-toggle="modal" data-bs-target="#addResourceModal">
                         <i class="fas fa-plus"></i> Kaynak Ekle
                     </button>
                     
@@ -418,7 +418,7 @@
                                 <tbody>
                                     @foreach (var kaynak in Model.Kaynaklar)
                                     {
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>
                                                 @if (!string.IsNullOrEmpty(kaynak.Url))
                                                 {
@@ -450,11 +450,11 @@
                                                 <div class="btn-group" role="group">
                                                     @if (!string.IsNullOrEmpty(kaynak.Url))
                                                     {
-                                                        <a href="@kaynak.Url" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <a href="@kaynak.Url" target="_blank" class="btn btn-sm btn-outline-primary animate-button">
                                                             <i class="fas fa-external-link-alt"></i> Aç
                                                         </a>
                                                     }
-                                                    <button type="button" class="btn btn-sm btn-outline-info" 
+                                                    <button type="button" class="btn btn-sm btn-outline-info animate-button" 
                                                             data-bs-toggle="popover" 
                                                             title="Açıklama" 
                                                             data-bs-content="@(string.IsNullOrEmpty(kaynak.Aciklama) ? "Açıklama bulunmamaktadır." : kaynak.Aciklama)">
@@ -463,7 +463,7 @@
                                                     <form asp-controller="ProjeKaynagi" asp-action="Delete" method="post" class="d-inline">
                                                         <input type="hidden" name="id" value="@kaynak.Id" />
                                                         <input type="hidden" name="projeId" value="@Model.Id" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bu kaynağı silmek istediğinizden emin misiniz?')">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger animate-button" onclick="return confirm('Bu kaynağı silmek istediğinizden emin misiniz?')">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -485,12 +485,12 @@
 
         <div class="col-md-4">
             <!-- Proje Değerlendirmeleri -->
-            <div class="card mb-4">
+            <div class="card mb-4 animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Değerlendirmeler</h5>
                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                     {
-                        <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">
+                        <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary animate-button">
                             <i class="fas fa-plus"></i> Değerlendirme Ekle
                         </a>
                     }
@@ -500,7 +500,7 @@
                     {
                         @foreach (var degerlendirme in Model.Degerlendirmeler.OrderByDescending(d => d.DegerlendirmeTarihi))
                         {
-                            <div class="card mb-2">
+                            <div class="card mb-2 comment-item table-hover-item">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <span class="badge bg-primary">@degerlendirme.DegerlendirmeTipi</span>
                                     <div>
@@ -510,7 +510,7 @@
                                             <form asp-controller="ProjeDegerlendirme" asp-action="Delete" method="post" class="d-inline ms-2">
                                                 <input type="hidden" name="id" value="@degerlendirme.Id" />
                                                 <input type="hidden" name="projeId" value="@Model.Id" />
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu değerlendirmeyi silmek istediğinizden emin misiniz?')">
+                                                <button type="submit" class="btn btn-sm btn-danger animate-button" onclick="return confirm('Bu değerlendirmeyi silmek istediğinizden emin misiniz?')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -533,12 +533,12 @@
             </div>
 
             <!-- Yorumlar -->
-            <div class="card">
+            <div class="card animate-card">
                 <div class="card-header">
                     <h5>Yorumlar</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-controller="ProjeYorum" asp-action="Add" method="post" class="mt-3">
+                    <form asp-controller="ProjeYorum" asp-action="Add" method="post" class="mt-3 animate-form">
                         <input type="hidden" name="ProjeId" value="@Model.Id" />
                         <div class="form-group mb-2">
                             <label for="YorumTipi">Yorum Tipi</label>
@@ -553,7 +553,7 @@
                             <label for="Icerik">Yorumunuz</label>
                             <textarea class="form-control" id="Icerik" name="Icerik" rows="3" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Yorum Ekle</button>
+                        <button type="submit" class="btn btn-primary animate-button">Yorum Ekle</button>
                     </form>
 
                     <hr />
@@ -563,7 +563,7 @@
                     {
                         @foreach (var yorum in Model.Yorumlar.OrderByDescending(y => y.OlusturmaTarihi))
                         {
-                            <div class="card mb-3">
+                            <div class="card mb-3 comment-item table-hover-item">
                                 <div class="card-header">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -588,7 +588,7 @@
                                                 <form asp-controller="ProjeYorum" asp-action="Delete" method="post" class="d-inline ms-2">
                                                     <input type="hidden" name="id" value="@yorum.Id" />
                                                     <input type="hidden" name="projeId" value="@Model.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu yorumu silmek istediğinizden emin misiniz?')">
+                                                    <button type="submit" class="btn btn-sm btn-danger animate-button" onclick="return confirm('Bu yorumu silmek istediğinizden emin misiniz?')">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -628,6 +628,31 @@
                     html: true
                 })
             });
+            
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 400);
+            
+            setTimeout(function() {
+                $('.table-hover-item').addClass('animate-in');
+            }, 500);
+            
+            setTimeout(function() {
+                $('.comment-item').addClass('animate-in');
+            }, 600);
             
             // 5 saniye sonra alert mesajlarını otomatik kapat
             setTimeout(function() {

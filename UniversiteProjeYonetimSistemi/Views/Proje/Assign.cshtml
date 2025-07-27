@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-4">
-    <div class="row mb-3">
+    <div class="row mb-3 animate-header">
         <div class="col">
             @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
             {
@@ -21,13 +21,13 @@
             }
         </div>
         <div class="col-auto">
-            <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+            <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary animate-button">
                 <i class="fas fa-arrow-left"></i> Proje Detayına Dön
             </a>
         </div>
     </div>
 
-    <div class="card">
+    <div class="card animate-card">
         <div class="card-header">
             <h5>@Model.Ad</h5>
         </div>
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <form asp-action="Assign" method="post">
+            <form asp-action="Assign" method="post" class="animate-form">
                 <input type="hidden" name="id" value="@Model.Id" />
                 
                 @if (Model.OgrenciId.HasValue)
@@ -149,23 +149,23 @@
                 <div class="form-group mt-3">
                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                     {
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary animate-button">
                             <i class="fas fa-user-edit"></i> Danışman Değiştir
                         </button>
                     }
                     else if (User.IsInRole("Akademisyen") && Model.Status == "Beklemede")
                     {
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success animate-button">
                             <i class="fas fa-check-circle"></i> Projeyi Kabul Et
                         </button>
                     }
                     else
                     {
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary animate-button">
                             <i class="fas fa-user-check"></i> Danışman Ata
                         </button>
                     }
-                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">İptal</a>
+                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary animate-button">İptal</a>
                 </div>
             </form>
         </div>
@@ -175,6 +175,23 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+            
             // Danışman seçimi için gelişmiş seçim kutusu (isteğe bağlı)
             // $('#mentorId').select2();
         });

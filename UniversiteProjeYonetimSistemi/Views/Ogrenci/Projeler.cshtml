@@ -4,11 +4,11 @@
 }
 
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 animate-header">
         <h1 class="display-4">
             <i class="fas fa-book me-2 text-primary"></i>Projelerim
         </h1>
-        <a asp-controller="Proje" asp-action="Create" class="btn btn-primary">
+        <a asp-controller="Proje" asp-action="Create" class="btn btn-primary animate-button">
             <i class="fas fa-plus me-2"></i>Yeni Proje Oluştur
         </a>
     </div>
@@ -32,7 +32,7 @@
     <!-- İstatistik Kartları -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card bg-primary text-white shadow-sm">
+            <div class="card bg-primary text-white shadow-sm animate-card stat-card">
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-tasks me-2"></i>Toplam Proje</h5>
                     <p class="display-6">@ViewBag.ToplamProjeSayisi</p>
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white shadow-sm">
+            <div class="card bg-success text-white shadow-sm animate-card stat-card">
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-check-circle me-2"></i>Tamamlanan</h5>
                     <p class="display-6">@ViewBag.TamamlananProjeSayisi</p>
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-info text-white shadow-sm">
+            <div class="card bg-info text-white shadow-sm animate-card stat-card">
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-spinner me-2"></i>Devam Eden</h5>
                     <p class="display-6">@ViewBag.DevamEdenProjeSayisi</p>
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-secondary text-white shadow-sm">
+            <div class="card bg-secondary text-white shadow-sm animate-card stat-card">
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-hourglass-half me-2"></i>Beklemede</h5>
                     <p class="display-6">@ViewBag.BeklemedeProjeSayisi</p>
@@ -66,9 +66,9 @@
     </div>
 
     <!-- Filtreleme ve Sıralama -->
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm mb-4 animate-card">
         <div class="card-body">
-            <form asp-action="Projeler" method="get" class="row g-3">
+            <form asp-action="Projeler" method="get" class="row g-3 animate-form">
                 <div class="col-md-5">
                     <label class="form-label"><i class="fas fa-filter me-2"></i>Durum Filtresi</label>
                     <select name="durum" class="form-select" onchange="this.form.submit()">
@@ -168,7 +168,7 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">
+                    <button type="submit" class="btn btn-primary w-100 animate-button">
                         <i class="fas fa-search me-2"></i>Uygula
                     </button>
                 </div>
@@ -178,7 +178,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm animate-card main-table">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">
                         <i class="fas fa-list me-2"></i>Proje Listem
@@ -192,7 +192,7 @@
                     @if (Model != null && Model.Any())
                     {
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover animate-table">
                                 <thead>
                                     <tr>
                                         <th>Proje Adı</th>
@@ -207,7 +207,7 @@
                                 <tbody>
                                     @foreach (var proje in Model)
                                     {
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td>@proje.Ad</td>
                                             <td>
                                                 @if (proje.Kategori != null)
@@ -266,7 +266,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-info">
+                                                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-info animate-button">
                                                         <i class="fas fa-eye me-1"></i> Detaylar
                                                     </a>
                                                 </div>
@@ -283,7 +283,7 @@
                             <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
                             <h5 class="text-muted">Henüz bir projeniz bulunmamaktadır.</h5>
                             <p>Yeni bir proje oluşturmak için "Yeni Proje Oluştur" butonuna tıklayabilirsiniz.</p>
-                            <a asp-controller="Proje" asp-action="Create" class="btn btn-primary mt-3">
+                            <a asp-controller="Proje" asp-action="Create" class="btn btn-primary mt-3 animate-button">
                                 <i class="fas fa-plus me-2"></i>Yeni Proje Oluştur
                             </a>
                         </div>
@@ -297,6 +297,39 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.stat-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 400);
+            
+            setTimeout(function() {
+                $('.main-table').addClass('animate-in');
+            }, 500);
+            
+            setTimeout(function() {
+                $('.animate-table').addClass('animate-in');
+            }, 600);
+            
+            setTimeout(function() {
+                $('.table-hover-item').addClass('animate-in');
+            }, 700);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 800);
+            
             // Alert'leri 5 saniye sonra otomatik kapat
             setTimeout(function () {
                 $('.alert').alert('close');

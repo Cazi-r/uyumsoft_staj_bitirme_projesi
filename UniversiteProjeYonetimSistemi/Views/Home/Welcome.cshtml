@@ -3,7 +3,7 @@
 }
 
 <div class="container py-5">
-    <div class="row align-items-center">
+    <div class="row align-items-center animate-header">
         <div class="col-lg-6">
             <h1 class="display-4 fw-bold text-primary">Üniversite Proje Yönetim Sistemi</h1>
             <p class="lead my-4">
@@ -11,10 +11,10 @@
                 Proje yönetimi artık çok daha kolay!
             </p>
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg px-4 me-md-2">
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg px-4 me-md-2 animate-button">
                     <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
                 </a>
-                <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-secondary btn-lg px-4">
+                <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-secondary btn-lg px-4 animate-button">
                     <i class="fas fa-user-plus me-2"></i>Kayıt Ol
                 </a>
             </div>
@@ -26,7 +26,7 @@
     
     <div class="row mt-5 pt-5">
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm animate-card">
                 <div class="card-body text-center py-4">
                     <div class="mb-3">
                         <i class="fas fa-users fa-3x text-primary"></i>
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm animate-card">
                 <div class="card-body text-center py-4">
                     <div class="mb-3">
                         <i class="fas fa-chalkboard-teacher fa-3x text-primary"></i>
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm animate-card">
                 <div class="card-body text-center py-4">
                     <div class="mb-3">
                         <i class="fas fa-tasks fa-3x text-primary"></i>
@@ -59,4 +59,23 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 300);
+        });
+    </script>
+} 

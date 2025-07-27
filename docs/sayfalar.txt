@@ -74,3 +74,8 @@ bildirimler eksik
 proje aşamaları proje görevlerine benzetilecek
 akademisyene ait proje bekleyendeyken proje ata yazısı değişmiyor
 geri ye basınca animasyon takılı kalıyo
+
+
+
+porje dosyaları aanimasyon
+proje kaynakalrı animasyon

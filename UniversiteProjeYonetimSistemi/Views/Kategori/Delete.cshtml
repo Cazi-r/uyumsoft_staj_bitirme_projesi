@@ -5,18 +5,18 @@
 }
 
 <div class="container mt-4">
-    <div class="row mb-3">
+    <div class="row mb-3 animate-header">
         <div class="col">
             <h1>Kategori Silme</h1>
         </div>
         <div class="col-auto">
-            <a asp-action="Index" class="btn btn-secondary">
+            <a asp-action="Index" class="btn btn-secondary animate-button">
                 <i class="fas fa-arrow-left"></i> Listeye Dön
             </a>
         </div>
     </div>
 
-    <div class="card border-danger">
+    <div class="card border-danger animate-card">
         <div class="card-header bg-danger text-white">
             <i class="fas fa-exclamation-triangle"></i> Uyarı
         </div>
@@ -54,7 +54,7 @@
                 </div>
                 
                 <div class="col-md-6">
-                    <div class="card">
+                    <div class="card animate-card">
                         <div class="card-header">Açıklama</div>
                         <div class="card-body">
                             @if (!string.IsNullOrEmpty(Model.Aciklama))
@@ -79,7 +79,7 @@
                 
                 @if (ViewBag.Kategoriler != null && ViewBag.Kategoriler.Count > 0)
                 {
-                    <form asp-action="Delete" method="post" class="mt-4">
+                    <form asp-action="Delete" method="post" class="mt-4 animate-form">
                         <input type="hidden" asp-for="Id" />
                         
                         <div class="form-group mb-3">
@@ -106,10 +106,10 @@
                         </div>
                         
                         <div class="form-group">
-                            <button type="submit" class="btn btn-danger">
+                            <button type="submit" class="btn btn-danger animate-button">
                                 <i class="fas fa-exchange-alt me-1"></i> Projeleri Aktar ve Kategoriyi Sil
                             </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                            <a asp-action="Index" class="btn btn-outline-secondary animate-button">İptal</a>
                         </div>
                     </form>
                 }
@@ -118,7 +118,7 @@
                     <div class="alert alert-danger mt-4">
                         <i class="fas fa-exclamation-triangle me-1"></i> <strong>Uyarı:</strong> Bu kategoriyi silemezsiniz çünkü projelerin aktarılacağı başka kategori bulunmamaktadır.
                         <br />
-                        <a asp-controller="Kategori" asp-action="Create" class="btn btn-outline-primary mt-2">
+                        <a asp-controller="Kategori" asp-action="Create" class="btn btn-outline-primary mt-2 animate-button">
                             <i class="fas fa-plus-circle me-1"></i> Önce Yeni Kategori Oluşturun
                         </a>
                     </div>
@@ -126,16 +126,39 @@
             }
             else
             {
-                <form asp-action="Delete" method="post" class="mt-4">
+                <form asp-action="Delete" method="post" class="mt-4 animate-form">
                     <input type="hidden" asp-for="Id" />
                     <div class="form-group">
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger animate-button">
                             <i class="fas fa-trash"></i> Kategoriyi Sil
                         </button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        <a asp-action="Index" class="btn btn-outline-secondary animate-button">İptal</a>
                     </div>
                 </form>
             }
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+        });
+    </script>
+} 

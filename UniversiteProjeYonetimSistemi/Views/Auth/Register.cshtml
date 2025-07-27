@@ -4,14 +4,14 @@
     ViewData["Title"] = "Kayıt Ol";
 }
 
-<div class="row justify-content-center mt-4">
+<div class="row justify-content-center mt-4 animate-header">
     <div class="col-md-8">
-        <div class="card">
+        <div class="card animate-card">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">Yeni Kullanıcı Kaydı</h4>
             </div>
             <div class="card-body">
-                <form asp-action="Register" method="post">
+                <form asp-action="Register" method="post" class="animate-form">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                     
                     <div class="row mb-3">
@@ -123,10 +123,10 @@
                     </div>
                     
                     <div class="mt-3 d-flex justify-content-between">
-                        <a asp-action="Login" class="btn btn-secondary">
+                        <a asp-action="Login" class="btn btn-secondary animate-button">
                             <i class="fas fa-arrow-left me-2"></i>Giriş Sayfasına Dön
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary animate-button">
                             <i class="fas fa-user-plus me-2"></i>Kayıt Ol
                         </button>
                     </div>
@@ -141,6 +141,23 @@
     
     <script>
         $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+            
             // Rol değişikliğinde ilgili alanları göster/gizle
             $("#rolSelect").change(function () {
                 var selectedValue = $(this).val();

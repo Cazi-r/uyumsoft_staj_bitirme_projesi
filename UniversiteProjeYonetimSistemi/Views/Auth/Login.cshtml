@@ -4,7 +4,7 @@
     ViewData["Title"] = "Giriş";
 }
 
-<div class="row justify-content-center mt-5">
+<div class="row justify-content-center mt-5 animate-header">
     <div class="col-md-6">
         @if (TempData["SuccessMessage"] != null)
         {
@@ -13,12 +13,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
-        <div class="card">
+        <div class="card animate-card">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">Giriş Yap</h4>
             </div>
             <div class="card-body">
-                <form method="post" asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                <form method="post" asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="animate-form">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="mb-3">
                         <label asp-for="Email" class="form-label"></label>
@@ -57,10 +57,10 @@
                         <label asp-for="RememberMe" class="form-check-label" for="rememberMe"></label>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary animate-button">
                             <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
                         </button>
-                        <a asp-action="Register" class="btn btn-outline-secondary">
+                        <a asp-action="Register" class="btn btn-outline-secondary animate-button">
                             <i class="fas fa-user-plus me-2"></i>Kayıt Ol
                         </a>
                     </div>
@@ -72,4 +72,25 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+    
+    <script>
+        $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+        });
+    </script>
 } 

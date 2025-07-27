@@ -9,17 +9,17 @@
     bool isFromProjeAsama = Context.Request.Path.Value.Contains("ProjeAsama");
 }
 
-<div class="container py-4">
+<div class="container py-4 animate-header">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm animate-card">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Proje Aşaması Ekle</h5>
                 </div>
                 <div class="card-body p-4">
                     @if (isFromProjeAsama)
                     {
-                        <form asp-controller="ProjeAsama" asp-action="Add" method="post">
+                        <form asp-controller="ProjeAsama" asp-action="Add" method="post" class="animate-form">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                             
                             <input type="hidden" asp-for="ProjeId" />
@@ -57,10 +57,10 @@
                             </div>
                             
                             <div class="d-flex justify-content-between">
-                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary">
+                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary animate-button">
                                     <i class="fas fa-arrow-left me-2"></i>Vazgeç
                                 </a>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary animate-button">
                                     <i class="fas fa-save me-2"></i>Aşamayı Kaydet
                                 </button>
                             </div>
@@ -68,7 +68,7 @@
                     }
                     else
                     {
-                        <form asp-controller="Proje" asp-action="AddStage" method="post">
+                        <form asp-controller="Proje" asp-action="AddStage" method="post" class="animate-form">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                             
                             <input type="hidden" asp-for="ProjeId" />
@@ -106,10 +106,10 @@
                             </div>
                             
                             <div class="d-flex justify-content-between">
-                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary">
+                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary animate-button">
                                     <i class="fas fa-arrow-left me-2"></i>Vazgeç
                                 </a>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary animate-button">
                                     <i class="fas fa-save me-2"></i>Aşamayı Kaydet
                                 </button>
                             </div>
@@ -123,4 +123,25 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+    
+    <script>
+        $(document).ready(function() {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+        });
+    </script>
 } 

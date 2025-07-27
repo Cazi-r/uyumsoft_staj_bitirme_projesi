@@ -4,115 +4,136 @@
     ViewData["Title"] = "Profilim";
 }
 
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body text-center p-4">
-                <div class="avatar bg-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
-                    <i class="fas fa-user fa-3x text-white"></i>
+<style>
+    .profile-center-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<div class="profile-center-container">
+    <div class="row w-100 justify-content-center align-items-center">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 h-100 animate-card">
+                <div class="card-body text-center p-4">
+                    <div class="avatar bg-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
+                    <h4 class="mb-0">@Model.Ad @Model.Soyad</h4>
+                    <p class="text-muted">@Model.Email</p>
+                    <div class="badge bg-primary mb-3">@Model.Rol</div>
                 </div>
-                <h4 class="mb-0">@Model.Ad @Model.Soyad</h4>
-                <p class="text-muted">@Model.Email</p>
-                <div class="badge bg-primary mb-3">@Model.Rol</div>
             </div>
         </div>
-    </div>
-    
-    <div class="col-md-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white py-3">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-id-card text-primary me-2"></i>Kullanıcı Bilgileri
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <th style="width: 35%"><i class="fas fa-user me-2 text-muted"></i>Ad Soyad</th>
-                                <td>@Model.Ad @Model.Soyad</td>
-                            </tr>
-                            <tr>
-                                <th><i class="fas fa-envelope me-2 text-muted"></i>E-posta</th>
-                                <td>@Model.Email</td>
-                            </tr>
-                            <tr>
-                                <th><i class="fas fa-user-tag me-2 text-muted"></i>Rol</th>
-                                <td>@Model.Rol</td>
-                            </tr>
-                            <tr>
-                                <th><i class="fas fa-clock me-2 text-muted"></i>Son Giriş</th>
-                                <td>@(Model.SonGiris.HasValue ? Model.SonGiris.Value.ToString("dd.MM.yyyy HH:mm") : "Henüz giriş yapılmadı")</td>
-                            </tr>
-                            <tr>
-                                <th><i class="fas fa-calendar-plus me-2 text-muted"></i>Kayıt Tarihi</th>
-                                <td>@Model.CreatedAt.ToString("dd.MM.yyyy")</td>
-                            </tr>
-                            
-                            @if (Model.Rol == "Ogrenci")
-                            {
+        
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 animate-card">
+                <div class="card-header bg-white py-3 animate-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-id-card text-primary me-2"></i>Kullanıcı Bilgileri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless animate-table">
+                            <tbody>
                                 <tr>
-                                    <th><i class="fas fa-id-badge me-2 text-muted"></i>Öğrenci Numarası</th>
-                                    <td>@(string.IsNullOrEmpty(Model.OgrenciNo) ? "-" : Model.OgrenciNo)</td>
+                                    <th style="width: 35%"><i class="fas fa-user me-2 text-muted"></i>Ad Soyad</th>
+                                    <td>@Model.Ad @Model.Soyad</td>
                                 </tr>
-                                @if (!string.IsNullOrEmpty(Model.Telefon))
+                                <tr>
+                                    <th><i class="fas fa-envelope me-2 text-muted"></i>E-posta</th>
+                                    <td>@Model.Email</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-user-tag me-2 text-muted"></i>Rol</th>
+                                    <td>@Model.Rol</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-clock me-2 text-muted"></i>Son Giriş</th>
+                                    <td>@(Model.SonGiris.HasValue ? Model.SonGiris.Value.ToString("dd.MM.yyyy HH:mm") : "Henüz giriş yapılmadı")</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-calendar-plus me-2 text-muted"></i>Kayıt Tarihi</th>
+                                    <td>@Model.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                </tr>
+                                
+                                @if (Model.Rol == "Ogrenci")
                                 {
                                     <tr>
-                                        <th><i class="fas fa-phone me-2 text-muted"></i>Telefon</th>
-                                        <td>@Model.Telefon</td>
+                                        <th><i class="fas fa-id-badge me-2 text-muted"></i>Öğrenci Numarası</th>
+                                        <td>@(string.IsNullOrEmpty(Model.OgrenciNo) ? "-" : Model.OgrenciNo)</td>
                                     </tr>
+                                    @if (!string.IsNullOrEmpty(Model.Telefon))
+                                    {
+                                        <tr>
+                                            <th><i class="fas fa-phone me-2 text-muted"></i>Telefon</th>
+                                            <td>@Model.Telefon</td>
+                                        </tr>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Adres))
+                                    {
+                                        <tr>
+                                            <th><i class="fas fa-map-marker-alt me-2 text-muted"></i>Adres</th>
+                                            <td>@Model.Adres</td>
+                                        </tr>
+                                    }
+                                    @if (Model.KayitTarihi.HasValue)
+                                    {
+                                        <tr>
+                                            <th><i class="fas fa-university me-2 text-muted"></i>Üniversite Kaydı</th>
+                                            <td>@Model.KayitTarihi.Value.ToString("dd.MM.yyyy")</td>
+                                        </tr>
+                                    }
                                 }
-                                @if (!string.IsNullOrEmpty(Model.Adres))
+                                @if (Model.Rol == "Akademisyen")
                                 {
-                                    <tr>
-                                        <th><i class="fas fa-map-marker-alt me-2 text-muted"></i>Adres</th>
-                                        <td>@Model.Adres</td>
-                                    </tr>
+                                    @if (!string.IsNullOrEmpty(Model.Unvan))
+                                    {
+                                        <tr>
+                                            <th><i class="fas fa-user-graduate me-2 text-muted"></i>Unvan</th>
+                                            <td>@Model.Unvan</td>
+                                        </tr>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.UzmanlikAlani))
+                                    {
+                                        <tr>
+                                            <th><i class="fas fa-book me-2 text-muted"></i>Uzmanlık Alanı</th>
+                                            <td>@Model.UzmanlikAlani</td>
+                                        </tr>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Ofis))
+                                    {
+                                        <tr>
+                                            <th><i class="fas fa-building me-2 text-muted"></i>Ofis</th>
+                                            <td>@Model.Ofis</td>
+                                        </tr>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Telefon))
+                                    {
+                                        <tr>
+                                            <th><i class="fas fa-phone me-2 text-muted"></i>Telefon</th>
+                                            <td>@Model.Telefon</td>
+                                        </tr>
+                                    }
                                 }
-                                @if (Model.KayitTarihi.HasValue)
-                                {
-                                    <tr>
-                                        <th><i class="fas fa-university me-2 text-muted"></i>Üniversite Kaydı</th>
-                                        <td>@Model.KayitTarihi.Value.ToString("dd.MM.yyyy")</td>
-                                    </tr>
-                                }
-                            }
-                            @if (Model.Rol == "Akademisyen")
-                            {
-                                @if (!string.IsNullOrEmpty(Model.Unvan))
-                                {
-                                    <tr>
-                                        <th><i class="fas fa-user-graduate me-2 text-muted"></i>Unvan</th>
-                                        <td>@Model.Unvan</td>
-                                    </tr>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.UzmanlikAlani))
-                                {
-                                    <tr>
-                                        <th><i class="fas fa-book me-2 text-muted"></i>Uzmanlık Alanı</th>
-                                        <td>@Model.UzmanlikAlani</td>
-                                    </tr>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.Ofis))
-                                {
-                                    <tr>
-                                        <th><i class="fas fa-building me-2 text-muted"></i>Ofis</th>
-                                        <td>@Model.Ofis</td>
-                                    </tr>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.Telefon))
-                                {
-                                    <tr>
-                                        <th><i class="fas fa-phone me-2 text-muted"></i>Telefon</th>
-                                        <td>@Model.Telefon</td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div> 
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
+            setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
+            setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 300);
+        });
+    </script>
+} 

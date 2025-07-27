@@ -2,10 +2,12 @@
     ViewData["Title"] = "Yönetim Paneli";
 }
 
+<br />
+
 <!-- Dashboard İçeriği -->
-<div class="row mb-4">
+<div class="row mb-4 animate-header">
     <div class="col-12">
-        <div class="card bg-light border-0 mb-3">
+        <div class="card bg-light border-0 mb-3 animate-card">
             <div class="card-body py-3">
                 <div class="row align-items-center">
                     <div class="col-lg">
@@ -13,10 +15,10 @@
                         <p class="mb-0 text-muted small">Son giriş: @DateTime.Now.AddDays(-1).ToString("dd.MM.yyyy HH:mm")</p>
                     </div>
                     <div class="col-lg-auto mt-3 mt-lg-0">
-                        <button class="btn btn-sm btn-falcon-primary me-2">
+                        <button class="btn btn-sm btn-falcon-primary me-2 animate-button">
                             <i class="fas fa-download me-1"></i> Rapor İndir
                         </button>
-                        <button class="btn btn-sm btn-outline-primary">
+                        <button class="btn btn-sm btn-outline-primary animate-button">
                             <i class="fas fa-sync-alt me-1"></i> Yenile
                         </button>
                     </div>
@@ -29,7 +31,7 @@
 <!-- İstatistik Kartları -->
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-body stats-card">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -42,7 +44,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm btn-falcon-default w-100">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm btn-falcon-default w-100 animate-button">
                         Detaylar <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -51,7 +53,7 @@
     </div>
 
     <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-body stats-card">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -64,7 +66,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-falcon-default w-100">
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-falcon-default w-100 animate-button">
                         Detaylar <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -73,7 +75,7 @@
     </div>
 
     <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-body stats-card">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -86,7 +88,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Akademisyen" class="btn btn-sm btn-falcon-default w-100">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Akademisyen" class="btn btn-sm btn-falcon-default w-100 animate-button">
                         Detaylar <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -95,7 +97,7 @@
     </div>
 
     <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-body stats-card">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -108,7 +110,7 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Ogrenci" class="btn btn-sm btn-falcon-default w-100">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Ogrenci" class="btn btn-sm btn-falcon-default w-100 animate-button">
                         Detaylar <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -120,12 +122,12 @@
 <div class="row g-3">
     <!-- Kullanıcı Kayıt Grafiği -->
     <div class="col-lg-8 mb-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">Aylık Kullanıcı Kayıtları</h5>
                     <div class="dropdown">
-                        <button class="btn btn-falcon-default btn-sm dropdown-toggle" type="button" id="chartOptions" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-falcon-default btn-sm dropdown-toggle animate-button" type="button" id="chartOptions" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-ellipsis-v"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="chartOptions">
@@ -148,12 +150,12 @@
 
     <!-- Rol Dağılımı Grafiği -->
     <div class="col-lg-4 mb-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">Kullanıcı Rol Dağılımı</h5>
                     <div class="dropdown">
-                        <button class="btn btn-falcon-default btn-sm" type="button">
+                        <button class="btn btn-falcon-default btn-sm animate-button" type="button">
                             <i class="fas fa-info-circle"></i>
                         </button>
                     </div>
@@ -171,12 +173,12 @@
 <div class="row g-3">
     <!-- Proje Durum Grafiği -->
     <div class="col-lg-5 mb-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">Proje Durumları</h5>
                     <div class="dropdown">
-                        <button class="btn btn-falcon-default btn-sm" type="button" data-bs-toggle="tooltip" title="Tüm projelerin durumları">
+                        <button class="btn btn-falcon-default btn-sm animate-button" type="button" data-bs-toggle="tooltip" title="Tüm projelerin durumları">
                             <i class="fas fa-info-circle"></i>
                         </button>
                     </div>
@@ -192,12 +194,12 @@
 
     <!-- En Aktif Akademisyenler -->
     <div class="col-lg-7 mb-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">En Aktif Akademisyenler</h5>
                     <div>
-                        <button class="btn btn-falcon-default btn-sm" type="button">
+                        <button class="btn btn-falcon-default btn-sm animate-button" type="button">
                             <i class="fas fa-filter"></i> Filtrele
                         </button>
                     </div>
@@ -205,7 +207,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped mb-0">
+                    <table class="table table-hover table-striped mb-0 animate-table">
                         <thead class="bg-light">
                             <tr>
                                 <th class="border-0">Ad Soyad</th>
@@ -219,7 +221,7 @@
                             {
                                 @foreach (var item in ViewBag.AkademisyenProjeSayilari)
                                 {
-                                    <tr>
+                                    <tr class="table-hover-item">
                                         <td class="align-middle">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar avatar-sm bg-primary text-white rounded-circle me-2">
@@ -233,7 +235,7 @@
                                             <span class="badge bg-info rounded-pill">@item.ProjeSayisi</span>
                                         </td>
                                         <td class="align-middle text-center">
-                                            <button class="btn btn-sm btn-falcon-default" data-bs-toggle="tooltip" title="Detaylı Bilgi">
+                                            <button class="btn btn-sm btn-falcon-default animate-button" data-bs-toggle="tooltip" title="Detaylı Bilgi">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </td>
@@ -251,18 +253,18 @@
 <div class="row g-3">
     <!-- Son Eklenen Kullanıcılar -->
     <div class="col-lg-6 mb-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">Son Eklenen Kullanıcılar</h5>
-                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm btn-falcon-primary">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm btn-falcon-primary animate-button">
                         <i class="fas fa-users me-1"></i> Tümünü Gör
                     </a>
                 </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-hover mb-0 animate-table">
                         <thead class="bg-light">
                             <tr>
                                 <th class="border-0">Kullanıcı</th>
@@ -276,7 +278,7 @@
                             {
                                 @foreach (var kullanici in ViewBag.SonKullanicilar)
                                 {
-                                    <tr>
+                                    <tr class="table-hover-item">
                                         <td class="align-middle">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar avatar-sm bg-light rounded-circle me-2">
@@ -302,18 +304,18 @@
 
     <!-- Son Eklenen Projeler -->
     <div class="col-lg-6 mb-3">
-        <div class="card h-100">
+        <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">Son Eklenen Projeler</h5>
-                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-falcon-primary">
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-falcon-primary animate-button">
                         <i class="fas fa-project-diagram me-1"></i> Tümünü Gör
                     </a>
                 </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-hover mb-0 animate-table">
                         <thead class="bg-light">
                             <tr>
                                 <th class="border-0">Proje Adı</th>
@@ -327,7 +329,7 @@
                             {
                                 @foreach (var proje in ViewBag.SonProjeler)
                                 {
-                                    <tr>
+                                    <tr class="table-hover-item">
                                         <td class="align-middle">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar avatar-sm bg-light rounded-circle me-2">
@@ -355,6 +357,27 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-table').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.table-hover-item').addClass('animate-in');
+            }, 400);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 500);
+            
             // Tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

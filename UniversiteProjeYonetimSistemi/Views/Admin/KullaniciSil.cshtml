@@ -7,8 +7,8 @@
 <div class="container py-4">
     <div class="row">
         <div class="col-md-6 mx-auto">
-            <div class="card border-danger shadow-sm">
-                <div class="card-header bg-danger text-white">
+            <div class="card border-danger shadow-sm animate-card">
+                <div class="card-header bg-danger text-white animate-header">
                     <h5 class="mb-0">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         Kullanıcı Silme Onayı
@@ -25,29 +25,29 @@
                     
                     <div class="mt-4">
                         <h6>Kullanıcı Bilgileri</h6>
-                        <table class="table table-sm">
+                        <table class="table table-sm animate-table">
                             <tbody>
-                                <tr>
+                                <tr class="table-hover-item">
                                     <th style="width: 30%">ID:</th>
                                     <td>@Model.Id</td>
                                 </tr>
-                                <tr>
+                                <tr class="table-hover-item">
                                     <th>Ad Soyad:</th>
                                     <td>@Model.Ad @Model.Soyad</td>
                                 </tr>
-                                <tr>
+                                <tr class="table-hover-item">
                                     <th>Email:</th>
                                     <td>@Model.Email</td>
                                 </tr>
-                                <tr>
+                                <tr class="table-hover-item">
                                     <th>Rol:</th>
                                     <td>@Model.Rol</td>
                                 </tr>
-                                <tr>
+                                <tr class="table-hover-item">
                                     <th>Durum:</th>
                                     <td>@(Model.Aktif ? "Aktif" : "Pasif")</td>
                                 </tr>
-                                <tr>
+                                <tr class="table-hover-item">
                                     <th>Kayıt Tarihi:</th>
                                     <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
                                 </tr>
@@ -55,11 +55,11 @@
                         </table>
                     </div>
                     
-                    <form asp-action="KullaniciSil" method="post" class="mt-4">
+                    <form asp-action="KullaniciSil" method="post" class="mt-4 animate-form">
                         <input type="hidden" asp-for="Id" />
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Kullanicilar" class="btn btn-outline-secondary">İptal</a>
-                            <button type="submit" class="btn btn-danger">
+                            <a asp-action="Kullanicilar" class="btn btn-outline-secondary animate-button">İptal</a>
+                            <button type="submit" class="btn btn-danger animate-button">
                                 <i class="fas fa-trash me-1"></i>
                                 Sil
                             </button>
@@ -69,4 +69,35 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-table').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.table-hover-item').addClass('animate-in');
+            }, 400);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 500);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 600);
+        });
+    </script>
+} 

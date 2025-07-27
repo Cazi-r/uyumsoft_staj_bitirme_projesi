@@ -6,12 +6,12 @@
 }
 
 <div class="container py-4">
-    <div class="row align-items-center mb-4">
+    <div class="row align-items-center mb-4 animate-header">
         <div class="col-md-8">
             <h1 class="mb-0">Danışmanlık Yaptığım Projeler</h1>
         </div>
         <div class="col-md-4 text-md-end">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary animate-button">
                 <i class="fas fa-arrow-left me-1"></i> Panele Dön
             </a>
         </div>
@@ -21,7 +21,7 @@
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
             <a asp-action="Danismanliklar" style="text-decoration: none;">
-                <div class="card @(string.IsNullOrEmpty(secilenDurum) ? "bg-primary text-white" : "border-primary") h-100">
+                <div class="card @(string.IsNullOrEmpty(secilenDurum) ? "bg-primary text-white" : "border-primary") h-100 animate-card">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Tüm Projeler</h5>
                         <h1 class="display-4 mt-2">@ViewBag.TumProjeSayisi</h1>
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-3 mb-3">
             <a asp-action="Danismanliklar" asp-route-durum="Devam" style="text-decoration: none;">
-                <div class="card @(secilenDurum == "Devam" ? "bg-info text-white" : "border-info") h-100">
+                <div class="card @(secilenDurum == "Devam" ? "bg-info text-white" : "border-info") h-100 animate-card">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Devam Eden</h5>
                         <h1 class="display-4 mt-2">@ViewBag.DevamEdenProjeSayisi</h1>
@@ -41,7 +41,7 @@
         </div>
         <div class="col-md-3 mb-3">
             <a asp-action="Danismanliklar" asp-route-durum="Beklemede" style="text-decoration: none;">
-                <div class="card @(secilenDurum == "Beklemede" ? "bg-warning text-white" : "border-warning") h-100">
+                <div class="card @(secilenDurum == "Beklemede" ? "bg-warning text-white" : "border-warning") h-100 animate-card">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Beklemede</h5>
                         <h1 class="display-4 mt-2">@ViewBag.BeklemedeProjeSayisi</h1>
@@ -51,7 +51,7 @@
         </div>
         <div class="col-md-3 mb-3">
             <a asp-action="Danismanliklar" asp-route-durum="Tamamlandi" style="text-decoration: none;">
-                <div class="card @(secilenDurum == "Tamamlandi" ? "bg-success text-white" : "border-success") h-100">
+                <div class="card @(secilenDurum == "Tamamlandi" ? "bg-success text-white" : "border-success") h-100 animate-card">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Tamamlanan</h5>
                         <h1 class="display-4 mt-2">@ViewBag.TamamlananProjeSayisi</h1>
@@ -64,8 +64,8 @@
     <div class="row">
         <!-- Proje Listesi -->
         <div class="col-lg-8 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <div class="card shadow-sm h-100 animate-card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center animate-header">
                     <h5 class="mb-0">
                         @if (!string.IsNullOrEmpty(secilenDurum))
                         {
@@ -78,14 +78,14 @@
                     </h5>
                     @if (!string.IsNullOrEmpty(secilenDurum))
                     {
-                        <a asp-action="Danismanliklar" class="btn btn-sm btn-outline-secondary">
+                        <a asp-action="Danismanliklar" class="btn btn-sm btn-outline-secondary animate-button">
                             <i class="fas fa-filter"></i> Filtreyi Temizle
                         </a>
                     }
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-hover mb-0 animate-table">
                             <thead class="table-light">
                                 <tr>
                                     <th>Proje Adı</th>
@@ -100,7 +100,7 @@
                                 {
                                     @foreach (var proje in Model.OrderByDescending(p => p.UpdatedAt))
                                     {
-                                        <tr>
+                                        <tr class="table-hover-item">
                                             <td class="fw-bold">@proje.Ad</td>
                                             <td>
                                                 @if (proje.Ogrenci != null)
@@ -134,10 +134,10 @@
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group">
-                                                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-info" title="Proje Sayfası">
+                                                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-info animate-button" title="Proje Sayfası">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a asp-action="DegerlendirmeOlustur" asp-route-projeId="@proje.Id" class="btn btn-sm btn-outline-success" title="Değerlendir">
+                                                    <a asp-action="DegerlendirmeOlustur" asp-route-projeId="@proje.Id" class="btn btn-sm btn-outline-success animate-button" title="Değerlendir">
                                                         <i class="fas fa-star"></i>
                                                     </a>
                                                 </div>
@@ -174,8 +174,8 @@
         <!-- Sağ Panel -->
         <div class="col-lg-4">
             <!-- Yaklaşan Teslim Tarihleri -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light">
+            <div class="card shadow-sm mb-4 animate-card">
+                <div class="card-header bg-light animate-header">
                     <h5 class="mb-0">Yaklaşan Teslim Tarihleri</h5>
                 </div>
                 <div class="card-body">
@@ -230,8 +230,8 @@
             </div>
 
             <!-- Son Değerlendirmelerim -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-light">
+            <div class="card shadow-sm animate-card">
+                <div class="card-header bg-light animate-header">
                     <h5 class="mb-0">Son Değerlendirmelerim</h5>
                 </div>
                 <div class="card-body">
@@ -266,3 +266,15 @@
         </div>
     </div>
 </div> 
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
+            setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
+            setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 300);
+            setTimeout(function() { $('.table-hover-item').addClass('animate-in'); }, 400);
+            setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 500);
+        });
+    </script>
+} 

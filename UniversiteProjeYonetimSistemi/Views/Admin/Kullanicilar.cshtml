@@ -9,7 +9,7 @@
 }
 
 <div class="container py-4">
-    <h1 class="mb-4">Kullanıcı Yönetimi</h1>
+    <h1 class="mb-4 animate-header">Kullanıcı Yönetimi</h1>
 
     @if (TempData["Message"] != null)
     {
@@ -21,7 +21,7 @@
 
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card bg-primary text-white h-100">
+            <div class="card bg-primary text-white h-100 animate-card">
                 <div class="card-body text-center">
                     <h6 class="card-title">Toplam Kullanıcı</h6>
                     <h2>@ViewBag.ToplamKullanici</h2>
@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white h-100">
+            <div class="card bg-success text-white h-100 animate-card">
                 <div class="card-body text-center">
                     <h6 class="card-title">Öğrenci</h6>
                     <h2>@ViewBag.OgrenciSayisi</h2>
@@ -39,7 +39,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-info text-white h-100">
+            <div class="card bg-info text-white h-100 animate-card">
                 <div class="card-body text-center">
                     <h6 class="card-title">Akademisyen</h6>
                     <h2>@ViewBag.AkademisyenSayisi</h2>
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-danger text-white h-100">
+            <div class="card bg-danger text-white h-100 animate-card">
                 <div class="card-body text-center">
                     <h6 class="card-title">Admin</h6>
                     <h2>@ViewBag.AdminSayisi</h2>
@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm animate-card">
         <div class="card-header bg-light">
             <h5 class="mb-0">
                 @if (!string.IsNullOrEmpty(rolFilter))
@@ -92,7 +92,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
-                               class="btn @(string.IsNullOrEmpty(rolFilter) ? "btn-primary" : "btn-outline-primary") btn-sm">
+                               class="btn @(string.IsNullOrEmpty(rolFilter) ? "btn-primary" : "btn-outline-primary") btn-sm animate-button">
                                 Tümü
                             </a>
                             <a asp-action="Kullanicilar" 
@@ -100,7 +100,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="@siralamaFilter" 
                                asp-route-arama="@aramaFilter"
-                               class="btn @(rolFilter == "Admin" ? "btn-danger" : "btn-outline-danger") btn-sm">
+                               class="btn @(rolFilter == "Admin" ? "btn-danger" : "btn-outline-danger") btn-sm animate-button">
                                 Admin
                             </a>
                             <a asp-action="Kullanicilar" 
@@ -108,7 +108,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
-                               class="btn @(rolFilter == "Akademisyen" ? "btn-info" : "btn-outline-info") btn-sm">
+                               class="btn @(rolFilter == "Akademisyen" ? "btn-info" : "btn-outline-info") btn-sm animate-button">
                                 Akademisyen
                             </a>
                             <a asp-action="Kullanicilar" 
@@ -116,7 +116,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
-                               class="btn @(rolFilter == "Ogrenci" ? "btn-success" : "btn-outline-success") btn-sm">
+                               class="btn @(rolFilter == "Ogrenci" ? "btn-success" : "btn-outline-success") btn-sm animate-button">
                                 Öğrenci
                             </a>
                         </div>
@@ -127,7 +127,7 @@
                                asp-route-rol="@rolFilter"
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
-                               class="btn @(string.IsNullOrEmpty(durumFilter) ? "btn-secondary" : "btn-outline-secondary") btn-sm">
+                               class="btn @(string.IsNullOrEmpty(durumFilter) ? "btn-secondary" : "btn-outline-secondary") btn-sm animate-button">
                                 Tüm Durumlar
                             </a>
                             <a asp-action="Kullanicilar" 
@@ -135,7 +135,7 @@
                                asp-route-durum="aktif"
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
-                               class="btn @(durumFilter == "aktif" ? "btn-success" : "btn-outline-success") btn-sm">
+                               class="btn @(durumFilter == "aktif" ? "btn-success" : "btn-outline-success") btn-sm animate-button">
                                 Aktif
                             </a>
                             <a asp-action="Kullanicilar" 
@@ -143,7 +143,7 @@
                                asp-route-durum="pasif"
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
-                               class="btn @(durumFilter == "pasif" ? "btn-danger" : "btn-outline-danger") btn-sm">
+                               class="btn @(durumFilter == "pasif" ? "btn-danger" : "btn-outline-danger") btn-sm animate-button">
                                 Pasif
                             </a>
                         </div>
@@ -158,7 +158,7 @@
                         <input type="hidden" name="siralama" value="@siralamaFilter" />
                         <input type="text" name="arama" value="@aramaFilter" class="form-control form-control-sm me-2" 
                                placeholder="Ad, soyad veya email ara..." />
-                        <button type="submit" class="btn btn-primary btn-sm">
+                        <button type="submit" class="btn btn-primary btn-sm animate-button">
                             <i class="fas fa-search"></i>
                         </button>
                         @if (!string.IsNullOrEmpty(aramaFilter))
@@ -167,7 +167,7 @@
                                asp-route-rol="@rolFilter"
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="@siralamaFilter"
-                               class="btn btn-outline-secondary btn-sm ms-1">
+                               class="btn btn-outline-secondary btn-sm ms-1 animate-button">
                                 <i class="fas fa-times"></i>
                             </a>
                         }
@@ -177,10 +177,10 @@
             
             <div class="text-end mb-3">
                 <div class="btn-group">
-                    <a asp-controller="Auth" asp-action="Register" class="btn btn-primary btn-sm">
+                    <a asp-controller="Auth" asp-action="Register" class="btn btn-primary btn-sm animate-button">
                         <i class="fas fa-plus-circle me-1"></i> Yeni Kullanıcı
                     </a>
-                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle animate-button" data-bs-toggle="dropdown">
                         <i class="fas fa-sort me-1"></i> Sırala
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -251,7 +251,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover table-striped mb-0">
+                <table class="table table-hover table-striped mb-0 animate-table">
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
@@ -267,7 +267,7 @@
                     <tbody>
                         @foreach (var kullanici in Model)
                         {
-                            <tr>
+                            <tr class="table-hover-item">
                                 <td>@kullanici.Id</td>
                                 <td>@kullanici.Ad @kullanici.Soyad</td>
                                 <td>@kullanici.Email</td>
@@ -287,11 +287,11 @@
                                 <td class="text-end">
                                     <div class="btn-group">
                                         <a asp-action="KullaniciDuzenle" asp-route-id="@kullanici.Id" 
-                                           class="btn btn-outline-primary btn-sm" title="Düzenle">
+                                           class="btn btn-outline-primary btn-sm animate-button" title="Düzenle">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <a asp-action="KullaniciSil" asp-route-id="@kullanici.Id" 
-                                           class="btn btn-outline-danger btn-sm" title="Sil">
+                                           class="btn btn-outline-danger btn-sm animate-button" title="Sil">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
@@ -325,6 +325,33 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-table').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.table-hover-item').addClass('animate-in');
+            }, 400);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 500);
+        });
+    </script>
+}
 
 @functions {
     private string GetRoleBadgeClass(string rol)

@@ -1849,3 +1849,13 @@ body {
     transform: none !important;
   }
 }
+
+.animate-nav-tabs {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.animate-nav-tabs.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}

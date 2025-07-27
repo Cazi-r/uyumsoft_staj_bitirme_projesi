@@ -2,11 +2,13 @@
     ViewData["Title"] = "Görünüm Ayarları";
 }
 
+<br />
+
 <div class="container-fluid">
     <!-- Başlık -->
-    <div class="row mb-4">
+    <div class="row mb-4 animate-header">
         <div class="col">
-            <div class="card bg-light border-0">
+            <div class="card bg-light border-0 animate-card">
                 <div class="card-body py-3">
                     <h5 class="mb-0">
                         <i class="fas fa-paint-brush me-2 text-blue"></i>Kişisel Görünüm Ayarlarınızı Özelleştirin
@@ -20,8 +22,8 @@
     <div class="row g-3">
         <!-- Tema Seçenekleri -->
         <div class="col-lg-6 mb-3">
-            <div class="card h-100">
-                <div class="card-header border-bottom">
+            <div class="card h-100 animate-card">
+                <div class="card-header border-bottom animate-header">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="mb-0"><i class="fas fa-palette me-2 text-blue"></i>Tema Seçenekleri</h5>
                     </div>
@@ -88,8 +90,8 @@
 
         <!-- Font ve Metin Boyutu -->
         <div class="col-lg-6 mb-3">
-            <div class="card h-100">
-                <div class="card-header border-bottom">
+            <div class="card h-100 animate-card">
+                <div class="card-header border-bottom animate-header">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="mb-0"><i class="fas fa-font me-2 text-blue"></i>Metin Ayarları</h5>
                     </div>
@@ -134,8 +136,8 @@
     <!-- Diğer Ayarlar -->
     <div class="row g-3">
         <div class="col-12 mb-3">
-            <div class="card">
-                <div class="card-header border-bottom">
+            <div class="card animate-card">
+                <div class="card-header border-bottom animate-header">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="mb-0"><i class="fas fa-sliders-h me-2 text-blue"></i>Diğer Görünüm Ayarları</h5>
                     </div>
@@ -218,10 +220,10 @@
                     </div>
                 </div>
                 <div class="card-footer bg-light-fixed d-flex justify-content-between">
-                    <button class="btn btn-outline-secondary" id="resetAllSettings">
+                    <button class="btn btn-outline-secondary animate-button" id="resetAllSettings">
                         <i class="fas fa-undo me-1"></i> Tümünü Sıfırla
                     </button>
-                    <button class="btn btn-blue btn-lg" id="saveAllSettings">
+                    <button class="btn btn-blue btn-lg animate-button" id="saveAllSettings">
                         <i class="fas fa-save me-1"></i> Tüm Ayarları Kaydet
                     </button>
                 </div>
@@ -297,124 +299,10 @@
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Font boyutu değişimi
-            const fontSizeRange = document.getElementById('fontSizeRange');
-            const fontSizeLabel = document.getElementById('fontSizeLabel');
-            const previewText = document.getElementById('previewText');
-            
-            fontSizeRange.addEventListener('input', function() {
-                const size = this.value;
-                fontSizeLabel.textContent = size + '%';
-                previewText.style.fontSize = (size / 100) + 'rem';
-            });
-
-            // Yazı tipi değişimi
-            const fontFamily = document.getElementById('fontFamily');
-            fontFamily.addEventListener('change', function() {
-                previewText.style.fontFamily = this.value;
-            });
-
-            // Tema modu değişimi
-            const themeModes = document.querySelectorAll('input[name="themeMode"]');
-            themeModes.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.value === 'dark') {
-                        previewText.classList.add('preview-dark');
-                    } else {
-                        previewText.classList.remove('preview-dark');
-                    }
-                });
-            });
-
-            document.getElementById('saveAllSettings').addEventListener('click', function() {
-                // Tüm ayarları saveThemeSettings fonksiyonuyla kaydet
-                const selectedThemeMode = document.querySelector('input[name="themeMode"]:checked').value;
-                const selectedColorPalette = document.querySelector('input[name="colorPalette"]:checked').value;
-                const fontSize = fontSizeRange.value;
-                const fontFamilyValue = fontFamily.value;
-                const compactLayout = document.getElementById('compactLayoutSwitch').checked;
-                const animations = document.getElementById('animationsSwitch').checked;
-                const highContrast = document.getElementById('highContrastSwitch')?.checked || false;
-                const borderRadius = document.getElementById('borderRadiusRange')?.value || 2;
-                const sidebarWidth = document.getElementById('sidebarWidth')?.value || 'default';
-                const iconSize = document.querySelector('input[name="iconSize"]:checked')?.value || 'normal';
-                
-                saveThemeSettings({
-                    themeMode: selectedThemeMode,
-                    colorPalette: selectedColorPalette,
-                    fontSize: fontSize,
-                    fontFamily: fontFamilyValue,
-                    compactLayout: compactLayout.toString(),
-                    animations: animations.toString(),
-                    highContrast: highContrast.toString(),
-                    borderRadius: borderRadius,
-                    sidebarWidth: sidebarWidth,
-                    iconSize: iconSize
-                });
-                
-                showToast('Tüm ayarlarınız kaydedildi');
-            });
-
-            document.getElementById('resetAllSettings').addEventListener('click', function() {
-                // resetThemeSettings fonksiyonunu kullan
-                resetThemeSettings();
-                
-                // Form değerlerini sıfırla
-                document.getElementById('lightMode').checked = true;
-                document.getElementById('defaultColor').checked = true;
-                fontSizeRange.value = 100;
-                fontSizeLabel.textContent = '100%';
-                fontFamily.value = 'system-ui';
-                document.getElementById('compactLayoutSwitch').checked = false;
-                document.getElementById('animationsSwitch').checked = true;
-                if (document.getElementById('highContrastSwitch')) {
-                    document.getElementById('highContrastSwitch').checked = false;
-                }
-                if (document.getElementById('borderRadiusRange')) {
-                    document.getElementById('borderRadiusRange').value = 2;
-                }
-                if (document.getElementById('sidebarWidth')) {
-                    document.getElementById('sidebarWidth').value = 'default';
-                }
-                if (document.getElementById('iconSizeNormal')) {
-                    document.getElementById('iconSizeNormal').checked = true;
-                }
-                
-                previewText.style.fontSize = '1rem';
-                previewText.style.fontFamily = 'system-ui';
-                previewText.classList.remove('preview-dark');
-                
-                showToast('Tüm ayarlarınız sıfırlandı');
-            });
-
-            // Toast mesajı gösterme fonksiyonu
-            function showToast(message) {
-                const toastHtml = `
-                    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
-                        <div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="toast-header">
-                                <i class="fas fa-check-circle text-success me-2"></i>
-                                <strong class="me-auto">Bildirim</strong>
-                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                            <div class="toast-body">${message}</div>
-                        </div>
-                    </div>
-                `;
-                
-                const toastContainer = document.createElement('div');
-                toastContainer.innerHTML = toastHtml;
-                document.body.appendChild(toastContainer);
-                
-                setTimeout(() => {
-                    const toast = new bootstrap.Toast(document.getElementById('liveToast'));
-                    toast.hide();
-                    setTimeout(() => {
-                        document.body.removeChild(toastContainer);
-                    }, 500);
-                }, 2000);
-            }
+        $(document).ready(function() {
+            setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
+            setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
+            setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 300);
         });
     </script>
 } 

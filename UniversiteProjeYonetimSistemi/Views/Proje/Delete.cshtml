@@ -6,8 +6,8 @@
 }
 
 <div class="container-fluid mt-4">
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <div class="card shadow mb-4 animate-card">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between animate-header">
             <h6 class="m-0 font-weight-bold text-primary">Proje Silme</h6>
         </div>
         <div class="card-body">
@@ -37,17 +37,40 @@
                 </dl>
             </div>
 
-            <form asp-action="Delete" method="post">
+            <form asp-action="Delete" method="post" class="animate-form">
                 <input type="hidden" asp-for="Id" />
                 <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">
+                    <a asp-action="Index" class="btn btn-secondary animate-button">
                         <i class="fas fa-arrow-left"></i> Geri Dön
                     </a>
-                    <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn btn-danger animate-button">
                         <i class="fas fa-trash"></i> Projeyi Sil
                     </button>
                 </div>
             </form>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+        });
+    </script>
+} 

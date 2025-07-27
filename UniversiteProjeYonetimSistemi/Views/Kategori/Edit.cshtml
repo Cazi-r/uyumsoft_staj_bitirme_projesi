@@ -5,20 +5,20 @@
 }
 
 <div class="container mt-4">
-    <div class="row mb-3">
+    <div class="row mb-3 animate-header">
         <div class="col">
             <h1>Kategori Düzenle</h1>
         </div>
         <div class="col-auto">
-            <a asp-action="Index" class="btn btn-secondary">
+            <a asp-action="Index" class="btn btn-secondary animate-button">
                 <i class="fas fa-arrow-left"></i> Listeye Dön
             </a>
         </div>
     </div>
 
-    <div class="card">
+    <div class="card animate-card">
         <div class="card-body">
-            <form asp-action="Edit" method="post">
+            <form asp-action="Edit" method="post" class="animate-form">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="CreatedAt" />
@@ -49,7 +49,7 @@
                             <span asp-validation-for="Renk" class="text-danger"></span>
                         </div>
                         
-                        <div class="card mt-4">
+                        <div class="card mt-4 animate-card">
                             <div class="card-header">Önizleme</div>
                             <div class="card-body">
                                 <h5>Kategori: <span id="preview-ad">@Model.Ad</span></h5>
@@ -66,7 +66,7 @@
                 </div>
                 
                 <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary animate-button">
                         <i class="fas fa-save"></i> Kaydet
                     </button>
                 </div>
@@ -80,6 +80,23 @@
     
     <script>
         $(document).ready(function() {
+            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
+            setTimeout(function() {
+                $('.animate-header').addClass('animate-in');
+            }, 100);
+            
+            setTimeout(function() {
+                $('.animate-card').addClass('animate-in');
+            }, 200);
+            
+            setTimeout(function() {
+                $('.animate-form').addClass('animate-in');
+            }, 300);
+            
+            setTimeout(function() {
+                $('.animate-button').addClass('animate-in');
+            }, 400);
+            
             // Renk değişikliğini izle
             $('input[type="color"]').on('input', function() {
                 var renk = $(this).val();
