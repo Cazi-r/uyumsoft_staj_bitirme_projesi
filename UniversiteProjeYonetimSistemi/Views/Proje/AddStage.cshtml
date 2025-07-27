@@ -123,25 +123,4 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-    
-    <script>
-        $(document).ready(function() {
-            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
-            setTimeout(function() {
-                $('.animate-header').addClass('animate-in');
-            }, 100);
-            
-            setTimeout(function() {
-                $('.animate-card').addClass('animate-in');
-            }, 200);
-            
-            setTimeout(function() {
-                $('.animate-form').addClass('animate-in');
-            }, 300);
-            
-            setTimeout(function() {
-                $('.animate-button').addClass('animate-in');
-            }, 400);
-        });
-    </script>
 } 

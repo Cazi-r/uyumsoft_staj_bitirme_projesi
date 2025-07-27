@@ -357,27 +357,6 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Staggered Page Load Animations - Akademisyen Dashboard tarzı animasyonlar
-            setTimeout(function() {
-                $('.animate-header').addClass('animate-in');
-            }, 100);
-            
-            setTimeout(function() {
-                $('.animate-card').addClass('animate-in');
-            }, 200);
-            
-            setTimeout(function() {
-                $('.animate-table').addClass('animate-in');
-            }, 300);
-            
-            setTimeout(function() {
-                $('.table-hover-item').addClass('animate-in');
-            }, 400);
-            
-            setTimeout(function() {
-                $('.animate-button').addClass('animate-in');
-            }, 500);
-            
             // Tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

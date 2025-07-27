@@ -3,13 +3,20 @@
 }
 
 <div class="container py-3">
-    <h1 class="mb-3">Yönetici Paneli</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header animate-header">
+        <h1 class="mb-0"><i class="fas fa-cogs me-2 text-primary"></i> Yönetici Paneli</h1>
+        <div>
+            <span class="badge bg-light text-dark border date-badge">
+                <i class="far fa-calendar me-1"></i> @DateTime.Now.ToString("dd MMMM yyyy")
+            </span>
+        </div>
+    </div>
     
     <!-- İki Kart Yan Yana -->
     <div class="row g-4 mb-4">
         <!-- Kullanıcı Bilgisi Kartı -->
         <div class="col-md-6">
-            <div class="card dashboard-card">
+            <div class="card dashboard-card stat-card animate-card">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -22,7 +29,7 @@
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a href="@Url.Action("Kullanicilar", "Admin")" class="details-link">
+                        <a href="@Url.Action("Kullanicilar", "Admin")" class="details-link animate-button">
                             Detaylar <i class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>
@@ -32,7 +39,7 @@
         
         <!-- Proje Bilgisi Kartı -->
         <div class="col-md-6">
-            <div class="card dashboard-card">
+            <div class="card dashboard-card stat-card animate-card">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -45,7 +52,7 @@
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a href="@Url.Action("Index", "Proje")" class="details-link">
+                        <a href="@Url.Action("Index", "Proje")" class="details-link animate-button">
                             Detaylar <i class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>
@@ -58,7 +65,7 @@
     <div class="row g-4 mb-4">
         <!-- Öğrenci Bilgisi Kartı -->
         <div class="col-md-6">
-            <div class="card dashboard-card">
+            <div class="card dashboard-card stat-card animate-card">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -73,7 +80,7 @@
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a href="@Url.Action("Kullanicilar", "Admin", new { rol = "Ogrenci" })" class="details-link">
+                        <a href="@Url.Action("Kullanicilar", "Admin", new { rol = "Ogrenci" })" class="details-link animate-button">
                             Detaylar <i class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>
@@ -83,7 +90,7 @@
         
         <!-- Akademisyen Bilgisi Kartı -->
         <div class="col-md-6">
-            <div class="card dashboard-card">
+            <div class="card dashboard-card stat-card animate-card">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -98,7 +105,7 @@
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a href="@Url.Action("Kullanicilar", "Admin", new { rol = "Akademisyen" })" class="details-link">
+                        <a href="@Url.Action("Kullanicilar", "Admin", new { rol = "Akademisyen" })" class="details-link animate-button">
                             Detaylar <i class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>
@@ -110,10 +117,10 @@
     <!-- Ana İçerik -->
     <div class="row mt-4">
         <div class="col-md-6 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 main-table animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center py-2">
                     <h5 class="mb-0 fs-6">Son Etkinlikler</h5>
-                    <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+                    <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" class="btn btn-sm btn-outline-primary animate-button">Tümünü Gör</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
@@ -121,7 +128,7 @@
                         {
                             @foreach (var etkinlik in ViewBag.SonEtkinlikler)
                             {
-                                <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" asp-route-kullaniciId="@etkinlik.KullaniciId" class="list-group-item list-group-item-action py-2">
+                                <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" asp-route-kullaniciId="@etkinlik.KullaniciId" class="list-group-item list-group-item-action py-2 table-hover-item">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1 small">@(etkinlik.Tip == "Giriş" ? "Sistem Girişi" : "Proje Oluşturuldu")</h6>
                                         <small>@((DateTime.Now - etkinlik.Tarih).TotalDays < 1 ? 
@@ -143,10 +150,10 @@
             </div>
         </div>
         <div class="col-md-6 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 main-table animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center py-2">
                     <h5 class="mb-0 fs-6">Proje Durumları</h5>
-                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-outline-primary animate-button">Tümünü Gör</a>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">

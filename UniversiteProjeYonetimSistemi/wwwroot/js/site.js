@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // YENİ: KAPSAMLI SAYFA ANIMASYON SİSTEMİ
 // =====================================================
 
-// Ana animasyon sistemi - tüm sayfalarda çalışır
+// Ana animasyon sistemi - tüm sayfalarda çalışır (Basit tarz)
 function initializePageAnimations() {
     // Animasyonlar kapalıysa hiçbir şey yapma
     if (document.body.classList.contains('no-animations')) {
@@ -98,13 +98,17 @@ function initializePageAnimations() {
         return;
     }
 
-
-    // Sayfa elementlerini otomatik tespit et ve animasyon sınıfları ekle
-    categorizeAndAnimateElements();
-    
-    // Animasyonları sırasıyla başlat
-    startStaggeredAnimations();
-    
+    // Basit staggered animasyonlar - dosyalarda kullanılan tarz
+    setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
+    setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
+    setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 300);
+    setTimeout(function() { $('.animate-form').addClass('animate-in'); }, 400);
+    setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 500);
+    setTimeout(function() { $('.table-hover-item').addClass('animate-in'); }, 600);
+    setTimeout(function() { $('.comment-item').addClass('animate-in'); }, 700);
+    setTimeout(function() { $('.stat-card').addClass('animate-in'); }, 800);
+    setTimeout(function() { $('.main-table').addClass('animate-in'); }, 900);
+    setTimeout(function() { $('.animate-nav-tabs').addClass('animate-in'); }, 1000);
 }
 
 // Animasyonlar kapalıysa elementleri görünür yap
