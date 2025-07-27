@@ -199,7 +199,7 @@
     <!-- Alt Bölüm -->
     <div class="row bottom-section">
         <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100 main-table animate-card">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">
                         <i class="fas fa-comments me-2 text-info"></i> Projelerinize Gelen Son Yorumlar
@@ -247,7 +247,7 @@
                                             <i class="fas fa-tag me-1"></i> @yorum.YorumTipi
                                         </small>
                                         </div>
-                                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@yorum.Proje.Id" class="btn btn-sm btn-outline-primary">
+                                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@yorum.Proje.Id" class="btn btn-sm btn-outline-primary animate-button">
                                             <i class="fas fa-eye me-1"></i> Görüntüle
                                         </a>
                                     </div>
@@ -261,17 +261,17 @@
                             <i class="fas fa-comments fa-4x text-muted mb-3"></i>
                             <h6 class="text-muted">Henüz Yorum Bulunmuyor</h6>
                             <p class="text-muted mb-3">Danışmanlık yaptığınız projelere henüz yorum yapılmamış.</p>
-                            <a asp-controller="Akademisyen" asp-action="Danismanliklar" class="btn btn-primary">
+                            <a asp-controller="Akademisyen" asp-action="Danismanliklar" class="btn btn-primary animate-button">
                                 <i class="fas fa-search me-2"></i> Projeleri Görüntüle
                             </a>
                         </div>
                     }
+                </div>
             </div>
         </div>
-    </div>
-    
+        
         <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100 main-table animate-card">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold">
                         <i class="fas fa-user-clock me-2 text-warning"></i> Bekleyen Görüşme Talepleri
@@ -310,7 +310,7 @@
                                         <small class="text-muted">
                                             <i class="far fa-clock me-1"></i> @gorusme.GorusmeTarihi.ToString("dd.MM.yyyy HH:mm")
                                         </small>
-                                        <a asp-controller="DanismanlikGorusmesi" asp-action="Details" asp-route-id="@gorusme.Id" class="btn btn-sm btn-outline-primary">
+                                        <a asp-controller="DanismanlikGorusmesi" asp-action="Details" asp-route-id="@gorusme.Id" class="btn btn-sm btn-outline-primary animate-button">
                                             <i class="fas fa-eye me-1"></i> Detaylar
                                         </a>
                                     </div>

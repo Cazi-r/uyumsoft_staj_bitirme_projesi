@@ -1238,7 +1238,7 @@ body {
 }
 
 .dark-mode .btn:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  /* Genel dark mode buton gölgesi kaldırıldı - her buton kendi rengine göre gölge alacak */
 }
 
 .dark-mode .btn-light {
@@ -1251,7 +1251,7 @@ body {
   background-color: var(--card-header-bg);
   border-color: var(--card-header-border);
   color: var(--body-color);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(248, 249, 250, 0.2);
 }
 
 .dark-mode .btn-outline-light {
@@ -1858,4 +1858,693 @@ body {
 .animate-nav-tabs.animate-in {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* =====================================================
+   13. ENHANCED ANIMATIONS - SMOOTH & BEAUTIFUL
+   ===================================================== */
+
+/* Enhanced Slide Up Animation with Bounce - FLICKER FIXED */
+@keyframes slideUp {
+  0% { 
+    opacity: 0; 
+    transform: translate3d(0, 30px, 0) scale(0.95); 
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate3d(0, -5px, 0) scale(1.02);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate3d(0, 0, 0) scale(1); 
+  }
+}
+
+/* Enhanced Fade In Animation - FLICKER FIXED */
+@keyframes fadeIn {
+  0% { 
+    opacity: 0; 
+    transform: translate3d(0, 0, 0) scale(0.9); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate3d(0, 0, 0) scale(1); 
+  }
+}
+
+/* Smooth Slide In From Left - FLICKER FIXED */
+@keyframes slideInFromLeft {
+  0% { 
+    opacity: 0; 
+    transform: translate3d(-40px, 0, 0) scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate3d(0, 0, 0) scale(1); 
+  }
+}
+
+/* Smooth Slide In From Right - FLICKER FIXED */
+@keyframes slideInFromRight {
+  0% { 
+    opacity: 0; 
+    transform: translate3d(40px, 0, 0) scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate3d(0, 0, 0) scale(1); 
+  }
+}
+
+/* Enhanced Scale In Animation - FLICKER FIXED */
+@keyframes scaleIn {
+  0% { 
+    opacity: 0; 
+    transform: translate3d(0, 0, 0) scale(0.8) rotate(-5deg); 
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0) scale(1.05) rotate(2deg);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg); 
+  }
+}
+
+/* Smooth Float Animation - FLICKER FIXED */
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0px, 0); }
+  50% { transform: translate3d(0, -8px, 0); }
+}
+
+/* Enhanced Fade In Up - FLICKER FIXED */
+@keyframes fadeInUp {
+  0% { 
+    opacity: 0; 
+    transform: translate3d(0, 40px, 0) scale(0.9); 
+  }
+  60% {
+    opacity: 0.8;
+    transform: translate3d(0, -8px, 0) scale(1.02);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate3d(0, 0, 0) scale(1); 
+  }
+}
+
+/* Smooth Slide In From Top - FLICKER FIXED */
+@keyframes slideInFromTop {
+  0% { 
+    opacity: 0; 
+    transform: translate3d(0, -40px, 0) scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate3d(0, 0, 0) scale(1); 
+  }
+}
+
+/* Enhanced Pulse Animation - KALDIRILDI */
+/*
+@keyframes pulse {
+  0% { 
+    transform: scale(1); 
+    box-shadow: 0 0 0 0 rgba(var(--primary-color-rgb), 0.4);
+  }
+  50% { 
+    transform: scale(1.05); 
+    box-shadow: 0 0 0 10px rgba(var(--primary-color-rgb), 0);
+  }
+  100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 0 0 rgba(var(--primary-color-rgb), 0);
+  }
+}
+*/
+
+/* Smooth Bounce Animation */
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40%, 43% {
+    transform: translateY(-10px);
+  }
+  70% {
+    transform: translateY(-5px);
+  }
+  90% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Enhanced Fade In Up */
+@keyframes fadeInUp {
+  0% { 
+    opacity: 0; 
+    transform: translateY(40px) scale(0.9); 
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateY(-8px) scale(1.02);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+/* Smooth Slide In From Top */
+@keyframes slideInFromTop {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-40px) scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+/* Smooth Spin Animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Enhanced Ripple Effect */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Loading Animation - Modern ve temiz */
+.loading {
+  /* animation: pulse 2s infinite; - KALDIRILDI */
+}
+
+/* Enhanced Page Load Animation - FLICKER FIXED */
+.animate-in {
+  animation: slideUp 0.6s ease-out forwards;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Enhanced Header Animation - FLICKER FIXED */
+.animate-header {
+  opacity: 0;
+  transform: translate3d(0, -20px, 0) scale(0.95);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-header.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Card Animation - FLICKER FIXED */
+.animate-card {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0) scale(0.95);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-card.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Stat Card Animation - FLICKER FIXED */
+.animate-stat {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0) scale(0.9);
+  transition: all 0.7s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-stat.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Table Animation - FLICKER FIXED */
+.animate-table {
+  opacity: 0;
+  transform: translate3d(0, 40px, 0) scale(0.95);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-table.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Button Animation - FLICKER FIXED */
+.animate-button {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0) scale(0.9);
+  transition: all 0.5s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-button.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Form Animation - FLICKER FIXED */
+.animate-form {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0) scale(0.95);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-form.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Sidebar Item Animation - FLICKER FIXED */
+.animate-sidebar-item {
+  opacity: 0;
+  transform: translate3d(-30px, 0, 0) scale(0.9);
+  transition: all 0.5s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-sidebar-item.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Table Row Animation - FLICKER FIXED */
+.animate-table-row {
+  opacity: 0;
+  transform: translate3d(-20px, 0, 0) scale(0.95);
+  transition: all 0.4s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-table-row.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced List Item Animation - FLICKER FIXED */
+.animate-list-item {
+  opacity: 0;
+  transform: translate3d(0, 15px, 0) scale(0.95);
+  transition: all 0.4s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-list-item.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Stat Card */
+.stat-card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.stat-card.animate-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Enhanced Main Table */
+.main-table {
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.main-table.animate-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Enhanced Bottom Section Cards */
+.bottom-section .card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.bottom-section .card.animate-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Enhanced Navigation Tabs */
+.animate-nav-tabs {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-nav-tabs.animate-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Enhanced Hover Effects - FLICKER FIXED */
+.card:hover {
+  transform: translate3d(0, -8px, 0) scale(1.02);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s ease-out;
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+}
+
+.btn:hover {
+  transform: translate3d(0, -2px, 0) scale(1.05);
+  transition: all 0.3s ease-out;
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+}
+
+.table-hover-item:hover {
+  transform: translate3d(5px, 0, 0) scale(1.02);
+  background-color: rgba(var(--primary-color-rgb), 0.05) !important;
+  transition: all 0.3s ease-out;
+  will-change: transform, background-color;
+  backface-visibility: hidden;
+}
+
+.comment-item:hover,
+.meeting-item:hover {
+  transform: translate3d(5px, 0, 0) scale(1.02);
+  background-color: rgba(var(--primary-color-rgb), 0.05) !important;
+  transition: all 0.3s ease-out;
+  will-change: transform, background-color;
+  backface-visibility: hidden;
+}
+
+/* Buton renklerine göre gölge efektleri */
+.btn-primary:hover {
+  box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
+}
+
+.btn-success:hover {
+  box-shadow: 0 6px 15px rgba(25, 135, 84, 0.3);
+}
+
+.btn-warning:hover {
+  box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-info:hover {
+  box-shadow: 0 6px 15px rgba(13, 202, 240, 0.3);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+}
+
+.btn-dark:hover {
+  box-shadow: 0 6px 15px rgba(33, 37, 41, 0.3);
+}
+
+.btn-light:hover {
+  box-shadow: 0 6px 15px rgba(248, 249, 250, 0.3);
+}
+
+/* Outline butonlar için */
+.btn-outline-primary:hover {
+  box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
+}
+
+.btn-outline-secondary:hover {
+  box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+}
+
+.btn-outline-success:hover {
+  box-shadow: 0 6px 15px rgba(25, 135, 84, 0.3);
+}
+
+.btn-outline-danger:hover {
+  box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-outline-warning:hover {
+  box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3);
+}
+
+.btn-outline-info:hover {
+  box-shadow: 0 6px 15px rgba(13, 202, 240, 0.3);
+}
+
+.btn-outline-light:hover {
+  box-shadow: 0 6px 15px rgba(248, 249, 250, 0.3);
+}
+
+.btn-outline-dark:hover {
+  box-shadow: 0 6px 15px rgba(33, 37, 41, 0.3);
+}
+
+.table-hover-item:hover {
+  transform: translateX(5px) scale(1.02);
+  background-color: rgba(var(--primary-color-rgb), 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.comment-item:hover,
+.meeting-item:hover {
+  transform: translateX(5px) scale(1.02);
+  background-color: rgba(var(--primary-color-rgb), 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Modern Loading Spinner - Sadece yazı, çerçeve yok */
+.loading-spinner {
+  /* Eski border'ları kaldır - sadece yazı animasyonu */
+  /* width: 20px; */
+  /* height: 20px; */
+  /* border: 2px solid rgba(var(--primary-color-rgb), 0.3); */
+  /* border-top: 2px solid var(--primary-color); */
+  /* border-radius: 50%; */
+  /* animation: spin 1s linear infinite; */
+}
+
+/* Enhanced Ripple Effect for Buttons */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-ripple:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Enhanced Shadow Effects */
+.hover-shadow {
+  transition: box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Enhanced Notification Badge */
+.notification-badge {
+  /* animation: bounce 2s infinite; - KALDIRILDI */
+}
+
+/* Enhanced Micro Icon Animations */
+.micro-icon {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.micro-icon:hover {
+  transform: scale(1.2) rotate(5deg);
+  /* animation: iconPulse 1s ease-in-out; - KALDIRILDI */
+}
+
+/* Enhanced Stat Icon */
+.stat-icon {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.stat-icon:hover {
+  transform: scale(1.1) rotate(10deg);
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Enhanced Details Link */
+.details-link {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.details-link:hover {
+  transform: translateX(5px);
+  color: var(--primary-color) !important;
+}
+
+.details-link:hover i {
+  transform: translateX(3px);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.dark-mode .btn-outline-light:hover {
+  background-color: var(--card-header-bg);
+  border-color: var(--card-header-border);
+  color: var(--body-color);
+}
+
+/* Dark mode için buton renklerine göre gölge efektleri */
+.dark-mode .btn-primary:hover {
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+}
+
+.dark-mode .btn-success:hover {
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.4);
+}
+
+.dark-mode .btn-warning:hover {
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.dark-mode .btn-danger:hover {
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.dark-mode .btn-info:hover {
+  box-shadow: 0 4px 12px rgba(13, 202, 240, 0.4);
+}
+
+.dark-mode .btn-secondary:hover {
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+}
+
+.dark-mode .btn-dark:hover {
+  box-shadow: 0 4px 12px rgba(33, 37, 41, 0.4);
+}
+
+/* Dark mode outline butonlar için */
+.dark-mode .btn-outline-primary:hover {
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+}
+
+.dark-mode .btn-outline-secondary:hover {
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+}
+
+.dark-mode .btn-outline-success:hover {
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.4);
+}
+
+.dark-mode .btn-outline-danger:hover {
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.dark-mode .btn-outline-warning:hover {
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.dark-mode .btn-outline-info:hover {
+  box-shadow: 0 4px 12px rgba(13, 202, 240, 0.4);
+}
+
+.dark-mode .btn-outline-dark:hover {
+  box-shadow: 0 4px 12px rgba(33, 37, 41, 0.4);
+}
+
+/* Enhanced Stat Card - FLICKER FIXED */
+.stat-card {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0) scale(0.9);
+  transition: all 0.7s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.stat-card.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Main Table - FLICKER FIXED */
+.main-table {
+  opacity: 0;
+  transform: translate3d(0, 40px, 0) scale(0.95);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.main-table.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Bottom Section Cards - FLICKER FIXED */
+.bottom-section .card {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0) scale(0.95);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.bottom-section .card.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Enhanced Navigation Tabs - FLICKER FIXED */
+.animate-nav-tabs {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0) scale(0.95);
+  transition: all 0.5s ease-out;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-nav-tabs.animate-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
 }

@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // YENİ: KAPSAMLI SAYFA ANIMASYON SİSTEMİ
 // =====================================================
 
-// Ana animasyon sistemi - tüm sayfalarda çalışır (Basit tarz)
+// Ana animasyon sistemi - tüm sayfalarda çalışır (Enhanced Smooth tarz)
 function initializePageAnimations() {
     // Animasyonlar kapalıysa hiçbir şey yapma
     if (document.body.classList.contains('no-animations')) {
@@ -98,17 +98,18 @@ function initializePageAnimations() {
         return;
     }
 
-    // Basit staggered animasyonlar - dosyalarda kullanılan tarz
-    setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 100);
-    setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 200);
-    setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 300);
-    setTimeout(function() { $('.animate-form').addClass('animate-in'); }, 400);
-    setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 500);
-    setTimeout(function() { $('.table-hover-item').addClass('animate-in'); }, 600);
-    setTimeout(function() { $('.comment-item').addClass('animate-in'); }, 700);
-    setTimeout(function() { $('.stat-card').addClass('animate-in'); }, 800);
-    setTimeout(function() { $('.main-table').addClass('animate-in'); }, 900);
-    setTimeout(function() { $('.animate-nav-tabs').addClass('animate-in'); }, 1000);
+    // Enhanced smooth staggered animasyonlar - daha güzel ve akıcı
+    setTimeout(function() { $('.animate-header').addClass('animate-in'); }, 150);
+    setTimeout(function() { $('.stat-card').addClass('animate-in'); }, 300);
+    setTimeout(function() { $('.main-table').addClass('animate-in'); }, 300);
+    setTimeout(function() { $('.animate-card').addClass('animate-in'); }, 450);
+    setTimeout(function() { $('.animate-button').addClass('animate-in'); }, 600);
+    setTimeout(function() { $('.animate-form').addClass('animate-in'); }, 750);
+    setTimeout(function() { $('.animate-table').addClass('animate-in'); }, 900);
+    setTimeout(function() { $('.table-hover-item').addClass('animate-in'); }, 1050);
+    setTimeout(function() { $('.comment-item').addClass('animate-in'); }, 1200);
+    setTimeout(function() { $('.meeting-item').addClass('animate-in'); }, 1200);
+    setTimeout(function() { $('.animate-nav-tabs').addClass('animate-in'); }, 1350);
 }
 
 // Animasyonlar kapalıysa elementleri görünür yap
@@ -537,14 +538,14 @@ function initializeDashboardHoverEffects() {
     document.querySelectorAll('.stat-card').forEach(card => {
         const icon = card.querySelector('.stat-icon');
         if (icon) {
-            card.addEventListener('mouseenter', function() {
-                if (!document.body.classList.contains('no-animations')) {
-                    icon.style.animation = 'pulse 2s infinite';
-                }
-            });
+                    card.addEventListener('mouseenter', function() {
+            if (!document.body.classList.contains('no-animations')) {
+                // icon.style.animation = 'pulse 2s infinite'; - KALDIRILDI
+            }
+        });
             
             card.addEventListener('mouseleave', function() {
-                icon.style.animation = '';
+                // icon.style.animation = ''; - KALDIRILDI
             });
         }
     });
