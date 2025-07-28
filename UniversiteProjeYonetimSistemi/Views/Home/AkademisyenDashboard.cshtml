@@ -19,9 +19,9 @@
                 <div class="card-body py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="fw-bold mb-2" style="color: #0d6efd;">Danışmanlık Projeleriniz</h6>
+                            <h6 class="fw-bold mb-2" style="color: #0d6efd;">Tüm Danışmanlık Projeleriniz</h6>
                             <h3 class="mb-1 stat-number" data-count="@ViewBag.DanismanlikSayisi">0</h3>
-                            <p class="text-muted mt-1 mb-0 small">Aktif danışmanlık</p>
+                            <p class="text-muted mt-1 mb-0 small">Toplam danışmanlık yapılan proje sayısı</p>
                         </div>
                         <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
                             <i class="fas fa-chalkboard-teacher fa-lg" style="color: #0d6efd;"></i>
@@ -84,7 +84,7 @@
     <!-- Danışmanlık Yaptığınız Projeler -->
     <div class="card shadow-sm mb-4 main-table">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold"><i class="fas fa-project-diagram me-2 text-primary"></i> Danışmanlık Yaptığınız Projeler</h5>
+            <h5 class="mb-0 fw-bold"><i class="fas fa-project-diagram me-2 text-primary"></i> Aktif Danışmanlık Yaptığınız Projeler</h5>
             <a asp-controller="Akademisyen" asp-action="Danismanliklar" class="btn btn-sm btn-primary">
                 <i class="fas fa-list me-1"></i> Tümünü Gör
             </a>
@@ -98,7 +98,7 @@
                             <th>Öğrenci</th>
                             <th>Kategori</th>
                             <th>Durum</th>
-                            <th>Tarih</th>
+                            <th>Teslim Tarihi</th>
                             <th class="text-end pe-3">İşlemler</th>
                         </tr>
                     </thead>
@@ -162,7 +162,7 @@
                                         @if (proje.TeslimTarihi != null)
                                         {
                                             <div>
-                                                <strong>Teslim:</strong> @proje.TeslimTarihi?.ToString("dd.MM.yyyy")
+                                                @proje.TeslimTarihi?.ToString("dd.MM.yyyy")
                                             </div>
                                         }
                                         else
@@ -247,7 +247,7 @@
                                             <i class="fas fa-tag me-1"></i> @yorum.YorumTipi
                                         </small>
                                         </div>
-                                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@yorum.Proje.Id" class="btn btn-sm btn-outline-primary animate-button">
+                                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@yorum.Proje.Id" class="btn btn-sm btn-primary">
                                             <i class="fas fa-eye me-1"></i> Görüntüle
                                         </a>
                                     </div>
@@ -310,7 +310,7 @@
                                         <small class="text-muted">
                                             <i class="far fa-clock me-1"></i> @gorusme.GorusmeTarihi.ToString("dd.MM.yyyy HH:mm")
                                         </small>
-                                        <a asp-controller="DanismanlikGorusmesi" asp-action="Details" asp-route-id="@gorusme.Id" class="btn btn-sm btn-outline-primary animate-button">
+                                        <a asp-controller="DanismanlikGorusmesi" asp-action="Details" asp-route-id="@gorusme.Id" class="btn btn-sm btn-primary">
                                             <i class="fas fa-eye me-1"></i> Detaylar
                                         </a>
                                     </div>

@@ -158,19 +158,19 @@
                             </td>
                             <td>
                                 <div class="d-flex flex-column">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light w-100 mb-1 text-start animate-button">
-                                        <i class="fas fa-eye text-primary me-2"></i>Görüntüle
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary w-100 mb-1 text-start animate-button details-btn">
+                                        <i class="fas fa-eye text-white me-2"></i>Görüntüle
                                     </a>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
                                     {
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light w-100 mb-1 text-start animate-button">
-                                            <i class="fas fa-edit text-warning me-2"></i>Düzenle
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning w-100 mb-1 text-start animate-button details-btn">
+                                            <i class="fas fa-edit text-white me-2"></i>Düzenle
                                         </a>
                                     }
                                     @if (User.IsInRole("Admin"))
                                     {
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light w-100 text-start animate-button">
-                                            <i class="fas fa-trash text-danger me-2"></i>Sil
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger w-100 text-start animate-button details-btn">
+                                            <i class="fas fa-trash text-white me-2"></i>Sil
                                         </a>
                                     }
                                 </div>

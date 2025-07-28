@@ -20,6 +20,9 @@ namespace UniversiteProjeYonetimSistemi.Models
         
         public DateTime YuklemeTarihi { get; set; } = DateTime.Now;
         
+        [StringLength(500)]
+        public string Aciklama { get; set; }
+        
         [ForeignKey("Proje")]
         public int ProjeId { get; set; }
         public Proje Proje { get; set; }

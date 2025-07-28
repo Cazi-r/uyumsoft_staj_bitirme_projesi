@@ -1,0 +1,130 @@
+@model UniversiteProjeYonetimSistemi.Models.ViewModels.ProjeDosyaViewModel
+@{
+    ViewData["Title"] = "Dosya Yükle";
+    var projeId = Model.ProjeId;
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card animate-card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-upload me-2"></i>
+                        Proje Dosyası Yükle
+                    </h4>
+                    @if (!string.IsNullOrEmpty(ViewBag.ProjeAdi))
+                    {
+                        <small class="text-muted d-block mt-1">
+                            <i class="fas fa-project-diagram me-1"></i>
+                            @ViewBag.ProjeAdi
+                        </small>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-controller="ProjeDosya" asp-action="Upload" method="post" enctype="multipart/form-data" class="animate-form">
+                        <input type="hidden" asp-for="ProjeId" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="Dosya" class="form-label">
+                                <i class="fas fa-file me-1"></i>
+                                Dosya Seç *
+                            </label>
+                            <input asp-for="Dosya" class="form-control" type="file" 
+                                   accept=".pdf,.doc,.docx,.txt,.zip,.rar,.jpg,.jpeg,.png,.gif,.xlsx,.xls,.ppt,.pptx" 
+                                   required>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Desteklenen dosya türleri: PDF, Word, Text, Resim, Arşiv, Excel, PowerPoint (Maks. 50MB)
+                            </div>
+                            <span asp-validation-for="Dosya" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Aciklama" class="form-label">
+                                <i class="fas fa-comment me-1"></i>
+                                Açıklama
+                            </label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="3" 
+                                      placeholder="Dosya ile ilgili açıklama ekleyebilirsiniz..."></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-6 pe-1">
+                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@projeId" 
+                                   class="btn btn-outline-secondary animate-button w-100">
+                                    <i class="fas fa-arrow-left me-1"></i> Vazgeç
+                                </a>
+                            </div>
+                            <div class="col-6 ps-1">
+                                <button type="submit" class="btn btn-primary animate-button w-100">
+                                    <i class="fas fa-upload me-1"></i> Dosyayı Yükle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dosya yükleme kuralları -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-exclamation-circle text-warning me-2"></i>
+                        Dosya Yükleme Kuralları
+                    </h6>
+                    <ul class="mb-0 small text-muted">
+                        <li>Maksimum dosya boyutu: 50MB</li>
+                        <li>Desteklenen dosya türleri: PDF, Word, Excel, PowerPoint, Resim, Arşiv ve Metin dosyaları</li>
+                        <li>Dosya adında özel karakterler bulunmamalıdır</li>
+                        <li>Yüklenen dosyalar proje ile ilgili olmalıdır</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Dosya seçim kontrolü
+        document.getElementById('Dosya').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Dosya boyutu kontrolü (50MB = 52428800 bytes)
+                if (file.size > 52428800) {
+                    alert('Dosya boyutu 50MB\'dan büyük olamaz!');
+                    e.target.value = '';
+                    return;
+                }
+                
+                // Dosya türü kontrolü
+                const allowedTypes = ['.pdf', '.doc', '.docx', '.txt', '.zip', '.rar', 
+                                    '.jpg', '.jpeg', '.png', '.gif', '.xlsx', '.xls', 
+                                    '.ppt', '.pptx'];
+                const fileName = file.name.toLowerCase();
+                const isAllowed = allowedTypes.some(type => fileName.endsWith(type));
+                
+                if (!isAllowed) {
+                    alert('Bu dosya türü desteklenmiyor!');
+                    e.target.value = '';
+                    return;
+                }
+                
+                console.log('Dosya seçildi:', file.name, 'Boyut:', (file.size / 1024 / 1024).toFixed(2) + 'MB');
+            }
+        });
+    </script>
+} 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
@@ -231,11 +231,27 @@
                     </button>
                     
                     <div class="d-md-none">
-                        <span class="fw-bold text-primary">Proje Yönetim</span>
-    </div>
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <a class="nav-link nav-notification position-relative d-flex align-items-center" asp-controller="Bildirim" asp-action="Index">
+                                <i class="fas fa-bell me-2" style="font-size: 1.2rem; color: #0d6efd;"></i>
+                                @await Component.InvokeAsync("BildirimSayaci")
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="fw-bold text-primary">Proje Yönetim</span>
+                        }
+                    </div>
 
                     <div class="d-none d-md-flex align-items-center">
-                        <span class="text-dark h5 mb-0">@ViewData["Title"]</span>
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <a class="nav-link nav-notification position-relative d-flex align-items-center me-3" asp-controller="Bildirim" asp-action="Index">
+                                <i class="fas fa-bell me-2" style="font-size: 1.5rem; color: #0d6efd;"></i>
+                                @await Component.InvokeAsync("BildirimSayaci")
+                            </a>
+                        }
                     </div>
 
                     <ul class="navbar-nav ms-auto">
@@ -248,20 +264,11 @@
                         
                         @if (User.Identity.IsAuthenticated)
                         {
-                            @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item me-3">
-                                    <a class="nav-link nav-notification position-relative" asp-controller="Bildirim" asp-action="Index">
-                                        <i class="fas fa-bell" style="font-size: 1.8rem;"></i>
-                                        @await Component.InvokeAsync("BildirimSayaci")
-                                    </a>
-                                </li>
-                            }
                             
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link d-flex align-items-center profile-dropdown" href="#" id="userDropdown" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="d-none d-lg-inline profile-name me-3">
+                                    <span class="d-none d-lg-inline profile-name me-3 user-name-display">
                                         @{
                                             var userRole = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
                                             var ad = User.Claims.FirstOrDefault(c => c.Type == "Ad")?.Value;

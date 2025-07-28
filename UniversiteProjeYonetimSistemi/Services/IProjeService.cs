@@ -45,5 +45,12 @@ namespace UniversiteProjeYonetimSistemi.Services
         Task DeleteStageAsync(int asamaId);
         Task<int> GetDegerlendirilmeyenAsamaSayisiByMentorIdAsync(int mentorId);
         Task UpdateStageEvaluatedStatusAsync(int asamaId, bool degerlendirildi);
+        
+        // Proje kaynakları işlemleri
+        Task<ProjeKaynagi> AddResourceAsync(int projeId, string kaynakAdi, string kaynakTipi, string url, string aciklama, string yazar, DateTime? yayinTarihi);
+        Task<IEnumerable<ProjeKaynagi>> GetResourcesByProjeIdAsync(int projeId);
+        Task<ProjeKaynagi> GetResourceByIdAsync(int kaynakId);
+        Task UpdateResourceAsync(ProjeKaynagi kaynak);
+        Task DeleteResourceAsync(int kaynakId);
     }
 } 

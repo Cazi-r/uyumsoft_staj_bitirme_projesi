@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Kaynak Ekle";
+    var projeId = Context.Request.Query["projeId"];
+}
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card animate-card">
+                <div class="card-header">
+                    <h4 class="mb-0">Proje Kaynağı Ekle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="ProjeKaynagi" asp-action="Add" method="post" class="animate-form">
+                        <input type="hidden" name="ProjeId" value="@projeId" />
+                        <div class="mb-3">
+                            <label for="KaynakAdi" class="form-label">Kaynak Adı</label>
+                            <input class="form-control" type="text" id="KaynakAdi" name="KaynakAdi" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="KaynakTipi" class="form-label">Kaynak Tipi</label>
+                            <select class="form-select" id="KaynakTipi" name="KaynakTipi">
+                                @foreach (var tip in ViewBag.KaynakTipleri)
+                                {
+                                    <option value="@tip">@tip</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Url" class="form-label">URL</label>
+                            <input class="form-control" type="url" id="Url" name="Url" placeholder="https://">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Yazar" class="form-label">Yazar</label>
+                            <input class="form-control" type="text" id="Yazar" name="Yazar">
+                        </div>
+                        <div class="mb-3">
+                            <label for="YayinTarihi" class="form-label">Yayın Tarihi</label>
+                            <input class="form-control" type="date" id="YayinTarihi" name="YayinTarihi">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Aciklama" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="Aciklama" name="Aciklama" rows="3"></textarea>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-6 pe-1">
+                                <a asp-controller="Proje" asp-action="Details" asp-route-id="@projeId" class="btn btn-outline-secondary animate-button w-100">
+                                    <i class="fas fa-arrow-left me-1"></i> Vazgeç
+                                </a>
+                            </div>
+                            <div class="col-6 ps-1">
+                                <button type="submit" class="btn btn-primary animate-button w-100">
+                                    <i class="fas fa-save me-1"></i> Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

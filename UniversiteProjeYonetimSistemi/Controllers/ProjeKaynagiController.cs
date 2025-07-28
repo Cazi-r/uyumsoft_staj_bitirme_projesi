@@ -1,12 +1,13 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using UniversiteProjeYonetimSistemi.Data;
 using UniversiteProjeYonetimSistemi.Models;
 using UniversiteProjeYonetimSistemi.Services;
+using Microsoft.AspNetCore.Authorization;
+using System;
+using UniversiteProjeYonetimSistemi.Models.ViewModels;
+using System.Collections.Generic;
 
 namespace UniversiteProjeYonetimSistemi.Controllers
 {
@@ -15,133 +16,117 @@ namespace UniversiteProjeYonetimSistemi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IProjeService _projeService;
-        private readonly IAkademisyenService _akademisyenService;
-        private readonly IOgrenciService _ogrenciService;
         private readonly AuthService _authService;
 
         public ProjeKaynagiController(
             ApplicationDbContext context,
             IProjeService projeService,
-            IAkademisyenService akademisyenService,
-            IOgrenciService ogrenciService,
             AuthService authService)
         {
             _context = context;
             _projeService = projeService;
-            _akademisyenService = akademisyenService;
-            _ogrenciService = ogrenciService;
             _authService = authService;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(ProjeKaynagi kaynak)
+        private async Task<bool> HasProjectPermission(int projeId)
         {
-            if (ModelState.IsValid)
-            {
-                var proje = await _context.Projeler
-                    .Include(p => p.Mentor)
-                    .Include(p => p.Ogrenci)
-                    .FirstOrDefaultAsync(p => p.Id == kaynak.ProjeId);
-
-                if (proje == null)
-                {
-                    return NotFound();
-                }
-
-                // Yetki kontrolü
-                bool yetkiliMi = false;
-
-                if (User.IsInRole("Admin"))
-                {
-                    yetkiliMi = true;
-                }
-                else if (User.IsInRole("Akademisyen"))
-                {
-                    var akademisyen = await _akademisyenService.GetAkademisyenByUserName(User.Identity.Name);
-                    if (akademisyen != null && proje.MentorId == akademisyen.Id)
-                    {
-                        yetkiliMi = true;
-                    }
-                }
-                else if (User.IsInRole("Ogrenci"))
-                {
-                    var ogrenci = await _ogrenciService.GetOgrenciByUserName(User.Identity.Name);
-                    if (ogrenci != null && proje.OgrenciId == ogrenci.Id)
-                    {
-                        yetkiliMi = true;
-                    }
-                }
-
-                if (!yetkiliMi)
-                {
-                    return Forbid();
-                }
-
-                _context.Add(kaynak);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "Kaynak başarıyla eklendi.";
-                return RedirectToAction("Details", "Proje", new { id = kaynak.ProjeId });
-            }
-
-            TempData["ErrorMessage"] = "Kaynak eklenirken bir hata oluştu.";
-            return RedirectToAction("Details", "Proje", new { id = kaynak.ProjeId });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id, int projeId)
-        {
-            var kaynak = await _context.ProjeKaynaklari.FindAsync(id);
-            if (kaynak == null)
-            {
-                return NotFound();
-            }
-
             var proje = await _context.Projeler
                 .Include(p => p.Mentor)
+                .Include(p => p.Ogrenci)
                 .FirstOrDefaultAsync(p => p.Id == projeId);
 
+            if (proje == null) return false;
+            if (User.IsInRole("Admin")) return true;
+
+            if (User.IsInRole("Akademisyen"))
+            {
+                var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+                return akademisyen != null && proje.MentorId == akademisyen.Id;
+            }
+
+            if (User.IsInRole("Ogrenci"))
+            {
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                return ogrenci != null && proje.OgrenciId == ogrenci.Id;
+            }
+
+            return false;
+        }
+
+        // GET: ProjeKaynagi/Create
+        public async Task<IActionResult> Create(int projeId)
+        {
+            if (!await HasProjectPermission(projeId))
+            {
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = projeId });
+            }
+
+            var proje = await _projeService.GetByIdAsync(projeId);
             if (proje == null)
             {
                 return NotFound();
             }
 
-            // Yetki kontrolü
-            bool yetkiliMi = false;
+            var model = new ProjeKaynagiViewModel
+            {
+                ProjeId = projeId
+            };
 
-            if (User.IsInRole("Admin"))
+            ViewBag.ProjeAdi = proje.Ad;
+            ViewBag.KaynakTipleri = new List<string> { "Kitap", "Makale", "Website", "API", "Dokuman", "Video", "Diger" };
+            return View(model);
+        }
+
+        // POST: ProjeKaynagi/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ProjeKaynagiViewModel model)
+        {
+            if (!await HasProjectPermission(model.ProjeId))
             {
-                yetkiliMi = true;
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
             }
-            else if (User.IsInRole("Akademisyen"))
+
+            // Debug: ModelState hatalarını kontrol et
+            if (!ModelState.IsValid)
             {
-                var akademisyen = await _akademisyenService.GetAkademisyenByUserName(User.Identity.Name);
-                if (akademisyen != null && proje.MentorId == akademisyen.Id)
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                TempData["ErrorMessage"] = "Form hataları: " + string.Join(", ", errors);
+                ViewBag.KaynakTipleri = new List<string> { "Kitap", "Makale", "Website", "API", "Dokuman", "Video", "Diger" };
+                return View(model);
+            }
+
+            try
+            {
+                var projeKaynagi = new ProjeKaynagi
                 {
-                    yetkiliMi = true;
-                }
+                    ProjeId = model.ProjeId,
+                    KaynakAdi = model.KaynakAdi,
+                    KaynakTipi = model.KaynakTipi,
+                    Url = model.Url,
+                    Yazar = model.Yazar,
+                    YayinTarihi = model.YayinTarihi,
+                    Aciklama = model.Aciklama,
+                    EklemeTarihi = DateTime.Now
+                };
+
+                _context.ProjeKaynaklari.Add(projeKaynagi);
+                await _context.SaveChangesAsync();
+                
+                TempData["SuccessMessage"] = "Kaynak başarıyla eklendi.";
+                return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
             }
-            else if (User.IsInRole("Ogrenci"))
+            catch (Exception ex)
             {
-                var ogrenci = await _ogrenciService.GetOgrenciByUserName(User.Identity.Name);
-                if (ogrenci != null && proje.OgrenciId == ogrenci.Id)
-                {
-                    yetkiliMi = true;
-                }
+                TempData["ErrorMessage"] = "Kaynak eklenirken bir hata oluştu: " + ex.Message;
+                // Debug: Exception detaylarını logla
+                System.Diagnostics.Debug.WriteLine($"ProjeKaynagi Create Error: {ex}");
             }
 
-            if (!yetkiliMi)
-            {
-                return Forbid();
-            }
-
-            _context.ProjeKaynaklari.Remove(kaynak);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Kaynak başarıyla silindi.";
-            return RedirectToAction("Details", "Proje", new { id = projeId });
+            ViewBag.KaynakTipleri = new List<string> { "Kitap", "Makale", "Website", "API", "Dokuman", "Video", "Diger" };
+            return View(model);
         }
     }
-} 
+}

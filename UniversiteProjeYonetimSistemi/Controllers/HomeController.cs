@@ -78,7 +78,7 @@ public class HomeController : Controller
                 if (akademisyen != null)
                 {
                     ViewBag.DanismanlikProjeleri = await _context.Projeler
-                        .Where(p => p.MentorId == akademisyen.Id)
+                        .Where(p => p.MentorId == akademisyen.Id && p.Status == "Devam")
                         .Include(p => p.Ogrenci)
                         .Include(p => p.Kategori)
                         .OrderByDescending(p => p.OlusturmaTarihi)
@@ -135,7 +135,7 @@ public class HomeController : Controller
                     var danismanlikProjeleri = await _context.Projeler
                         .Include(p => p.Ogrenci)
                         .Include(p => p.Kategori)
-                        .Where(p => p.MentorId == akademisyen.Id)
+                        .Where(p => p.MentorId == akademisyen.Id && p.Status == "Devam")
                         .OrderByDescending(p => p.OlusturmaTarihi)
                         .Take(5)
                         .ToListAsync();

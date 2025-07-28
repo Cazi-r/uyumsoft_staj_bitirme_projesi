@@ -156,6 +156,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 DosyaTipi = file.ContentType,
                 DosyaBoyutu = file.Length,
                 YuklemeTarihi = DateTime.Now,
+                Aciklama = aciklama,
                 YukleyenId = yukleyenId,
                 YukleyenTipi = yukleyenTipi,
                 CreatedAt = DateTime.Now,
@@ -381,6 +382,59 @@ namespace UniversiteProjeYonetimSistemi.Services
                 asama.UpdatedAt = DateTime.Now;
 
                 _context.ProjeAsamalari.Update(asama);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        // Proje Kaynakları işlemleri
+        public async Task<ProjeKaynagi> AddResourceAsync(int projeId, string kaynakAdi, string kaynakTipi, string url, string aciklama, string yazar, DateTime? yayinTarihi)
+        {
+            var kaynak = new ProjeKaynagi
+            {
+                ProjeId = projeId,
+                KaynakAdi = kaynakAdi,
+                KaynakTipi = kaynakTipi,
+                Url = url,
+                Aciklama = aciklama,
+                Yazar = yazar,
+                YayinTarihi = yayinTarihi,
+                EklemeTarihi = DateTime.Now,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+
+            _context.ProjeKaynaklari.Add(kaynak);
+            await _context.SaveChangesAsync();
+
+            return kaynak;
+        }
+
+        public async Task<IEnumerable<ProjeKaynagi>> GetResourcesByProjeIdAsync(int projeId)
+        {
+            return await _context.ProjeKaynaklari
+                .Where(k => k.ProjeId == projeId)
+                .OrderByDescending(k => k.EklemeTarihi)
+                .ToListAsync();
+        }
+
+        public async Task<ProjeKaynagi> GetResourceByIdAsync(int kaynakId)
+        {
+            return await _context.ProjeKaynaklari.FindAsync(kaynakId);
+        }
+
+        public async Task UpdateResourceAsync(ProjeKaynagi kaynak)
+        {
+            kaynak.UpdatedAt = DateTime.Now;
+            _context.ProjeKaynaklari.Update(kaynak);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteResourceAsync(int kaynakId)
+        {
+            var kaynak = await _context.ProjeKaynaklari.FindAsync(kaynakId);
+            if (kaynak != null)
+            {
+                _context.ProjeKaynaklari.Remove(kaynak);
                 await _context.SaveChangesAsync();
             }
         }

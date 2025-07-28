@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.IIS;
 using UniversiteProjeYonetimSistemi.Data;
 using UniversiteProjeYonetimSistemi.Services;
 using UniversiteProjeYonetimSistemi.Middleware;
@@ -36,6 +38,19 @@ builder.Services.AddScoped<IOgrenciService, OgrenciService>();
 builder.Services.AddScoped<IAkademisyenService, AkademisyenService>();
 builder.Services.AddScoped<IBildirimService, BildirimService>();
 builder.Services.AddScoped<ZamanDurumuService>();
+
+// Dosya yükleme boyut sınırını ayarla (50MB)
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 52428800; // 50MB
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartBodyLengthLimit = 52428800; // 50MB
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 builder.Services.AddControllersWithViews();
 

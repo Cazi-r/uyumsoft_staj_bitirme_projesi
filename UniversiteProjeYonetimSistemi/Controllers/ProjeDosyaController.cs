@@ -55,48 +55,161 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
+        // GET: ProjeDosya/Upload
+        public async Task<IActionResult> Upload(int projeId)
+        {
+            // Proje var mı kontrol et
+            var proje = await _projeService.GetByIdAsync(projeId);
+            if (proje == null)
+            {
+                TempData["ErrorMessage"] = "Proje bulunamadı.";
+                return RedirectToAction("Index", "Proje");
+            }
+
+            // Kullanıcının bu projeye dosya yükleme yetkisi var mı kontrol et
+            var currentUser = await _authService.GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            bool hasPermission = false;
+            
+            if (User.IsInRole("Admin"))
+            {
+                hasPermission = true;
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                hasPermission = ogrenci != null && proje.OgrenciId == ogrenci.Id;
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                hasPermission = await IsCurrentUserProjectMentor(projeId);
+            }
+
+            if (!hasPermission)
+            {
+                TempData["ErrorMessage"] = "Bu projeye dosya yükleme yetkiniz bulunmuyor.";
+                return RedirectToAction("Details", "Proje", new { id = projeId });
+            }
+
+            var model = new ProjeDosyaViewModel
+            {
+                ProjeId = projeId
+            };
+
+            ViewBag.ProjeAdi = proje.Ad;
+            return View(model);
+        }
+
         // POST: ProjeDosya/Upload
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(ProjeDosyaViewModel model)
         {
+            // Model validation
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Lütfen bir dosya seçin.";
+                var proje = await _projeService.GetByIdAsync(model.ProjeId);
+                ViewBag.ProjeAdi = proje?.Ad;
+                return View(model);
+            }
+
+            // Proje var mı kontrol et
+            var projeCheck = await _projeService.GetByIdAsync(model.ProjeId);
+            if (projeCheck == null)
+            {
+                TempData["ErrorMessage"] = "Proje bulunamadı.";
+                return RedirectToAction("Index", "Proje");
+            }
+
+            // Kullanıcının bu projeye dosya yükleme yetkisi var mı kontrol et
+            var currentUser = await _authService.GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            bool hasPermission = false;
+            int? yukleyenId = null;
+            string yukleyenTipi = "Ogrenci";
+
+            if (User.IsInRole("Admin"))
+            {
+                hasPermission = true;
+                // Admin için default olarak akademisyen olarak işaretle
+                yukleyenTipi = "Akademisyen";
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                hasPermission = ogrenci != null && projeCheck.OgrenciId == ogrenci.Id;
+                if (hasPermission)
+                {
+                    yukleyenId = ogrenci.Id;
+                    yukleyenTipi = "Ogrenci";
+                }
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                hasPermission = await IsCurrentUserProjectMentor(model.ProjeId);
+                if (hasPermission)
+                {
+                    var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+                    yukleyenId = akademisyen?.Id;
+                    yukleyenTipi = "Akademisyen";
+                }
+            }
+
+            if (!hasPermission)
+            {
+                TempData["ErrorMessage"] = "Bu projeye dosya yükleme yetkiniz bulunmuyor.";
                 return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
             }
 
+            // Dosya var mı ve geçerli mi kontrol et
             if (model.Dosya != null && model.Dosya.Length > 0)
             {
-                int? yukleyenId = null;
-                string yukleyenTipi = "Ogrenci";
-
-                // Yükleyen bilgisini belirle
-                if (User.IsInRole("Akademisyen"))
+                try
                 {
-                    var akademisyen = await _authService.GetCurrentAkademisyenAsync();
-                    if (akademisyen != null)
+                    // Dosya boyutu kontrolü (50MB)
+                    if (model.Dosya.Length > 50 * 1024 * 1024)
                     {
-                        yukleyenId = akademisyen.Id;
-                        yukleyenTipi = "Akademisyen";
+                        TempData["ErrorMessage"] = "Dosya boyutu 50MB'dan büyük olamaz.";
+                        ViewBag.ProjeAdi = projeCheck.Ad;
+                        return View(model);
                     }
-                }
-                else if (User.IsInRole("Ogrenci"))
-                {
-                    var ogrenci = await _authService.GetCurrentOgrenciAsync();
-                    if (ogrenci != null)
-                    {
-                        yukleyenId = ogrenci.Id;
-                        yukleyenTipi = "Ogrenci";
-                    }
-                }
 
-                await _projeService.UploadFileAsync(model.ProjeId, model.Dosya, model.Aciklama, yukleyenId, yukleyenTipi);
-                TempData["SuccessMessage"] = "Dosya başarıyla yüklendi.";
+                    // Dosya türü kontrolü
+                    var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".txt", ".zip", ".rar", 
+                        ".jpg", ".jpeg", ".png", ".gif", ".xlsx", ".xls", ".ppt", ".pptx" };
+                    var extension = Path.GetExtension(model.Dosya.FileName).ToLowerInvariant();
+                    
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        TempData["ErrorMessage"] = "Bu dosya türü desteklenmiyor.";
+                        ViewBag.ProjeAdi = projeCheck.Ad;
+                        return View(model);
+                    }
+
+                    // Dosyayı yükle
+                    await _projeService.UploadFileAsync(model.ProjeId, model.Dosya, model.Aciklama, yukleyenId, yukleyenTipi);
+                    TempData["SuccessMessage"] = "Dosya başarıyla yüklendi.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Dosya yüklenirken bir hata oluştu: " + ex.Message;
+                    ViewBag.ProjeAdi = projeCheck.Ad;
+                    return View(model);
+                }
             }
             else
             {
-                TempData["ErrorMessage"] = "Geçersiz dosya.";
+                TempData["ErrorMessage"] = "Lütfen bir dosya seçin.";
+                ViewBag.ProjeAdi = projeCheck.Ad;
+                return View(model);
             }
 
             return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
@@ -108,12 +221,44 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             var dosya = await _projeService.GetFileByIdAsync(id);
             if (dosya == null)
             {
+                TempData["ErrorMessage"] = "Dosya bulunamadı.";
                 return NotFound();
+            }
+
+            // Kullanıcının bu dosyayı indirme yetkisi var mı kontrol et
+            var proje = await _projeService.GetByIdAsync(dosya.ProjeId);
+            if (proje == null)
+            {
+                TempData["ErrorMessage"] = "Proje bulunamadı.";
+                return NotFound();
+            }
+
+            // Yetki kontrolü
+            bool hasPermission = false;
+            if (User.IsInRole("Admin"))
+            {
+                hasPermission = true;
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                hasPermission = ogrenci != null && proje.OgrenciId == ogrenci.Id;
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                hasPermission = await IsCurrentUserProjectMentor(dosya.ProjeId);
+            }
+
+            if (!hasPermission)
+            {
+                TempData["ErrorMessage"] = "Bu dosyayı indirme yetkiniz bulunmuyor.";
+                return RedirectToAction("Details", "Proje", new { id = dosya.ProjeId });
             }
 
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", dosya.DosyaYolu.TrimStart('/'));
             if (!System.IO.File.Exists(filePath))
             {
+                TempData["ErrorMessage"] = "Dosya fiziksel olarak bulunamadı.";
                 return NotFound();
             }
 
@@ -124,7 +269,38 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             }
             memory.Position = 0;
 
-            return File(memory, "application/octet-stream", dosya.DosyaAdi);
+            // Dosya türüne göre content type belirle
+            string contentType = GetContentType(dosya.DosyaTipi, dosya.DosyaAdi);
+
+            return File(memory, contentType, dosya.DosyaAdi);
+        }
+
+        private string GetContentType(string dosyaTipi, string dosyaAdi)
+        {
+            if (!string.IsNullOrEmpty(dosyaTipi))
+            {
+                return dosyaTipi;
+            }
+
+            // Eğer content type bilinmiyorsa, dosya uzantısına göre belirle
+            var extension = Path.GetExtension(dosyaAdi).ToLowerInvariant();
+            return extension switch
+            {
+                ".pdf" => "application/pdf",
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".txt" => "text/plain",
+                ".zip" => "application/zip",
+                ".rar" => "application/x-rar-compressed",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".xls" => "application/vnd.ms-excel",
+                ".ppt" => "application/vnd.ms-powerpoint",
+                ".pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                _ => "application/octet-stream"
+            };
         }
 
         // POST: ProjeDosya/Delete/5
