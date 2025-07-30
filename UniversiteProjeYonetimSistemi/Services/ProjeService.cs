@@ -271,6 +271,14 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        public async Task<Degerlendirme> GetEvaluationByIdAsync(int degerlendirmeId)
+        {
+            return await _context.Degerlendirmeler
+                .Include(d => d.Akademisyen)
+                .Include(d => d.Proje)
+                .FirstOrDefaultAsync(d => d.Id == degerlendirmeId);
+        }
+
         public async Task UpdateEvaluationAsync(int degerlendirmeId, int puan, string aciklama, string degerlendirmeTipi)
         {
             var degerlendirme = await _context.Degerlendirmeler.FindAsync(degerlendirmeId);

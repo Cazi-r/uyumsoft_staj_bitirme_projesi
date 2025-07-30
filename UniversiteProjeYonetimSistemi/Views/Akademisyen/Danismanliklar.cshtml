@@ -137,9 +137,9 @@
                                                     <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-info animate-button" title="Proje Sayfası">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a asp-action="DegerlendirmeOlustur" asp-route-projeId="@proje.Id" class="btn btn-sm btn-outline-success animate-button" title="Değerlendir">
-                                                        <i class="fas fa-star"></i>
-                                                    </a>
+                                                                                            <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-success animate-button" title="Değerlendir">
+                                            <i class="fas fa-star"></i>
+                                        </a>
                                                 </div>
                                             </td>
                                         </tr>

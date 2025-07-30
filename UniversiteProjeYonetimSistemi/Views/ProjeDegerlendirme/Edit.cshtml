@@ -1,0 +1,167 @@
+@model UniversiteProjeYonetimSistemi.Models.Degerlendirme
+
+@{
+    ViewData["Title"] = "Değerlendirme Düzenle";
+}
+
+<style>
+    /* Range input için custom renkli track */
+    input[type=range].puan-range::-webkit-slider-thumb {
+        background: #0d6efd;
+    }
+    input[type=range].puan-range {
+        width: 100%;
+        accent-color: #dc3545; /* fallback */
+    }
+    input[type=range].puan-range::-webkit-slider-runnable-track {
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #198754 100%);
+    }
+    input[type=range].puan-range::-moz-range-thumb {
+        background: #0d6efd;
+    }
+    input[type=range].puan-range::-moz-range-track {
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #198754 100%);
+    }
+    input[type=range].puan-range::-ms-fill-lower {
+        background: #dc3545;
+    }
+    input[type=range].puan-range::-ms-fill-upper {
+        background: #198754;
+    }
+</style>
+
+<div class="container py-4 animate-header">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-warning text-dark">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-edit me-2"></i>Değerlendirme Düzenle
+                        </h5>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover-item">
+                                <tr>
+                                    <th style="width: 150px;">Proje Adı</th>
+                                    <td>@Model.Proje.Ad</td>
+                                </tr>
+                                <tr>
+                                    <th>Değerlendiren</th>
+                                    <td>@Model.Akademisyen.Unvan @Model.Akademisyen.Ad @Model.Akademisyen.Soyad</td>
+                                </tr>
+                                <tr>
+                                    <th>Oluşturulma Tarihi</th>
+                                    <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <form asp-controller="ProjeDegerlendirme" asp-action="Edit" method="post" class="animate-form">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="projeId" value="@Model.ProjeId" />
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-tag me-1"></i>Değerlendirme Tipi
+                            </label>
+                            <select name="degerlendirmeTipi" class="form-select" required>
+                                <option value="">Seçiniz...</option>
+                                <option value="Ara Değerlendirme" selected="@(Model.DegerlendirmeTipi == "Ara Değerlendirme")">Ara Değerlendirme</option>
+                                <option value="Final Değerlendirme" selected="@(Model.DegerlendirmeTipi == "Final Değerlendirme")">Final Değerlendirme</option>
+                                <option value="İlerleme Raporu" selected="@(Model.DegerlendirmeTipi == "İlerleme Raporu")">İlerleme Raporu</option>
+                                <option value="Sunum Değerlendirme" selected="@(Model.DegerlendirmeTipi == "Sunum Değerlendirme")">Sunum Değerlendirme</option>
+                                <option value="Teknik İnceleme" selected="@(Model.DegerlendirmeTipi == "Teknik İnceleme")">Teknik İnceleme</option>
+                                <option value="Diğer" selected="@(Model.DegerlendirmeTipi == "Diğer")">Diğer</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-star me-1"></i>Puan (0-100)
+                            </label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" name="puan" class="form-range flex-grow-1 puan-range" min="0" max="100" value="@Model.Puan" id="puanSlider">
+                                <span class="badge ms-3" id="puanDisplay" style="min-width: 50px; font-size: 1rem; background-color: #ffc107; color: #222;">@Model.Puan</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-1">
+                                <span>Yetersiz (0)</span>
+                                <span>Geliştirilebilir (25)</span>
+                                <span>İyi (50)</span>
+                                <span>Çok iyi (75)</span>
+                                <span>Mükemmel (100)</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-comment me-1"></i>Değerlendirme Açıklaması
+                            </label>
+                            <textarea name="aciklama" class="form-control" rows="6" placeholder="Değerlendirme detaylarını yazınız..." required>@Model.Aciklama</textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Değerlendirmenizde projenin güçlü yanlarını, geliştirilmesi gereken alanlarını ve önerilerinizi belirtiniz.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="ProjeDegerlendirme" asp-action="Index" asp-route-projeId="@Model.ProjeId" class="btn btn-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-warning animate-button">
+                                <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function getColorForScore(val) {
+            // 0: kırmızı (#dc3545), 50: sarı (#ffc107), 100: yeşil (#198754)
+            let r, g, b;
+            if (val < 50) {
+                // kırmızıdan sarıya
+                let ratio = val / 50;
+                r = 220 + (255-220)*ratio;
+                g = 53 + (193-53)*ratio;
+                b = 69 + (7-69)*ratio;
+            } else {
+                // sarıdan yeşile
+                let ratio = (val-50)/50;
+                r = 255 + (25-255)*ratio;
+                g = 193 + (135-193)*ratio;
+                b = 7 + (84-7)*ratio;
+            }
+            return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+        }
+        function updatePuanColor(val) {
+            const color = getColorForScore(val);
+            document.getElementById('puanDisplay').style.backgroundColor = color;
+            document.getElementById('puanDisplay').style.color = val < 30 ? '#fff' : '#222';
+            // Slider track için accent-color (modern tarayıcılar)
+            document.getElementById('puanSlider').style.setProperty('accent-color', color);
+        }
+        $(document).ready(function() {
+            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+        });
+        document.getElementById('puanSlider').addEventListener('input', function() {
+            document.getElementById('puanDisplay').textContent = this.value;
+            updatePuanColor(this.value);
+        });
+        // Sayfa yüklenince ilk renk ayarı
+        updatePuanColor(document.getElementById('puanSlider').value);
+    </script>
+} 

@@ -131,75 +131,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // Değerlendirme oluşturma sayfasını gösterir
-        public async Task<IActionResult> DegerlendirmeOlustur(int projeId)
-        {
-            // Giriş yapmış akademisyeni bul
-            var kullanici = await _authService.GetCurrentUserAsync();
-            if (kullanici == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
 
-            var akademisyen = await _akademisyenService.GetByKullaniciIdAsync(kullanici.Id);
-            if (akademisyen == null)
-            {
-                return NotFound("Akademisyen bilgileriniz bulunamadı.");
-            }
-
-            // Projeyi getir
-            var proje = await _projeService.GetByIdAsync(projeId);
-            if (proje == null)
-            {
-                return NotFound("Proje bulunamadı.");
-            }
-
-            // Akademisyen bu projenin danışmanı mı kontrol et
-            if (proje.MentorId != akademisyen.Id)
-            {
-                return Forbid("Bu projeyi değerlendirme yetkiniz bulunmamaktadır.");
-            }
-
-            ViewBag.Proje = proje;
-            return View();
-        }
-
-        // Değerlendirme oluşturur
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DegerlendirmeOlustur(int projeId, int puan, string aciklama, string degerlendirmeTipi)
-        {
-            // Giriş yapmış akademisyeni bul
-            var kullanici = await _authService.GetCurrentUserAsync();
-            if (kullanici == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
-            var akademisyen = await _akademisyenService.GetByKullaniciIdAsync(kullanici.Id);
-            if (akademisyen == null)
-            {
-                return NotFound("Akademisyen bilgileriniz bulunamadı.");
-            }
-
-            // Projeyi getir
-            var proje = await _projeService.GetByIdAsync(projeId);
-            if (proje == null)
-            {
-                return NotFound("Proje bulunamadı.");
-            }
-
-            // Akademisyen bu projenin danışmanı mı kontrol et
-            if (proje.MentorId != akademisyen.Id)
-            {
-                return Forbid("Bu projeyi değerlendirme yetkiniz bulunmamaktadır.");
-            }
-
-            // Değerlendirme oluştur
-            await _projeService.AddEvaluationAsync(projeId, puan, aciklama, degerlendirmeTipi, akademisyen.Id);
-            
-            return RedirectToAction("ProjeDetay", new { id = projeId });
-        }
         
         // Yorum ekleme 
         [HttpPost]

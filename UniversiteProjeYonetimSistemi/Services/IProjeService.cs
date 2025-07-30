@@ -35,6 +35,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         // Değerlendirme işlemleri
         Task<Degerlendirme> AddEvaluationAsync(int projeId, int puan, string aciklama, string degerlendirmeTipi, int akademisyenId);
         Task<IEnumerable<Degerlendirme>> GetEvaluationsByProjeIdAsync(int projeId);
+        Task<Degerlendirme> GetEvaluationByIdAsync(int degerlendirmeId);
         Task UpdateEvaluationAsync(int degerlendirmeId, int puan, string aciklama, string degerlendirmeTipi);
         Task DeleteEvaluationAsync(int degerlendirmeId);
         

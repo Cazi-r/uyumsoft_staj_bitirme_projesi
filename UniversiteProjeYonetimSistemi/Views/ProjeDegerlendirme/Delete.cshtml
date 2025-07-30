@@ -1,0 +1,83 @@
+@model UniversiteProjeYonetimSistemi.Models.Degerlendirme
+
+@{
+    ViewData["Title"] = "Değerlendirme Sil";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Değerlendirme Sil</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Dikkat!</strong> Bu işlem geri alınamaz. Değerlendirme kalıcı olarak silinecektir.
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Değerlendirme Bilgileri:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Değerlendirme Tipi:</strong>
+                                <p><span class="badge bg-info">@Model.DegerlendirmeTipi</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Puan:</strong>
+                                <p>@Model.Puan / 100</p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Değerlendiren:</strong>
+                                <p>@Model.Akademisyen.Unvan @Model.Akademisyen.Ad @Model.Akademisyen.Soyad</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Değerlendirme Tarihi:</strong>
+                                <p>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Proje:</strong>
+                                <p>@Model.Proje.Ad</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Oluşturulma Tarihi:</strong>
+                                <p>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Aciklama))
+                        {
+                            <div class="mb-3">
+                                <strong>Açıklama:</strong>
+                                <div class="p-3 bg-light rounded">
+                                    @Html.Raw(Model.Aciklama.Replace("\n", "<br/>"))
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    
+                    <form asp-controller="ProjeDegerlendirme" asp-action="Delete" method="post" class="animate-form">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="projeId" value="@Model.ProjeId" />
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="ProjeDegerlendirme" asp-action="Index" asp-route-projeId="@Model.ProjeId" class="btn btn-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-danger animate-button">
+                                <i class="fas fa-trash me-2"></i>Değerlendirmeyi Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
