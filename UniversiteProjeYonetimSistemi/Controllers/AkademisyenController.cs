@@ -31,7 +31,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // Akademisyenin danışmanlığını yaptığı projeleri listeler
-        public async Task<IActionResult> Danismanliklar(string durum = "")
+        public async Task<IActionResult> Danismanliklar(string durum = "", string kategori = "", string search = "")
         {
             // Giriş yapmış akademisyeni bul
             var kullanici = await _authService.GetCurrentUserAsync();
@@ -49,10 +49,24 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             // Akademisyenin danışmanlık yaptığı projeleri getir
             var projeler = await _projeService.GetByMentorIdAsync(akademisyen.Id);
             
-            // Durum filtresi uygula
+            // Filtreleri uygula
             if (!string.IsNullOrEmpty(durum))
             {
                 projeler = projeler.Where(p => p.Status == durum);
+            }
+            
+            if (!string.IsNullOrEmpty(kategori))
+            {
+                var kategoriId = int.Parse(kategori);
+                projeler = projeler.Where(p => p.KategoriId == kategoriId);
+            }
+            
+            if (!string.IsNullOrEmpty(search))
+            {
+                projeler = projeler.Where(p => 
+                    p.Ad.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    (p.Ogrenci != null && (p.Ogrenci.Ad + " " + p.Ogrenci.Soyad).Contains(search, StringComparison.OrdinalIgnoreCase))
+                );
             }
             
             // Proje durum bazlı istatistikler
@@ -62,6 +76,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             ViewBag.TamamlananProjeSayisi = projeler.Count(p => p.Status == "Tamamlandi");
             ViewBag.SecilenDurum = durum;
 
+            // Bekleyen değerlendirme sayısı
+            ViewBag.BekleyenDegerlendirmeSayisi = projeler.Count(p => p.Status == "Devam" || p.Status == "Atanmis");
+
             // Son eklenen değerlendirmeleri getir
             var sonDegerlendirmeler = await _akademisyenService.GetDegerlendirmelerAsync(akademisyen.Id);
             ViewBag.SonDegerlendirmeler = sonDegerlendirmeler
@@ -69,16 +86,47 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 .Take(5)
                 .ToList();
 
-            // Yaklaşan teslim tarihi olan projeleri getir
+            // Yaklaşan teslim tarihi olan projeleri getir (7 gün içinde)
             var bugun = DateTime.Today;
-            var ikiHaftaSonra = bugun.AddDays(14);
+            var birHaftaSonra = bugun.AddDays(7);
             
             ViewBag.YaklasanTeslimler = projeler
                 .Where(p => p.TeslimTarihi.HasValue && 
                            p.TeslimTarihi >= bugun && 
-                           p.TeslimTarihi <= ikiHaftaSonra)
+                           p.TeslimTarihi <= birHaftaSonra &&
+                           p.Status != "Tamamlandi")
                 .OrderBy(p => p.TeslimTarihi)
                 .ToList();
+
+            // Son yorumları getir
+            var projeIds = projeler.Select(p => p.Id).ToList();
+            var sonYorumlar = await _context.ProjeYorumlari
+                .Include(y => y.Proje)
+                .Include(y => y.Ogrenci)
+                .Include(y => y.Akademisyen)
+                .Where(y => projeIds.Contains(y.ProjeId))
+                .OrderByDescending(y => y.OlusturmaTarihi)
+                .Take(5)
+                .ToListAsync();
+            ViewBag.SonYorumlar = sonYorumlar;
+
+            // Yaklaşan proje aşamalarını getir (7 gün içinde)
+            var yaklasanAsamalar = await _context.ProjeAsamalari
+                .Include(a => a.Proje)
+                .Where(a => projeIds.Contains(a.ProjeId) && 
+                           a.BitisTarihi.HasValue && 
+                           a.BitisTarihi >= DateTime.Today && 
+                           a.BitisTarihi <= DateTime.Today.AddDays(7) &&
+                           !a.Tamamlandi)
+                .OrderBy(a => a.BitisTarihi)
+                .Take(5)
+                .ToListAsync();
+            ViewBag.YaklasanAsamalar = yaklasanAsamalar;
+            ViewBag.YaklasanAsamaSayisi = yaklasanAsamalar.Count;
+
+            // Kategorileri getir
+            var kategoriler = await _context.ProjeKategorileri.ToListAsync();
+            ViewBag.Kategoriler = kategoriler;
 
             return View(projeler.ToList());
         }

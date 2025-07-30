@@ -106,7 +106,7 @@
                                                     case "Atanmis": statusBadgeClass = "bg-info"; break;
                                                     case "Devam": statusBadgeClass = "bg-primary"; break;
                                                     case "Tamamlandi": statusBadgeClass = "bg-success"; break;
-                                                    case "Iptal": statusBadgeClass = "bg-danger"; break;
+                                                    case "Iptal": statusBadgeClass = "bg-soft-danger"; break;
                                                     default: statusBadgeClass = "bg-secondary"; break;
                                                 }
                                             }
@@ -132,11 +132,11 @@
                                                 }
                                                 else if (kalanGun == 0)
                                                 {
-                                                    <span class="ms-2 badge bg-danger">Bugün</span>
+                                                    <span class="ms-2 badge bg-soft-danger">Bugün</span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="ms-2 badge bg-danger">@Math.Abs(kalanGun) gün geçti</span>
+                                                    <span class="ms-2 badge bg-soft-danger">@Math.Abs(kalanGun) gün geçti</span>
                                                 }
                                             }
                                             else

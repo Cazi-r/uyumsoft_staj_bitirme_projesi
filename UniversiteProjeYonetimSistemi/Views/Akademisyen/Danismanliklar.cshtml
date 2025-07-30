@@ -6,93 +6,199 @@
 }
 
 <div class="container py-4">
-    <div class="row align-items-center mb-4 animate-header">
-        <div class="col-md-8">
-            <h1 class="mb-0">Danışmanlık Yaptığım Projeler</h1>
-        </div>
-        <div class="col-md-4 text-md-end">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary animate-button">
-                <i class="fas fa-arrow-left me-1"></i> Panele Dön
-            </a>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header animate-header">
+        <h1><i class="fas fa-chalkboard-teacher me-2 text-primary"></i> Danışmanlık Yaptığım Projeler</h1>
+        <div>
+            <span class="badge bg-light text-dark border date-badge ms-2">
+                <i class="far fa-calendar me-1"></i> @DateTime.Now.ToString("dd MMMM yyyy")
+            </span>
         </div>
     </div>
 
-    <!-- Özet Kartları -->
+    <!-- Gelişmiş İstatistik Kartları -->
     <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <a asp-action="Danismanliklar" style="text-decoration: none;">
-                <div class="card @(string.IsNullOrEmpty(secilenDurum) ? "bg-primary text-white" : "border-primary") h-100 animate-card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-0">Tüm Projeler</h5>
-                        <h1 class="display-4 mt-2">@ViewBag.TumProjeSayisi</h1>
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-2" style="color: #0d6efd;">Tüm Projeler</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.TumProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Toplam danışmanlık</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-project-diagram fa-lg" style="color: #0d6efd;"></i>
+                        </div>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <a asp-action="Danismanliklar" asp-route-durum="Devam" style="text-decoration: none;">
-                <div class="card @(secilenDurum == "Devam" ? "bg-info text-white" : "border-info") h-100 animate-card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-0">Devam Eden</h5>
-                        <h1 class="display-4 mt-2">@ViewBag.DevamEdenProjeSayisi</h1>
+        
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-success fw-bold mb-2">Devam Eden</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.DevamEdenProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Aktif projeler</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-spinner fa-lg text-success"></i>
+                        </div>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <a asp-action="Danismanliklar" asp-route-durum="Beklemede" style="text-decoration: none;">
-                <div class="card @(secilenDurum == "Beklemede" ? "bg-warning text-white" : "border-warning") h-100 animate-card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-0">Beklemede</h5>
-                        <h1 class="display-4 mt-2">@ViewBag.BeklemedeProjeSayisi</h1>
+        
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-warning fw-bold mb-2">Beklemede</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.BeklemedeProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Onay bekleyen</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-hourglass-half fa-lg text-warning"></i>
+                        </div>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <a asp-action="Danismanliklar" asp-route-durum="Tamamlandi" style="text-decoration: none;">
-                <div class="card @(secilenDurum == "Tamamlandi" ? "bg-success text-white" : "border-success") h-100 animate-card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-0">Tamamlanan</h5>
-                        <h1 class="display-4 mt-2">@ViewBag.TamamlananProjeSayisi</h1>
+        
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-info fw-bold mb-2">Bekleyen Değerlendirme</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.BekleyenDegerlendirmeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Değerlendirilecek</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-clipboard-check fa-lg text-info"></i>
+                        </div>
                     </div>
                 </div>
-            </a>
+            </div>
+        </div>
+        
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-soft-danger fw-bold mb-2">Yaklaşan Aşamalar</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.YaklasanAsamaSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">7 gün içinde</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-tasks fa-lg text-soft-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-success fw-bold mb-2">Tamamlanan</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.TamamlananProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Bu ay</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-check-circle fa-lg text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Proje Listesi -->
-        <div class="col-lg-8 mb-4">
-            <div class="card shadow-sm h-100 animate-card">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center animate-header">
-                    <h5 class="mb-0">
-                        @if (!string.IsNullOrEmpty(secilenDurum))
+    <!-- Filtreleme Bölümü -->
+    <div class="card shadow-sm mb-4 animate-card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3 mb-2">
+                    <label class="form-label fw-bold">Durum Filtresi</label>
+                    <select class="form-select" id="durumFilter">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="Beklemede" selected="@(secilenDurum == "Beklemede")">Beklemede</option>
+                        <option value="Atanmis" selected="@(secilenDurum == "Atanmis")">Atanmış</option>
+                        <option value="Devam" selected="@(secilenDurum == "Devam")">Devam</option>
+                        <option value="Tamamlandi" selected="@(secilenDurum == "Tamamlandi")">Tamamlandı</option>
+                        <option value="Iptal" selected="@(secilenDurum == "Iptal")">İptal</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label fw-bold">Kategori</label>
+                    <select class="form-select" id="kategoriFilter">
+                        <option value="">Tüm Kategoriler</option>
+                        @if (ViewBag.Kategoriler != null)
                         {
-                            <span>@secilenDurum Durumundaki Projeler</span>
+                            @foreach (var kategori in ViewBag.Kategoriler)
+                            {
+                                <option value="@kategori.Id">@kategori.Ad</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label class="form-label fw-bold">Arama</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Proje adı veya öğrenci adı...">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label fw-bold">&nbsp;</label>
+                    <button class="btn btn-primary w-100" id="filterBtn">
+                        <i class="fas fa-search me-1"></i> Filtrele
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ana Proje Tablosu -->
+    <div class="card shadow-sm mb-4 main-table">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">
+                <i class="fas fa-list me-2 text-primary"></i> 
+                @if (!string.IsNullOrEmpty(secilenDurum))
+                {
+                    <span>@secilenDurum Durumundaki Projeler</span>
                         }
                         else
                         {
-                            <span>Tüm Projeler</span>
+                    <span>Tüm Danışmanlık Projeleri</span>
                         }
                     </h5>
+            <div>
                     @if (!string.IsNullOrEmpty(secilenDurum))
                     {
-                        <a asp-action="Danismanliklar" class="btn btn-sm btn-outline-secondary animate-button">
-                            <i class="fas fa-filter"></i> Filtreyi Temizle
+                    <a asp-action="Danismanliklar" class="btn btn-sm btn-outline-secondary me-2">
+                        <i class="fas fa-times me-1"></i> Filtreyi Temizle
                         </a>
                     }
+                <span class="badge bg-primary">@(Model?.Count() ?? 0) Proje</span>
+            </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 animate-table">
+                <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Proje Adı</th>
+                            <th class="ps-3">Proje Adı</th>
                                     <th>Öğrenci</th>
+                            <th>Kategori</th>
                                     <th>Durum</th>
+                            <th>Teslim Tarihi</th>
                                     <th>Son Güncelleme</th>
-                                    <th class="text-center">İşlemler</th>
+                            <th class="text-end pe-3">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,46 +206,122 @@
                                 {
                                     @foreach (var proje in Model.OrderByDescending(p => p.UpdatedAt))
                                     {
-                                        <tr class="table-hover-item">
-                                            <td class="fw-bold">@proje.Ad</td>
-                                            <td>
-                                                @if (proje.Ogrenci != null)
+                                <tr class="project-row">
+                                    <td class="fw-medium ps-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                <i class="fas fa-folder text-warning"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">@proje.Ad</div>
+                                                @if (!string.IsNullOrEmpty(proje.Aciklama))
                                                 {
-                                                    <span>@proje.Ogrenci.Ad @proje.Ogrenci.Soyad</span>
+                                                    <small class="text-muted">@(proje.Aciklama.Length > 50 ? proje.Aciklama.Substring(0, 50) + "..." : proje.Aciklama)</small>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (proje.Ogrenci != null)
+                                        {
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                    @proje.Ogrenci.Ad.Substring(0,1)@proje.Ogrenci.Soyad.Substring(0,1)
+                                                </div>
+                                                <div>
+                                                    <div class="fw-medium">@proje.Ogrenci.Ad @proje.Ogrenci.Soyad</div>
+                                                    <small class="text-muted">@proje.Ogrenci.OgrenciNo</small>
+                                                </div>
+                                            </div>
                                                 }
                                                 else
                                                 {
                                                     <span class="text-muted">-</span>
                                                 }
                                             </td>
+                                    <td>
+                                        @if (proje.Kategori != null)
+                                        {
+                                            <span class="badge" style="background-color: @proje.Kategori.Renk">@proje.Kategori.Ad</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Kategori Yok</span>
+                                        }
+                                    </td>
                                             <td>
                                                 @{
                                                     string statusBadgeClass = "";
+                                            string statusBadgeIcon = "";
                                                     switch (proje.Status)
                                                     {
-                                                        case "Beklemede": statusBadgeClass = "bg-warning"; break;
-                                                        case "Atanmis": statusBadgeClass = "bg-info"; break;
-                                                        case "Devam": statusBadgeClass = "bg-primary"; break;
-                                                        case "Tamamlandi": statusBadgeClass = "bg-success"; break;
-                                                        case "Iptal": statusBadgeClass = "bg-danger"; break;
-                                                        default: statusBadgeClass = "bg-secondary"; break;
-                                                    }
+                                                case "Beklemede": 
+                                                    statusBadgeClass = "bg-warning"; 
+                                                    statusBadgeIcon = "fa-hourglass-half";
+                                                    break;
+                                                case "Atanmis": 
+                                                    statusBadgeClass = "bg-info"; 
+                                                    statusBadgeIcon = "fa-user-check";
+                                                    break;
+                                                case "Devam": 
+                                                    statusBadgeClass = "bg-primary"; 
+                                                    statusBadgeIcon = "fa-spinner";
+                                                    break;
+                                                case "Tamamlandi": 
+                                                    statusBadgeClass = "bg-success"; 
+                                                    statusBadgeIcon = "fa-check-circle";
+                                                    break;
+                                                case "Iptal": 
+                                                    statusBadgeClass = "bg-soft-danger"; 
+                                                    statusBadgeIcon = "fa-ban";
+                                                    break;
+                                                default: 
+                                                    statusBadgeClass = "bg-secondary"; 
+                                                    statusBadgeIcon = "fa-question-circle";
+                                                    break;
+                                            }
+                                        }
+                                        <span class="badge @statusBadgeClass">
+                                            <i class="fas @statusBadgeIcon me-1"></i> @proje.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (proje.TeslimTarihi != null)
+                                        {
+                                            var kalanGun = (proje.TeslimTarihi.Value - DateTime.Today).Days;
+                                            <div>
+                                                <div>@proje.TeslimTarihi?.ToString("dd.MM.yyyy")</div>
+                                                @if (proje.Status == "Tamamlandi")
+                                                {
+                                                    <!-- Tamamlanmış projeler için gün sayısı gösterilmez -->
                                                 }
-                                                <span class="badge @statusBadgeClass">@proje.Status</span>
+                                                else if (kalanGun < 0)
+                                                {
+                                                    <small class="badge bg-danger text-white">teslim edilemedi</small>
+                                                }
+                                                else
+                                                {
+                                                    var teslimBadgeClass = kalanGun <= 3 ? "bg-danger" : (kalanGun <= 7 ? "bg-warning" : "bg-info");
+                                                    <small class="badge @teslimBadgeClass text-white">@kalanGun gün kaldı</small>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-calendar-alt me-1 text-muted"></i> 
+                                            <span class="text-muted">Teslim tarihi yok</span>
+                                        }
                                             </td>
                                             <td>
                                                 <small class="text-muted">
                                                     @proje.UpdatedAt.ToString("dd.MM.yyyy HH:mm")
                                                 </small>
                                             </td>
-                                            <td class="text-center">
+                                    <td class="text-end pe-3">
                                                 <div class="btn-group">
-                                                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-info animate-button" title="Proje Sayfası">
-                                                        <i class="fas fa-eye"></i>
+                                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-primary" title="Proje Detayı">
+                                                        <i class="fas fa-eye me-1"></i> Proje Detayı
                                                     </a>
-                                                                                            <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@proje.Id" class="btn btn-sm btn-outline-success animate-button" title="Değerlendir">
-                                            <i class="fas fa-star"></i>
-                                        </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -148,17 +330,17 @@
                                 else
                                 {
                                     <tr>
-                                        <td colspan="5" class="text-center py-5">
-                                            <div class="text-center">
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="py-4">
                                                 <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
                                                 @if (!string.IsNullOrEmpty(secilenDurum))
                                                 {
-                                                    <p>@secilenDurum durumunda hiç projeniz bulunmuyor.</p>
-                                                    <a asp-action="Danismanliklar" class="btn btn-primary">Tüm Projeleri Göster</a>
+                                            <p class="mb-0">@secilenDurum durumunda hiç projeniz bulunmuyor.</p>
+                                            <a asp-action="Danismanliklar" class="btn btn-primary mt-3">Tüm Projeleri Göster</a>
                                                 }
                                                 else
                                                 {
-                                                    <p>Henüz danışmanlık yaptığınız herhangi bir proje bulunmuyor.</p>
+                                            <p class="mb-0">Henüz danışmanlık yaptığınız herhangi bir proje bulunmuyor.</p>
                                                 }
                                             </div>
                                         </td>
@@ -167,16 +349,80 @@
                             </tbody>
                         </table>
                     </div>
+        </div>
+    </div>
+    
+    <!-- Alt Bölüm - Üç Sütun -->
+    <div class="row bottom-section">
+        <!-- Sol Sütun - Son Yorumlar -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm h-100 main-table animate-card">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-comments me-2 text-info"></i> Son Yorumlar
+                    </h5>
+                    <span class="badge bg-info">Son 5</span>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.SonYorumlar != null && ViewBag.SonYorumlar.Count > 0)
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var yorum in ViewBag.SonYorumlar)
+                            {
+                                <div class="list-group-item border-0 border-bottom py-3 comment-item table-hover-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0 fw-medium">
+                                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@yorum.Proje.Id" class="text-decoration-none">
+                                                @yorum.Proje.Ad
+                                            </a>
+                                        </h6>
+                                        <small class="text-muted">
+                                            @((DateTime.Now - yorum.OlusturmaTarihi).TotalDays < 1 ? 
+                                                $"{(int)(DateTime.Now - yorum.OlusturmaTarihi).TotalHours} saat önce" : 
+                                                $"{(int)(DateTime.Now - yorum.OlusturmaTarihi).TotalDays} gün önce")
+                                        </small>
+                                    </div>
+                                    <p class="mb-2">@yorum.Icerik</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i> 
+                                            @if (yorum.Ogrenci != null)
+                                            {
+                                                @(yorum.Ogrenci.Ad + " " + yorum.Ogrenci.Soyad)
+                                            }
+                                            else if (yorum.Akademisyen != null)
+                                            {
+                                                @(yorum.Akademisyen.Ad + " " + yorum.Akademisyen.Soyad)
+                                            }
+                                        </small>
+                                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@yorum.Proje.Id" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye me-1"></i> Görüntüle
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-comments fa-4x text-muted mb-3"></i>
+                            <h6 class="text-muted">Henüz Yorum Bulunmuyor</h6>
+                            <p class="text-muted mb-3">Danışmanlık yaptığınız projelere henüz yorum yapılmamış.</p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
 
-        <!-- Sağ Panel -->
-        <div class="col-lg-4">
-            <!-- Yaklaşan Teslim Tarihleri -->
-            <div class="card shadow-sm mb-4 animate-card">
-                <div class="card-header bg-light animate-header">
-                    <h5 class="mb-0">Yaklaşan Teslim Tarihleri</h5>
+        <!-- Orta Sütun - Yaklaşan Teslimler -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm h-100 main-table animate-card">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-alt me-2 text-warning"></i> Yaklaşan Teslimler
+                    </h5>
+                    <span class="badge bg-warning text-dark">7 gün içinde</span>
                 </div>
                 <div class="card-body">
                     @if (ViewBag.YaklasanTeslimler != null && ViewBag.YaklasanTeslimler.Count > 0)
@@ -184,8 +430,6 @@
                         <div class="list-group list-group-flush">
                             @foreach (var proje in ViewBag.YaklasanTeslimler)
                             {
-                                // Proje.TeslimTarihi nullable DateTime? olarak tanımlanmış ama ViewBag'de farklı tipe dönüşebiliyor
-                                // Her ihtimale karşı bu kısmı güvenli şekilde yazalım
                                 DateTime teslimTarihi;
                                 int kalanGun;
                                 string badgeClass;
@@ -194,61 +438,36 @@
                                 {
                                     teslimTarihi = Convert.ToDateTime(proje.TeslimTarihi);
                                     kalanGun = (teslimTarihi - DateTime.Today).Days;
-                                    badgeClass = kalanGun <= 3 ? "danger" : (kalanGun <= 7 ? "warning" : "info");
+                                    badgeClass = kalanGun <= 3 ? "soft-danger" : (kalanGun <= 7 ? "warning" : "info");
                                 }
                                 catch
                                 {
-                                    // Herhangi bir hata durumunda varsayılan değerleri kullan
                                     kalanGun = 0;
                                     badgeClass = "secondary";
                                 }
                                 
-                                <a href="@Url.Action("ProjeDetay", new { id = proje.Id })" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">@proje.Ad</h6>
+                                <div class="list-group-item border-0 border-bottom py-3 meeting-item table-hover-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0 fw-medium">@proje.Ad</h6>
                                         <span class="badge bg-@badgeClass">@kalanGun gün</span>
                                     </div>
-                                    <p class="mb-1">
+                                    <div class="mb-2">
                                         @if (proje.Ogrenci != null)
                                         {
+                                            <small class="text-muted">
+                                                <i class="fas fa-user-graduate me-1"></i>
                                             @proje.Ogrenci.Ad @proje.Ogrenci.Soyad
+                                            </small>
                                         }
-                                    </p>
-                                    <small>Teslim: @(proje.TeslimTarihi != null ? Convert.ToDateTime(proje.TeslimTarihi).ToString("dd.MM.yyyy") : "-")</small>
-                                </a>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-4">
-                            <i class="fas fa-calendar-check fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">İki hafta içinde teslim tarihi olan proje bulunmuyor.</p>
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <!-- Son Değerlendirmelerim -->
-            <div class="card shadow-sm animate-card">
-                <div class="card-header bg-light animate-header">
-                    <h5 class="mb-0">Son Değerlendirmelerim</h5>
-                </div>
-                <div class="card-body">
-                    @if (ViewBag.SonDegerlendirmeler != null && ViewBag.SonDegerlendirmeler.Count > 0)
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var degerlendirme in ViewBag.SonDegerlendirmeler)
-                            {
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-1">@degerlendirme.Proje.Ad</h6>
-                                        <span class="badge bg-info">@degerlendirme.Puan / 100</span>
                                     </div>
-                                    <p class="mb-1">@degerlendirme.Aciklama</p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">@degerlendirme.DegerlendirmeTipi</small>
-                                        <small class="text-muted">@degerlendirme.CreatedAt.ToString("dd.MM.yyyy")</small>
+                                        <small class="text-muted">
+                                            <i class="far fa-calendar me-1"></i> 
+                                            @(proje.TeslimTarihi != null ? Convert.ToDateTime(proje.TeslimTarihi).ToString("dd.MM.yyyy") : "-")
+                                        </small>
+                                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye me-1"></i> Detaylar
+                                        </a>
                                     </div>
                                 </div>
                             }
@@ -257,8 +476,85 @@
                     else
                     {
                         <div class="text-center py-4">
-                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">Henüz değerlendirme yapmadınız.</p>
+                            <i class="fas fa-calendar-check fa-3x text-muted mb-3"></i>
+                            <h6 class="text-muted">Yaklaşan Teslim Yok</h6>
+                            <p class="text-muted">7 gün içinde teslim tarihi olan proje bulunmuyor.</p>
+                        </div>
+                    }
+                </div>
+                </div>
+            </div>
+
+        <!-- Sağ Sütun - Yaklaşan Proje Aşamaları -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm h-100 main-table animate-card">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-tasks me-2 text-primary"></i> Yaklaşan Proje Aşamaları
+                    </h5>
+                    <span class="badge bg-primary">7 gün içinde</span>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.YaklasanAsamalar != null && ViewBag.YaklasanAsamalar.Count > 0)
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var asama in ViewBag.YaklasanAsamalar)
+                            {
+                                DateTime bitisTarihi;
+                                int kalanGun;
+                                string badgeClass;
+                                
+                                try 
+                                {
+                                    bitisTarihi = Convert.ToDateTime(asama.BitisTarihi);
+                                    kalanGun = (bitisTarihi - DateTime.Today).Days;
+                                    badgeClass = kalanGun <= 3 ? "soft-danger" : (kalanGun <= 7 ? "warning" : "info");
+                                }
+                                catch
+                                {
+                                    kalanGun = 0;
+                                    badgeClass = "secondary";
+                                }
+                                
+                                <div class="list-group-item border-0 border-bottom py-3 stage-item table-hover-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0 fw-medium">
+                                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@asama.ProjeId" class="text-decoration-none">
+                                                @asama.AsamaAdi
+                                            </a>
+                                        </h6>
+                                        <span class="badge bg-@badgeClass">@kalanGun gün</span>
+                                    </div>
+                                    <p class="mb-2">
+                                        @if (asama.Proje != null)
+                                        {
+                                            <i class="fas fa-project-diagram me-1"></i>
+                                            @asama.Proje.Ad
+                                        }
+                                        @if (!string.IsNullOrEmpty(asama.Aciklama))
+                                        {
+                                            <br><small class="text-muted">@asama.Aciklama</small>
+                                        }
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="far fa-calendar me-1"></i> 
+                                            @(asama.BitisTarihi != null ? Convert.ToDateTime(asama.BitisTarihi).ToString("dd.MM.yyyy") : "-")
+                                        </small>
+                                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@asama.ProjeId" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye me-1"></i> Detaylar
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-tasks fa-4x text-muted mb-3"></i>
+                            <h6 class="text-muted">Yaklaşan Aşama Yok</h6>
+                            <p class="text-muted mb-3">7 gün içinde bitiş tarihi olan proje aşaması bulunmuyor.</p>
                         </div>
                     }
                 </div>
@@ -270,7 +566,103 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+            // İstatistik sayılarını animasyonlu göster
+            $('.stat-number').each(function() {
+                var $this = $(this);
+                var countTo = $this.attr('data-count');
+                
+                $({ countNum: $this.text() }).animate({
+                    countNum: countTo
+                }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function() {
+                        $this.text(Math.floor(this.countNum));
+                    },
+                    complete: function() {
+                        $this.text(this.countNum);
+                    }
+                });
+            });
+
+            // Filtreleme işlevselliği
+            $('#filterBtn').click(function() {
+                var durum = $('#durumFilter').val();
+                var kategori = $('#kategoriFilter').val();
+                var search = $('#searchInput').val();
+                
+                var url = '@Url.Action("Danismanliklar")';
+                var params = [];
+                
+                if (durum) params.push('durum=' + durum);
+                if (kategori) params.push('kategori=' + kategori);
+                if (search) params.push('search=' + search);
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                window.location.href = url;
+            });
+
+            // Enter tuşu ile arama
+            $('#searchInput').keypress(function(e) {
+                if (e.which == 13) {
+                    $('#filterBtn').click();
+                }
+            });
         });
     </script>
-} 
+}
+
+<style>
+    .stage-item {
+        transition: all 0.3s ease;
+    }
+    
+    .stage-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .stage-item h6 a {
+        color: #0d6efd;
+        text-decoration: none;
+    }
+    
+    .stage-item h6 a:hover {
+        text-decoration: underline;
+    }
+    
+    .stage-item .badge {
+        font-size: 0.75rem;
+    }
+    
+    .stage-item .btn-primary {
+        font-size: 0.875rem;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .soft-danger {
+        background-color: #dc3545 !important;
+        color: white !important;
+        opacity: 0.8;
+    }
+    
+    .soft-danger:hover {
+        background-color: #dc3545 !important;
+        opacity: 1;
+    }
+    
+    .bg-soft-danger {
+        background-color: #dc3545 !important;
+        opacity: 0.8;
+    }
+    
+    .text-soft-danger {
+        color: #dc3545 !important;
+        opacity: 0.8;
+    }
+</style> 
