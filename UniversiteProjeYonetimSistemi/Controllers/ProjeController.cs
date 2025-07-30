@@ -44,7 +44,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // GET: Proje/Details/5
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, bool? highlightYorum = false)
         {
             var proje = await _projeService.GetByIdAsync(id);
             if (proje == null)
@@ -54,6 +54,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
             // Şu anki kullanıcının projenin danışmanı olup olmadığını kontrol et
             ViewBag.IsCurrentUserMentor = await IsCurrentUserProjectMentor(id);
+            
+            // Yorum bölümünü highlight etmek için
+            ViewBag.HighlightYorum = highlightYorum ?? false;
 
             return View(proje);
         }

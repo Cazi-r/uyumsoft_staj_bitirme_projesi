@@ -75,6 +75,46 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
         }
 
+        // GET: ProjeYorum/Index
+        public async Task<IActionResult> Index(int projeId)
+        {
+            // Proje var mı kontrol et
+            var proje = await _projeService.GetByIdAsync(projeId);
+            if (proje == null)
+            {
+                TempData["ErrorMessage"] = "Proje bulunamadı.";
+                return RedirectToAction("Index", "Proje");
+            }
+
+            // Kullanıcının bu projeye erişim yetkisi var mı kontrol et
+            bool hasPermission = false;
+            if (User.IsInRole("Admin"))
+            {
+                hasPermission = true;
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                hasPermission = ogrenci != null && proje.OgrenciId == ogrenci.Id;
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+                hasPermission = akademisyen != null && proje.MentorId == akademisyen.Id;
+            }
+
+            if (!hasPermission)
+            {
+                TempData["ErrorMessage"] = "Bu projeye erişim yetkiniz bulunmuyor.";
+                return RedirectToAction("Index", "Proje");
+            }
+
+            var yorumlar = await _projeService.GetCommentsByProjeIdAsync(projeId);
+            return View(yorumlar);
+        }
+
+
+
         // POST: ProjeYorum/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -111,12 +151,12 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             if (!canDelete)
             {
                 TempData["ErrorMessage"] = "Bu yorumu silme yetkiniz yok.";
-                return RedirectToAction("Details", "Proje", new { id = projeId });
+                return RedirectToAction("Index", "ProjeYorum", new { projeId = projeId });
             }
             
             await _projeService.DeleteCommentAsync(id);
             TempData["SuccessMessage"] = "Yorum başarıyla silindi.";
-            return RedirectToAction("Details", "Proje", new { id = projeId });
+            return RedirectToAction("Index", "ProjeYorum", new { projeId = projeId });
         }
     }
 } 
