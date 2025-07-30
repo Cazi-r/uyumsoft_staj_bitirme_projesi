@@ -1,0 +1,103 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeKaynagi
+
+@{
+    ViewData["Title"] = "Kaynak Detayları";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Kaynak Detayları</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4 class="text-primary mb-3">@Model.KaynakAdi</h4>
+                            <span class="badge bg-info fs-6 mb-3">@Model.KaynakTipi</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Kaynak Adı:</div>
+                        <div class="col-md-8">@Model.KaynakAdi</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Kaynak Türü:</div>
+                        <div class="col-md-8">
+                            <span class="badge bg-info">@Model.KaynakTipi</span>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Yazar))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Yazar:</div>
+                            <div class="col-md-8">@Model.Yazar</div>
+                        </div>
+                    }
+
+                    @if (Model.YayinTarihi.HasValue)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Yayın Tarihi:</div>
+                            <div class="col-md-8">@Model.YayinTarihi.Value.ToString("dd/MM/yyyy")</div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Url))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">URL:</div>
+                            <div class="col-md-8">
+                                <a href="@Model.Url" target="_blank" class="btn btn-outline-primary">
+                                    <i class="fas fa-external-link-alt me-2"></i>Kaynağı Görüntüle
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Aciklama))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Açıklama:</div>
+                            <div class="col-md-8">
+                                <div class="p-3 bg-light rounded">
+                                    @Html.Raw(Model.Aciklama.Replace("\n", "<br/>"))
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Ekleme Tarihi:</div>
+                        <div class="col-md-8">@Model.EklemeTarihi.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 fw-bold">Son Güncelleme:</div>
+                        <div class="col-md-8">@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-controller="ProjeKaynagi" asp-action="Index" asp-route-projeId="@Model.ProjeId" class="btn btn-secondary animate-button">
+                            <i class="fas fa-arrow-left me-2"></i>Kaynak Listesine Dön
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a asp-controller="ProjeKaynagi" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning animate-button">
+                                <i class="fas fa-edit me-2"></i>Düzenle
+                            </a>
+                            <a asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger animate-button">
+                                <i class="fas fa-trash me-2"></i>Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -55,8 +55,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
-        // GET: ProjeDosya/Upload
-        public async Task<IActionResult> Upload(int projeId)
+        // GET: ProjeDosya/Add
+        public async Task<IActionResult> Add(int projeId)
         {
             // Proje var mı kontrol et
             var proje = await _projeService.GetByIdAsync(projeId);
@@ -104,10 +104,10 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // POST: ProjeDosya/Upload
+        // POST: ProjeDosya/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upload(ProjeDosyaViewModel model)
+        public async Task<IActionResult> Add(ProjeDosyaViewModel model)
         {
             // Model validation
             if (!ModelState.IsValid)
@@ -303,6 +303,188 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             };
         }
 
+        // GET: ProjeDosya/Index
+        public async Task<IActionResult> Index(int projeId)
+        {
+            // Proje var mı kontrol et
+            var proje = await _projeService.GetByIdAsync(projeId);
+            if (proje == null)
+            {
+                TempData["ErrorMessage"] = "Proje bulunamadı.";
+                return RedirectToAction("Index", "Proje");
+            }
+
+            // Kullanıcının bu projeye erişim yetkisi var mı kontrol et
+            bool hasPermission = false;
+            if (User.IsInRole("Admin"))
+            {
+                hasPermission = true;
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                hasPermission = ogrenci != null && proje.OgrenciId == ogrenci.Id;
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                hasPermission = await IsCurrentUserProjectMentor(projeId);
+            }
+
+            if (!hasPermission)
+            {
+                TempData["ErrorMessage"] = "Bu projeye erişim yetkiniz bulunmuyor.";
+                return RedirectToAction("Index", "Proje");
+            }
+
+            var dosyalar = await _projeService.GetFilesByProjeIdAsync(projeId);
+            
+            // Yükleyen kişilerin adlarını al
+            var dosyalarWithYukleyen = new List<object>();
+            foreach (var dosya in dosyalar)
+            {
+                string yukleyenAdi = "Bilinmiyor";
+                if (dosya.YukleyenId.HasValue)
+                {
+                    if (dosya.YukleyenTipi == "Ogrenci")
+                    {
+                        var ogrenci = await _authService.GetOgrenciByIdAsync(dosya.YukleyenId.Value);
+                        if (ogrenci != null)
+                        {
+                            yukleyenAdi = $"{ogrenci.Ad} {ogrenci.Soyad}";
+                        }
+                    }
+                    else if (dosya.YukleyenTipi == "Akademisyen")
+                    {
+                        var akademisyen = await _authService.GetAkademisyenByIdAsync(dosya.YukleyenId.Value);
+                        if (akademisyen != null)
+                        {
+                            yukleyenAdi = $"{akademisyen.Ad} {akademisyen.Soyad}";
+                        }
+                    }
+                }
+
+                dosyalarWithYukleyen.Add(new
+                {
+                    Dosya = dosya,
+                    YukleyenAdi = yukleyenAdi
+                });
+            }
+
+            ViewBag.DosyalarWithYukleyen = dosyalarWithYukleyen;
+            return View(dosyalar);
+        }
+
+        // GET: ProjeDosya/Details/5
+        public async Task<IActionResult> Details(int id)
+        {
+            var dosya = await _projeService.GetFileByIdAsync(id);
+            if (dosya == null)
+            {
+                TempData["ErrorMessage"] = "Dosya bulunamadı.";
+                return NotFound();
+            }
+
+            // Proje var mı kontrol et
+            var proje = await _projeService.GetByIdAsync(dosya.ProjeId);
+            if (proje == null)
+            {
+                TempData["ErrorMessage"] = "Proje bulunamadı.";
+                return NotFound();
+            }
+
+            // Yükleyen kişinin bilgilerini al
+            string yukleyenAdi = "Bilinmiyor";
+            if (dosya.YukleyenId.HasValue)
+            {
+                if (dosya.YukleyenTipi == "Ogrenci")
+                {
+                    var ogrenci = await _authService.GetOgrenciByIdAsync(dosya.YukleyenId.Value);
+                    if (ogrenci != null)
+                    {
+                        yukleyenAdi = $"{ogrenci.Ad} {ogrenci.Soyad}";
+                    }
+                }
+                else if (dosya.YukleyenTipi == "Akademisyen")
+                {
+                    var akademisyen = await _authService.GetAkademisyenByIdAsync(dosya.YukleyenId.Value);
+                    if (akademisyen != null)
+                    {
+                        yukleyenAdi = $"{akademisyen.Ad} {akademisyen.Soyad}";
+                    }
+                }
+            }
+
+            ViewBag.YukleyenAdi = yukleyenAdi;
+
+            // Kullanıcının bu dosyaya erişim yetkisi var mı kontrol et
+            bool hasPermission = false;
+            if (User.IsInRole("Admin"))
+            {
+                hasPermission = true;
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                var ogrenci = await _authService.GetCurrentOgrenciAsync();
+                hasPermission = ogrenci != null && proje.OgrenciId == ogrenci.Id;
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                hasPermission = await IsCurrentUserProjectMentor(dosya.ProjeId);
+            }
+
+            if (!hasPermission)
+            {
+                TempData["ErrorMessage"] = "Bu dosyaya erişim yetkiniz bulunmuyor.";
+                return RedirectToAction("Index", "Proje");
+            }
+
+            return View(dosya);
+        }
+
+        // GET: ProjeDosya/Delete/5
+        public async Task<IActionResult> Delete(int id)
+        {
+            var dosya = await _projeService.GetFileByIdAsync(id);
+            if (dosya == null)
+            {
+                TempData["ErrorMessage"] = "Dosya bulunamadı.";
+                return NotFound();
+            }
+
+            // Yükleyen kişinin bilgilerini al
+            string yukleyenAdi = "Bilinmiyor";
+            if (dosya.YukleyenId.HasValue)
+            {
+                if (dosya.YukleyenTipi == "Ogrenci")
+                {
+                    var ogrenci = await _authService.GetOgrenciByIdAsync(dosya.YukleyenId.Value);
+                    if (ogrenci != null)
+                    {
+                        yukleyenAdi = $"{ogrenci.Ad} {ogrenci.Soyad}";
+                    }
+                }
+                else if (dosya.YukleyenTipi == "Akademisyen")
+                {
+                    var akademisyen = await _authService.GetAkademisyenByIdAsync(dosya.YukleyenId.Value);
+                    if (akademisyen != null)
+                    {
+                        yukleyenAdi = $"{akademisyen.Ad} {akademisyen.Soyad}";
+                    }
+                }
+            }
+
+            ViewBag.YukleyenAdi = yukleyenAdi;
+
+            // Sadece projenin danışmanı dosya silebilir
+            if (!await IsCurrentUserProjectMentor(dosya.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu dosyayı sadece projenin danışmanı veya admin silebilir.";
+                return RedirectToAction("Index", "ProjeDosya", new { projeId = dosya.ProjeId });
+            }
+
+            return View(dosya);
+        }
+
         // POST: ProjeDosya/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -313,12 +495,12 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             if (!await IsCurrentUserProjectMentor(projeId))
             {
                 TempData["ErrorMessage"] = "Bu projeye ait dosyaları sadece danışmanı veya admin silebilir.";
-                return RedirectToAction("Details", "Proje", new { id = projeId });
+                return RedirectToAction("Index", "ProjeDosya", new { projeId = projeId });
             }
 
             await _projeService.DeleteFileAsync(id);
             TempData["SuccessMessage"] = "Dosya başarıyla silindi.";
-            return RedirectToAction("Details", "Proje", new { id = projeId });
+            return RedirectToAction("Index", "ProjeDosya", new { projeId = projeId });
         }
     }
 } 

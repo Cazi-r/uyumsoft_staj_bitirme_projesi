@@ -5,6 +5,7 @@ namespace UniversiteProjeYonetimSistemi.Models.ViewModels
 {
     public class ProjeKaynagiViewModel
     {
+        public int Id { get; set; }
         public int ProjeId { get; set; }
         
         [Required(ErrorMessage = "Kaynak adı zorunludur.")]

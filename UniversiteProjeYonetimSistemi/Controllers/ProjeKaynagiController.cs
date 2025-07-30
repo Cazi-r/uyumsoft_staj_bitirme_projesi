@@ -53,8 +53,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return false;
         }
 
-        // GET: ProjeKaynagi/Create
-        public async Task<IActionResult> Create(int projeId)
+        // GET: ProjeKaynagi/Add
+        public async Task<IActionResult> Add(int projeId)
         {
             if (!await HasProjectPermission(projeId))
             {
@@ -78,10 +78,10 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // POST: ProjeKaynagi/Create
+        // POST: ProjeKaynagi/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProjeKaynagiViewModel model)
+        public async Task<IActionResult> Add(ProjeKaynagiViewModel model)
         {
             if (!await HasProjectPermission(model.ProjeId))
             {
@@ -127,6 +127,157 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
             ViewBag.KaynakTipleri = new List<string> { "Kitap", "Makale", "Website", "API", "Dokuman", "Video", "Diger" };
             return View(model);
+        }
+
+        // GET: ProjeKaynagi/Index
+        public async Task<IActionResult> Index(int projeId)
+        {
+            if (!await HasProjectPermission(projeId))
+            {
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = projeId });
+            }
+
+            var kaynaklar = await _projeService.GetResourcesByProjeIdAsync(projeId);
+            return View(kaynaklar);
+        }
+
+        // GET: ProjeKaynagi/Details/5
+        public async Task<IActionResult> Details(int id)
+        {
+            var kaynak = await _projeService.GetResourceByIdAsync(id);
+            if (kaynak == null)
+            {
+                return NotFound();
+            }
+
+            if (!await HasProjectPermission(kaynak.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = kaynak.ProjeId });
+            }
+
+            return View(kaynak);
+        }
+
+        // GET: ProjeKaynagi/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            var kaynak = await _projeService.GetResourceByIdAsync(id);
+            if (kaynak == null)
+            {
+                return NotFound();
+            }
+
+            if (!await HasProjectPermission(kaynak.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = kaynak.ProjeId });
+            }
+
+            var model = new ProjeKaynagiViewModel
+            {
+                Id = kaynak.Id,
+                ProjeId = kaynak.ProjeId,
+                KaynakAdi = kaynak.KaynakAdi,
+                KaynakTipi = kaynak.KaynakTipi,
+                Url = kaynak.Url,
+                Yazar = kaynak.Yazar,
+                YayinTarihi = kaynak.YayinTarihi,
+                Aciklama = kaynak.Aciklama
+            };
+
+            ViewBag.KaynakTipleri = new List<string> { "Kitap", "Makale", "Website", "API", "Dokuman", "Video", "Diger" };
+            return View(model);
+        }
+
+        // POST: ProjeKaynagi/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ProjeKaynagiViewModel model)
+        {
+            if (!await HasProjectPermission(model.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.KaynakTipleri = new List<string> { "Kitap", "Makale", "Website", "API", "Dokuman", "Video", "Diger" };
+                return View(model);
+            }
+
+            try
+            {
+                var kaynak = await _projeService.GetResourceByIdAsync(model.Id);
+                if (kaynak == null)
+                {
+                    return NotFound();
+                }
+
+                kaynak.KaynakAdi = model.KaynakAdi;
+                kaynak.KaynakTipi = model.KaynakTipi;
+                kaynak.Url = model.Url;
+                kaynak.Yazar = model.Yazar;
+                kaynak.YayinTarihi = model.YayinTarihi;
+                kaynak.Aciklama = model.Aciklama;
+                kaynak.UpdatedAt = DateTime.Now;
+
+                await _projeService.UpdateResourceAsync(kaynak);
+                
+                TempData["SuccessMessage"] = "Kaynak başarıyla güncellendi.";
+                return RedirectToAction("Index", new { projeId = model.ProjeId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Kaynak güncellenirken bir hata oluştu: " + ex.Message;
+            }
+
+            ViewBag.KaynakTipleri = new List<string> { "Kitap", "Makale", "Website", "API", "Dokuman", "Video", "Diger" };
+            return View(model);
+        }
+
+        // GET: ProjeKaynagi/Delete/5
+        public async Task<IActionResult> Delete(int id)
+        {
+            var kaynak = await _projeService.GetResourceByIdAsync(id);
+            if (kaynak == null)
+            {
+                return NotFound();
+            }
+
+            if (!await HasProjectPermission(kaynak.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = kaynak.ProjeId });
+            }
+
+            return View(kaynak);
+        }
+
+        // POST: ProjeKaynagi/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id, int projeId)
+        {
+            if (!await HasProjectPermission(projeId))
+            {
+                TempData["ErrorMessage"] = "Bu işlem için yetkiniz yok.";
+                return RedirectToAction("Details", "Proje", new { id = projeId });
+            }
+
+            try
+            {
+                await _projeService.DeleteResourceAsync(id);
+                TempData["SuccessMessage"] = "Kaynak başarıyla silindi.";
+                return RedirectToAction("Index", new { projeId = projeId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Kaynak silinirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction("Index", new { projeId = projeId });
+            }
         }
     }
 }

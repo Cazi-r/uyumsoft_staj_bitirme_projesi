@@ -104,6 +104,20 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(a => a.KullaniciId == kullanici.Id);
         }
 
+        public async Task<Ogrenci> GetOgrenciByIdAsync(int id)
+        {
+            return await _context.Ogrenciler
+                .Include(o => o.Kullanici)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task<Akademisyen> GetAkademisyenByIdAsync(int id)
+        {
+            return await _context.Akademisyenler
+                .Include(a => a.Kullanici)
+                .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
         // Yeni kayıt metodu - Admin rolü için düzeltildi
         public async Task<(bool Success, string Message)> RegisterAsync(RegisterViewModel model)
         {

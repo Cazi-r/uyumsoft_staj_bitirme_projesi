@@ -250,10 +250,12 @@
             <div class="card mb-4 animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Proje Dosyaları</h5>
-                    <div class="btn-group" style="min-width: 120px;">
-                        <!-- Dosya Yükleme Butonu -->
-                        <a asp-controller="ProjeDosya" asp-action="Upload" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn mb-3 animate-button w-100">
-                            <i class="fas fa-cloud-upload-alt"></i> Dosya Yükle
+                    <div class="d-flex flex-column gap-1" style="min-width: 120px;">
+                        <a asp-controller="ProjeDosya" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
+                            <i class="fas fa-plus me-2"></i>Dosya Ekle
+                        </a>
+                        <a asp-controller="ProjeDosya" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
+                            <i class="fas fa-list me-2"></i>Tüm Dosyalar
                         </a>
                     </div>
                 </div>
@@ -264,7 +266,7 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Dosya Adı</th>
+                                        <th>Açıklama</th>
                                         <th>Boyut</th>
                                         <th>Tür</th>
                                         <th>Yükleme Tarihi</th>
@@ -275,7 +277,16 @@
                                     @foreach (var dosya in Model.Dosyalar)
                                     {
                                         <tr class="table-hover-item">
-                                            <td>@dosya.DosyaAdi</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(dosya.Aciklama))
+                                                {
+                                                    @dosya.Aciklama
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Açıklama yok</span>
+                                                }
+                                            </td>
                                             <td>@(dosya.DosyaBoyutu / 1024) KB</td>
                                             <td>@dosya.DosyaTipi</td>
                                             <td>@dosya.YuklemeTarihi.ToShortDateString()</td>
@@ -286,13 +297,9 @@
                                                     </a>
                                                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                                                     {
-                                                        <form asp-controller="ProjeDosya" asp-action="Delete" method="post" class="d-inline">
-                                                            <input type="hidden" name="id" value="@dosya.Id" />
-                                                            <input type="hidden" name="projeId" value="@Model.Id" />
-                                                            <button type="submit" class="btn btn-xs btn-outline-danger animate-button w-100" onclick="return confirm('Bu dosyayı silmek istediğinizden emin misiniz?')">
-                                                                <i class="fas fa-trash"></i> Sil
-                                                            </button>
-                                                        </form>
+                                                        <a asp-controller="ProjeDosya" asp-action="Delete" asp-route-id="@dosya.Id" class="btn btn-xs btn-outline-danger animate-button w-100">
+                                                            <i class="fas fa-trash me-1"></i>Sil
+                                                        </a>
                                                     }
                                                 </div>
                                             </td>
@@ -313,9 +320,12 @@
             <div class="card mb-4 animate-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Proje Kaynakları</h5>
-                    <div class="btn-group" style="min-width: 120px;">
-                                                <a asp-controller="ProjeKaynagi" asp-action="Create" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn mb-3 animate-button w-100">
-                            <i class="fas fa-plus"></i> Kaynak Ekle
+                    <div class="d-flex flex-column gap-1" style="min-width: 120px;">
+                        <a asp-controller="ProjeKaynagi" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
+                            <i class="fas fa-plus me-2"></i>Kaynak Ekle
+                        </a>
+                        <a asp-controller="ProjeKaynagi" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
+                            <i class="fas fa-list me-2"></i>Tüm Kaynaklar
                         </a>
                     </div>
                 </div>
@@ -338,14 +348,7 @@
                                     {
                                         <tr class="table-hover-item">
                                             <td>
-                                                @if (!string.IsNullOrEmpty(kaynak.Url))
-                                                {
-                                                    <a href="@kaynak.Url" target="_blank">@kaynak.KaynakAdi</a>
-                                                }
-                                                else
-                                                {
-                                                    @kaynak.KaynakAdi
-                                                }
+                                                @kaynak.KaynakAdi
                                             </td>
                                             <td>
                                                 @{
@@ -369,7 +372,7 @@
                                                     @if (!string.IsNullOrEmpty(kaynak.Url))
                                                     {
                                                         <a href="@kaynak.Url" target="_blank" class="btn btn-xs btn-outline-primary animate-button w-100">
-                                                            <i class="fas fa-external-link-alt"></i> Aç
+                                                            <i class="fas fa-external-link-alt"></i> Linke Git
                                                         </a>
                                                     }
                                                     <button type="button" class="btn btn-xs btn-outline-info animate-button w-100" 
@@ -378,13 +381,9 @@
                                                             data-bs-content="@(string.IsNullOrEmpty(kaynak.Aciklama) ? "Açıklama bulunmamaktadır." : kaynak.Aciklama)">
                                                         <i class="fas fa-info-circle"></i> Detay
                                                     </button>
-                                                    <form asp-controller="ProjeKaynagi" asp-action="Delete" method="post" class="d-inline">
-                                                        <input type="hidden" name="id" value="@kaynak.Id" />
-                                                        <input type="hidden" name="projeId" value="@Model.Id" />
-                                                        <button type="submit" class="btn btn-xs btn-outline-danger animate-button w-100" onclick="return confirm('Bu kaynağı silmek istediğinizden emin misiniz?')">
-                                                            <i class="fas fa-trash"></i> Sil
-                                                        </button>
-                                                    </form>
+                                                    <a asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@kaynak.Id" class="btn btn-xs btn-outline-danger animate-button w-100">
+                                                        <i class="fas fa-trash me-1"></i>Sil
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
