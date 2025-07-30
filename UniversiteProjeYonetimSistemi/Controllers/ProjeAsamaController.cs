@@ -2,8 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using UniversiteProjeYonetimSistemi.Models;
 using UniversiteProjeYonetimSistemi.Services;
+using UniversiteProjeYonetimSistemi.Data;
 using System.Linq;
 
 namespace UniversiteProjeYonetimSistemi.Controllers
@@ -14,15 +16,18 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         private readonly IProjeService _projeService;
         private readonly AuthService _authService;
         private readonly IBildirimService _bildirimService;
+        private readonly ApplicationDbContext _context;
 
         public ProjeAsamaController(
             IProjeService projeService,
             AuthService authService,
-            IBildirimService bildirimService)
+            IBildirimService bildirimService,
+            ApplicationDbContext context)
         {
             _projeService = projeService;
             _authService = authService;
             _bildirimService = bildirimService;
+            _context = context;
         }
 
         // Helper method to check if current user is the mentor of the project
@@ -80,8 +85,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 SiraNo = (await _projeService.GetStagesByProjeIdAsync(id)).Count() + 1
             };
 
-            // Proje klasöründeki AddStage view'ini kullanalım
-            return View("~/Views/Proje/AddStage.cshtml", model);
+            return View(model);
         }
 
         // POST: ProjeAsama/Add
@@ -92,8 +96,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Post işleminde de aynı view'i kullanalım
-                return View("~/Views/Proje/AddStage.cshtml", model);
+                return View(model);
             }
 
             // Aciklama null ise boş string olarak ayarla
@@ -136,6 +139,107 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             
             TempData["SuccessMessage"] = tamamlandi ? "Aşama tamamlandı olarak işaretlendi." : "Aşama devam ediyor olarak işaretlendi.";
             return RedirectToAction("Details", "Proje", new { id = projeId });
+        }
+
+        // GET: ProjeAsama/Index/5
+        [HttpGet]
+        [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
+        public async Task<IActionResult> Index(int id)
+        {
+            var proje = await _projeService.GetByIdAsync(id);
+            if (proje == null)
+            {
+                return NotFound();
+            }
+            
+            var asamalar = await _projeService.GetStagesByProjeIdAsync(id);
+            return View(asamalar);
+        }
+
+        // GET: ProjeAsama/Edit/5
+        [HttpGet]
+        [Authorize(Roles = "Admin,Akademisyen")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            // Tüm projelerin aşamalarını al ve belirtilen ID'ye sahip aşamayı bul
+            var allAsamalar = await _context.ProjeAsamalari
+                .Include(a => a.Proje)
+                .ToListAsync();
+            var asama = allAsamalar.FirstOrDefault(a => a.Id == id);
+            
+            if (asama == null)
+            {
+                return NotFound();
+            }
+            
+            // Sadece projenin danışmanı aşama düzenleyebilir
+            if (!await IsCurrentUserProjectMentor(asama.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu aşamayı sadece projenin danışmanı veya admin düzenleyebilir.";
+                return RedirectToAction("Details", "Proje", new { id = asama.ProjeId });
+            }
+            
+            return View(asama);
+        }
+
+        // POST: ProjeAsama/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Akademisyen")]
+        public async Task<IActionResult> Edit(ProjeAsamasi model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            
+            // Sadece projenin danışmanı aşama düzenleyebilir
+            if (!await IsCurrentUserProjectMentor(model.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu aşamayı sadece projenin danışmanı veya admin düzenleyebilir.";
+                return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
+            }
+            
+            // Aciklama null ise boş string olarak ayarla
+            string aciklama = model.Aciklama ?? "";
+            
+            await _projeService.UpdateStageAsync(
+                model.Id,
+                model.AsamaAdi,
+                aciklama,
+                model.BaslangicTarihi,
+                model.BitisTarihi,
+                model.SiraNo,
+                model.Tamamlandi);
+                
+            TempData["SuccessMessage"] = "Proje aşaması başarıyla güncellendi.";
+            return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
+        }
+
+        // GET: ProjeAsama/Delete/5
+        [HttpGet]
+        [Authorize(Roles = "Admin,Akademisyen")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            // Tüm projelerin aşamalarını al ve belirtilen ID'ye sahip aşamayı bul
+            var allAsamalar = await _context.ProjeAsamalari
+                .Include(a => a.Proje)
+                .ToListAsync();
+            var asama = allAsamalar.FirstOrDefault(a => a.Id == id);
+            
+            if (asama == null)
+            {
+                return NotFound();
+            }
+            
+            // Sadece projenin danışmanı aşama silebilir
+            if (!await IsCurrentUserProjectMentor(asama.ProjeId))
+            {
+                TempData["ErrorMessage"] = "Bu aşamayı sadece projenin danışmanı veya admin silebilir.";
+                return RedirectToAction("Details", "Proje", new { id = asama.ProjeId });
+            }
+            
+            return View(asama);
         }
 
         // POST: ProjeAsama/Delete/5

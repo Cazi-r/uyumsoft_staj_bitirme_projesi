@@ -41,6 +41,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         // Proje aşamaları işlemleri
         Task<ProjeAsamasi> AddStageAsync(int projeId, string asamaAdi, string aciklama, DateTime? baslangicTarihi, DateTime? bitisTarihi, int siraNo);
         Task<IEnumerable<ProjeAsamasi>> GetStagesByProjeIdAsync(int projeId);
+        Task UpdateStageAsync(int asamaId, string asamaAdi, string aciklama, DateTime? baslangicTarihi, DateTime? bitisTarihi, int siraNo, bool tamamlandi);
         Task UpdateStageStatusAsync(int asamaId, bool tamamlandi);
         Task DeleteStageAsync(int asamaId);
         Task<int> GetDegerlendirilmeyenAsamaSayisiByMentorIdAsync(int mentorId);

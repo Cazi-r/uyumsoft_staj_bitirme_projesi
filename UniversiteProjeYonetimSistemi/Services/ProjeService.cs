@@ -326,6 +326,33 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        public async Task UpdateStageAsync(int asamaId, string asamaAdi, string aciklama, DateTime? baslangicTarihi, DateTime? bitisTarihi, int siraNo, bool tamamlandi)
+        {
+            var asama = await _context.ProjeAsamalari.FindAsync(asamaId);
+            if (asama != null)
+            {
+                asama.AsamaAdi = asamaAdi;
+                asama.Aciklama = aciklama;
+                asama.BaslangicTarihi = baslangicTarihi;
+                asama.BitisTarihi = bitisTarihi;
+                asama.SiraNo = siraNo;
+                asama.Tamamlandi = tamamlandi;
+                
+                if (tamamlandi && !asama.TamamlanmaTarihi.HasValue)
+                {
+                    asama.TamamlanmaTarihi = DateTime.Now;
+                }
+                else if (!tamamlandi)
+                {
+                    asama.TamamlanmaTarihi = null;
+                }
+                
+                asama.UpdatedAt = DateTime.Now;
+                _context.ProjeAsamalari.Update(asama);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task UpdateStageStatusAsync(int asamaId, bool tamamlandi)
         {
             var asama = await _context.ProjeAsamalari.FindAsync(asamaId);

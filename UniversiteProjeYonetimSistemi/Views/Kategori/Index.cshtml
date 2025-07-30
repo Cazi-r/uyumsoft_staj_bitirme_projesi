@@ -51,18 +51,18 @@
                                     <td>
                                         <span class="badge" style="background-color: @item.Renk; padding: 8px;">@item.Renk</span>
                                     </td>
-                                    <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td>@item.CreatedAt.ToString("dd.MM.yyyy")</td>
                                     <td>
-                                        <div class="btn-group" role="group">
+                                        <div class="d-flex gap-2">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info animate-button">
+                                                <i class="fas fa-info-circle"></i> Detaylar
+                                            </a>
                                             @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
                                             {
                                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary animate-button">
                                                     <i class="fas fa-edit"></i> Düzenle
                                                 </a>
                                             }
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info animate-button">
-                                                <i class="fas fa-info-circle"></i> Detaylar
-                                            </a>
                                             @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
                                             {
                                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger animate-button">
