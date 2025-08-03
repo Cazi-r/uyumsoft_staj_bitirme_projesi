@@ -1,4 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
 // Sidebar Functionality
@@ -800,13 +800,20 @@ if (localStorage.getItem('themeMode') === 'auto') {
 // Highlight active nav link based on current URL
 function highlightActiveNavLink() {
     const currentUrl = window.location.pathname;
+    let bestMatch = null;
+
     document.querySelectorAll('.sidebar-link').forEach(link => {
         const href = link.getAttribute('href');
-        if (href === currentUrl || 
-            (currentUrl.includes(href) && href !== '/')) {
-            link.classList.add('active');
+        if (currentUrl.startsWith(href)) {
+            if (!bestMatch || href.length > bestMatch.getAttribute('href').length) {
+                bestMatch = link;
+            }
         }
     });
+
+    if (bestMatch) {
+        bestMatch.classList.add('active');
+    }
 }
 
 // Initialize Charts

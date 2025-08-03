@@ -176,6 +176,63 @@ namespace UniversiteProjeYonetimSistemi.Services
                 akademisyenId: proje.MentorId.Value);
         }
 
+        // 7. Görüşme durumu değiştiğinde bildirim gönder
+        public async Task GorusmeDurumuDegistiBildirimiGonder(DanismanlikGorusmesi gorusme)
+        {
+            if (gorusme == null)
+                return;
+
+            string guncelleyenAd = "";
+            string aliciRol = "";
+            int aliciId = 0;
+            string mesaj = "";
+
+            var akademisyen = await _context.Akademisyenler.FindAsync(gorusme.AkademisyenId);
+            var ogrenci = await _context.Ogrenciler.FindAsync(gorusme.OgrenciId);
+
+            if (akademisyen == null || ogrenci == null)
+                return;
+
+            if (gorusme.SonGuncelleyenRol == "Ogrenci")
+            {
+                guncelleyenAd = $"{ogrenci.Ad} {ogrenci.Soyad}";
+                aliciRol = "Akademisyen";
+                aliciId = gorusme.AkademisyenId;
+            }
+            else
+            {
+                guncelleyenAd = $"{akademisyen.Unvan} {akademisyen.Ad} {akademisyen.Soyad}";
+                aliciRol = "Ogrenci";
+                aliciId = gorusme.OgrenciId;
+            }
+
+            switch (gorusme.Durum)
+            {
+                case GorusmeDurumu.Onaylandi:
+                    mesaj = $"{guncelleyenAd}, '{gorusme.Baslik}' başlıklı görüşme talebinizi onayladı.";
+                    break;
+                case GorusmeDurumu.IptalEdildi:
+                    mesaj = $"{guncelleyenAd}, '{gorusme.Baslik}' başlıklı görüşme talebinizi iptal etti/reddetti.";
+                    break;
+                case GorusmeDurumu.OgrenciOnayiBekliyor:
+                case GorusmeDurumu.HocaOnayiBekliyor:
+                    mesaj = $"{guncelleyenAd}, '{gorusme.Baslik}' başlıklı görüşme için yeni bir tarih önerdi: {gorusme.GorusmeTarihi:dd.MM.yyyy HH:mm}. Lütfen kontrol ediniz.";
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(mesaj))
+            {
+                if (aliciRol == "Ogrenci")
+                {
+                    await BildirimOlustur("Görüşme Durumu Güncellendi", mesaj, "Bilgi", ogrenciId: aliciId);
+                }
+                else
+                {
+                    await BildirimOlustur("Görüşme Durumu Güncellendi", mesaj, "Bilgi", akademisyenId: aliciId);
+                }
+            }
+        }
+
         // Okunmamış bildirim sayısını getir
         public async Task<int> OkunmamisBildirimSayisiniGetir(string kullaniciId, string rol)
         {

@@ -125,7 +125,7 @@ public class HomeController : Controller
                     var bekleyenGorusmeler = await _context.DanismanlikGorusmeleri
                         .Include(g => g.Ogrenci)
                         .Include(g => g.Proje)
-                        .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede")
+                        .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == GorusmeDurumu.HocaOnayiBekliyor)
                         .OrderBy(g => g.GorusmeTarihi)
                         .ToListAsync();
                     
@@ -156,10 +156,9 @@ public class HomeController : Controller
                         .OrderByDescending(p => p.OlusturmaTarihi)
                         .ToListAsync();
                         
-                    // Aktif proje sayısı
-                    ViewBag.AktifProjeSayisi = await _context.Projeler
-                        .CountAsync(p => p.OgrenciId == ogrenci.Id && 
-                                  (p.Status == "Atanmis" || p.Status == "Devam"));
+                    // Toplam proje sayısı
+                    ViewBag.ToplamProjeSayisi = await _context.Projeler
+                        .CountAsync(p => p.OgrenciId == ogrenci.Id);
                     
                     // Yaklaşan teslim tarihleri
                     var bugun = DateTime.Today;
@@ -254,7 +253,7 @@ public class HomeController : Controller
         var bekleyenTalepler = await _context.DanismanlikGorusmeleri
             .Include(g => g.Ogrenci)
             .Include(g => g.Proje)
-            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Beklemede")
+            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == GorusmeDurumu.HocaOnayiBekliyor)
             .OrderBy(g => g.GorusmeTarihi)
             .ToListAsync(); // Limit kaldırıldı, tümünü getiriyoruz
             
@@ -272,21 +271,21 @@ public class HomeController : Controller
             
         // Yakın Görüşmeleri getir (onaylanmış ve bugün veya yakın gelecekte)
         var yakinGorusmeler = tumGorusmeler
-            .Where(g => g.Durum == "Onaylandı" && (g.ZamanDurumu == "Bugun" || g.ZamanDurumu == "YakinGelecek"))
+            .Where(g => g.Durum == GorusmeDurumu.Onaylandi && (g.ZamanDurumu == "Bugun" || g.ZamanDurumu == "YakinGelecek"))
             .OrderBy(g => g.GorusmeTarihi)
             .Take(3)
             .ToList();
             
         // Uzak gelecek görüşmeleri getir (onaylanmış ve uzak gelecekte)
         var gelecekGorusmeler = tumGorusmeler
-            .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "UzakGelecek")
+            .Where(g => g.Durum == GorusmeDurumu.Onaylandi && g.ZamanDurumu == "UzakGelecek")
             .OrderBy(g => g.GorusmeTarihi)
             .Take(3)
             .ToList();
             
         // Geçmiş görüşmeleri getir (onaylanmış ve tarihi geçmiş)
         var gecmisGorusmeler = tumGorusmeler
-            .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "Gecmis")
+            .Where(g => g.Durum == GorusmeDurumu.Onaylandi && g.ZamanDurumu == "Gecmis")
             .OrderByDescending(g => g.GorusmeTarihi)
             .Take(3)
             .ToList();
@@ -295,7 +294,7 @@ public class HomeController : Controller
         var iptalGorusmeler = await _context.DanismanlikGorusmeleri
             .Include(g => g.Ogrenci)
             .Include(g => g.Proje)
-            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == "Reddedildi")
+            .Where(g => g.AkademisyenId == akademisyen.Id && g.Durum == GorusmeDurumu.IptalEdildi)
             .OrderByDescending(g => g.GorusmeTarihi)
             .Take(3)
             .ToListAsync();

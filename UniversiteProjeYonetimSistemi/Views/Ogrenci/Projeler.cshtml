@@ -8,9 +8,6 @@
         <h1 class="display-4">
             <i class="fas fa-book me-2 text-primary"></i>Projelerim
         </h1>
-        <a asp-controller="Proje" asp-action="Create" class="btn btn-primary animate-button">
-            <i class="fas fa-plus me-2"></i>Yeni Proje Oluştur
-        </a>
     </div>
 
     @if (TempData["SuccessMessage"] != null)
@@ -28,42 +25,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-
-    <!-- İstatistik Kartları -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white shadow-sm animate-card stat-card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-tasks me-2"></i>Toplam Proje</h5>
-                    <p class="display-6">@ViewBag.ToplamProjeSayisi</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white shadow-sm animate-card stat-card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-check-circle me-2"></i>Tamamlanan</h5>
-                    <p class="display-6">@ViewBag.TamamlananProjeSayisi</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white shadow-sm animate-card stat-card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-spinner me-2"></i>Devam Eden</h5>
-                    <p class="display-6">@ViewBag.DevamEdenProjeSayisi</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-secondary text-white shadow-sm animate-card stat-card">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-hourglass-half me-2"></i>Beklemede</h5>
-                    <p class="display-6">@ViewBag.BeklemedeProjeSayisi</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Filtreleme ve Sıralama -->
     <div class="card shadow-sm mb-4 animate-card">
@@ -168,68 +129,24 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100 animate-button">
-                        <i class="fas fa-search me-2"></i>Uygula
-                    </button>
+                    <a asp-controller="Proje" asp-action="Create" class="btn btn-primary w-100 animate-button">
+                        <i class="fas fa-plus me-2"></i>Yeni Proje Ekle
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow-sm animate-card main-table">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>Proje Listem
-                        @if (ViewBag.SeciliDurum != "Tumu")
-                        {
-                            <span class="badge bg-info ms-2">@ViewBag.SeciliDurum</span>
-                        }
-                    </h5>
-                </div>
-                <div class="card-body">
+    <!-- Proje Kartları -->
                     @if (Model != null && Model.Any())
                     {
-                        <div class="table-responsive">
-                            <table class="table table-hover animate-table">
-                                <thead>
-                                    <tr>
-                                        <th>Proje Adı</th>
-                                        <th>Kategori</th>
-                                        <th>Danışman</th>
-                                        <th>Durum</th>
-                                        <th>Oluşturulma Tarihi</th>
-                                        <th>Teslim Tarihi</th>
-                                        <th>İşlemler</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+        <div class="row">
                                     @foreach (var proje in Model)
                                     {
-                                        <tr class="table-hover-item">
-                                            <td>@proje.Ad</td>
-                                            <td>
-                                                @if (proje.Kategori != null)
-                                                {
-                                                    <span class="badge" style="background-color: @proje.Kategori.Renk">@proje.Kategori.Ad</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">Kategorisiz</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (proje.Mentor != null)
-                                                {
-                                                    <span>@proje.Mentor.Unvan @proje.Mentor.Ad @proje.Mentor.Soyad</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-warning">Atanmamış</span>
-                                                }
-                                            </td>
-                                            <td>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm animate-card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold">@proje.Ad</h6>
                                                 @{
                                                     var statusClass = proje.Status switch
                                                     {
@@ -252,33 +169,111 @@
                                                     };
                                                 }
                                                 <span class="badge @statusClass">@statusText</span>
-                                            </td>
-                                            <td>@proje.OlusturmaTarihi.ToString("dd.MM.yyyy")</td>
-                                            <td>
-                                                @if (proje.TeslimTarihi.HasValue)
-                                                {
-                                                    @proje.TeslimTarihi.Value.ToString("dd.MM.yyyy")
+                        </div>
+                        <div class="card-body">
+                            <!-- Temel Bilgiler -->
+                            <div class="mb-3">
+                                @if (proje.Kategori != null)
+                                {
+                                    <span class="badge mb-2" style="background-color: @proje.Kategori.Renk">
+                                        <i class="fas fa-tag me-1"></i>@proje.Kategori.Ad
+                                    </span>
+                                }
+                                @if (proje.Mentor != null)
+                                {
+                                    <p class="small mb-1">
+                                        <i class="fas fa-user-tie me-1"></i>
+                                        <strong>Danışman:</strong> @proje.Mentor.Unvan @proje.Mentor.Ad @proje.Mentor.Soyad
+                                    </p>
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted">Belirtilmemiş</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <div class="btn-group" role="group">
-                                                    <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-sm btn-info animate-button">
-                                                        <i class="fas fa-eye me-1"></i> Detaylar
-                                                    </a>
+                                    <p class="small mb-1 text-warning">
+                                        <i class="fas fa-user-times me-1"></i>Danışman atanmamış
+                                    </p>
+                                }
+                                <p class="small mb-1">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    <strong>Oluşturulma:</strong> @proje.OlusturmaTarihi.ToString("dd.MM.yyyy")
+                                </p>
+                                @if (proje.TeslimTarihi.HasValue)
+                                {
+                                    <p class="small mb-1">
+                                        <i class="fas fa-calendar-check me-1"></i>
+                                        <strong>Teslim Tarihi:</strong> @proje.TeslimTarihi.Value.ToString("dd.MM.yyyy")
+                                    </p>
+                                }
+                            </div>
+
+                            <!-- Proje İstatistikleri -->
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <i class="fas fa-tasks text-primary"></i>
+                                        <h6 class="small mb-0">@((proje.Asamalar?.Count() ?? 0)) Aşama</h6>
+                                        <small class="text-muted">@((proje.Asamalar?.Count(a => a.Tamamlandi) ?? 0)) Tamamlandı</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <i class="fas fa-file-upload text-success"></i>
+                                        <h6 class="small mb-0">@((proje.Dosyalar?.Count() ?? 0)) Dosya</h6>
+                                        <small class="text-muted">Teslim Edildi</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Aşama İlerleme Çubuğu -->
+                            @if (proje.Asamalar != null && proje.Asamalar.Any())
+                            {
+                                var toplamAsama = proje.Asamalar.Count();
+                                var tamamlananAsama = proje.Asamalar.Count(a => a.Tamamlandi);
+                                var ilerlemeyuzde = toplamAsama > 0 ? (tamamlananAsama * 100 / toplamAsama) : 0;
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-muted">Proje İlerlemesi</small>
+                                        <small class="text-muted">%@ilerlemeyuzde</small>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: @(ilerlemeyuzde)%"></div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Son Teslimler -->
+                            @if (proje.Dosyalar != null && proje.Dosyalar.Any())
+                            {
+                                <div class="mb-3">
+                                    <h6 class="small text-muted mb-2">
+                                        <i class="fas fa-clock me-1"></i>Son Teslimler
+                                    </h6>
+                                    @foreach (var dosya in proje.Dosyalar.OrderByDescending(d => d.YuklemeTarihi).Take(3))
+                                    {
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-truncate me-2">@dosya.DosyaAdi</small>
+                                            <small class="text-muted">@dosya.YuklemeTarihi.ToString("dd.MM")</small>
                                                 </div>
-                                            </td>
-                                        </tr>
                                     }
-                                </tbody>
-                            </table>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-eye me-1"></i> Proje Detayları
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
                         </div>
                     }
                     else
                     {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm animate-card">
+                    <div class="card-body">
                         <div class="text-center py-5">
                             <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
                             <h5 class="text-muted">Henüz bir projeniz bulunmamaktadır.</h5>
@@ -287,16 +282,203 @@
                                 <i class="fas fa-plus me-2"></i>Yeni Proje Oluştur
                             </a>
                         </div>
+                    </div>
+                </div>
+            </div>
+                        </div>
                     }
+
+    <!-- Üst İstatistik Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-2" style="color: #0d6efd;">Toplam Proje</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.ToplamProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Tüm projelerim</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-tasks fa-lg" style="color: #0d6efd;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-success fw-bold mb-2">Tamamlanan</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.TamamlananProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Bitirilen projeler</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-check-circle fa-lg text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-primary fw-bold mb-2">Toplam Teslim</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.ToplamTeslimSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Yüklenen dosyalar</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-upload fa-lg text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-success fw-bold mb-2">Tamamlanan Aşama</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.TamamlananAsamaSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Bitirilen aşamalar</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-check-double fa-lg text-success"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Alt İstatistik Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-danger fw-bold mb-2">Yaklaşan Aşama</h6>
+                            <h3 class="mb-1 stat-number" data-count="@(((List<UniversiteProjeYonetimSistemi.Models.ProjeAsamasi>)ViewBag.YaklasanAsamalar).Count)">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">7 gün içinde</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-clock fa-lg text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-warning fw-bold mb-2">Beklemede</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.BeklemedeProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Onay bekleyen</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-hourglass-half fa-lg text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-info fw-bold mb-2">Devam Eden</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.DevamEdenProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Aktif projeler</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-spinner fa-lg text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yaklaşan Aşamalar Listesi -->
+    @if (((List<UniversiteProjeYonetimSistemi.Models.ProjeAsamasi>)ViewBag.YaklasanAsamalar).Any())
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm animate-card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Yaklaşan Aşamalar (7 Gün İçinde)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var asama in (List<UniversiteProjeYonetimSistemi.Models.ProjeAsamasi>)ViewBag.YaklasanAsamalar)
+                            {
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card border-danger h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-danger">@asama.AsamaAdi</h6>
+                                            <p class="card-text small mb-2">
+                                                <strong>Proje:</strong> @asama.Proje?.Ad
+                                            </p>
+                                            <p class="card-text small mb-2">
+                                                <strong>Bitiş Tarihi:</strong> 
+                                                <span class="text-danger fw-bold">
+                                                    @asama.BitisTarihi?.ToString("dd.MM.yyyy")
+                                                </span>
+                                            </p>
+                                            @if (!string.IsNullOrEmpty(asama.Aciklama))
+                                            {
+                                                <p class="card-text small text-muted">@asama.Aciklama</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // İstatistik sayılarını animasyonlu göster
+            $('.stat-number').each(function() {
+                var $this = $(this);
+                var countTo = $this.attr('data-count');
+                
+                $({ countNum: $this.text() }).animate({
+                    countNum: countTo
+                }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function() {
+                        $this.text(Math.floor(this.countNum));
+                    },
+                    complete: function() {
+                        $this.text(this.countNum);
+                    }
+                });
+            });
+
             // Alert'leri 5 saniye sonra otomatik kapat
             setTimeout(function () {
                 $('.alert').alert('close');

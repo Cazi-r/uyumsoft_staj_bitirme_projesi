@@ -86,5 +86,24 @@ namespace UniversiteProjeYonetimSistemi.Services
         {
             return await _projeService.GetByOgrenciIdAsync(ogrenciId);
         }
+
+        public async Task<IEnumerable<Proje>> GetProjelerWithDetailsAsync(int ogrenciId)
+        {
+            return await _context.Projeler
+                .Include(p => p.Ogrenci)
+                .Include(p => p.Mentor)
+                .Include(p => p.Kategori)
+                .Include(p => p.Dosyalar.OrderByDescending(d => d.YuklemeTarihi))
+                .Include(p => p.Asamalar.OrderBy(a => a.SiraNo))
+                .Include(p => p.Yorumlar.OrderByDescending(y => y.OlusturmaTarihi))
+                    .ThenInclude(y => y.Ogrenci)
+                .Include(p => p.Yorumlar)
+                    .ThenInclude(y => y.Akademisyen)
+                .Include(p => p.Degerlendirmeler.OrderByDescending(d => d.CreatedAt))
+                    .ThenInclude(d => d.Akademisyen)
+                .Where(p => p.OgrenciId == ogrenciId)
+                .OrderByDescending(p => p.OlusturmaTarihi)
+                .ToListAsync();
+        }
     }
 } 

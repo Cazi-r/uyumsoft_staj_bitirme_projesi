@@ -16,5 +16,6 @@ namespace UniversiteProjeYonetimSistemi.Services
         Task UpdateAsync(Ogrenci ogrenci);
         Task DeleteAsync(int id);
         Task<IEnumerable<Proje>> GetProjelerAsync(int ogrenciId);
+        Task<IEnumerable<Proje>> GetProjelerWithDetailsAsync(int ogrenciId);
     }
 } 

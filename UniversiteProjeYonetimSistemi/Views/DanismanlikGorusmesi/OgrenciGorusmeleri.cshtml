@@ -1,26 +1,28 @@
 @model IEnumerable<UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi>
+@using UniversiteProjeYonetimSistemi.Models
 
 @{
     ViewData["Title"] = "Görüşmelerim";
 }
 
-<div class="container mt-4">
-    <div class="row mb-3 animate-header">
-        <div class="col-md-8">
-            <h2>@ViewData["Title"]</h2>
-            <p>Danışmanlık görüşme taleplerinizi bu sayfadan yönetebilirsiniz.</p>
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header animate-header">
+        <div>
+            <h1><i class="fas fa-comments me-2 text-primary"></i> Görüşmelerim</h1>
+            <p class="text-muted mb-0">Danışmanlık görüşme taleplerinizi bu sayfadan yönetebilirsiniz.</p>
         </div>
-        <div class="col-md-4 text-end">
-            <a asp-action="Create" class="btn btn-primary animate-button">
-                <i class="bi bi-plus-circle"></i> Yeni Görüşme Talebi
-            </a>
+        <div>
+            <span class="badge bg-light text-dark border date-badge ms-2">
+                <i class="far fa-calendar me-1"></i> @DateTime.Now.ToString("dd MMMM yyyy")
+            </span>
         </div>
     </div>
 
     @if (TempData["Message"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Message"]
+            <i class="fas fa-check-circle me-2"></i> @TempData["Message"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
@@ -28,97 +30,498 @@
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["Error"]
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-
-    <div class="row">
+    
+    <!-- Tab Navigation -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="card animate-card">
-                <div class="card-body">
+            <ul class="nav nav-tabs animate-nav-tabs" id="gorusmelerTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="bekleyen-tab" data-bs-toggle="tab" data-bs-target="#bekleyen" type="button" role="tab" aria-controls="bekleyen" aria-selected="true">
+                        <i class="fas fa-hourglass-half me-2"></i>Bekleyen Talepler
+                        <span class="badge bg-warning ms-2">@Model.Count(g => g.Durum == GorusmeDurumu.HocaOnayiBekliyor || g.Durum == GorusmeDurumu.OgrenciOnayiBekliyor)</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="yakin-tab" data-bs-toggle="tab" data-bs-target="#yakin" type="button" role="tab" aria-controls="yakin" aria-selected="false">
+                        <i class="fas fa-calendar-day me-2"></i>Yaklaşan Görüşmeler
+                        <span class="badge bg-primary ms-2">@Model.Count(g => g.Durum == GorusmeDurumu.Onaylandi && g.GorusmeTarihi >= DateTime.Now && g.GorusmeTarihi <= DateTime.Now.AddDays(7))</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ilerideki-tab" data-bs-toggle="tab" data-bs-target="#ilerideki" type="button" role="tab" aria-controls="ilerideki" aria-selected="false">
+                        <i class="fas fa-calendar-plus me-2"></i>İlerideki Görüşmeler
+                        <span class="badge bg-info ms-2">@Model.Count(g => g.Durum == GorusmeDurumu.Onaylandi && g.GorusmeTarihi > DateTime.Now.AddDays(7))</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="gecmis-tab" data-bs-toggle="tab" data-bs-target="#gecmis" type="button" role="tab" aria-controls="gecmis" aria-selected="false">
+                        <i class="fas fa-history me-2"></i>Geçmiş Görüşmeler
+                        <span class="badge bg-secondary ms-2">@Model.Count(g => g.Durum == GorusmeDurumu.Onaylandi && g.GorusmeTarihi < DateTime.Now)</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="iptal-tab" data-bs-toggle="tab" data-bs-target="#iptal" type="button" role="tab" aria-controls="iptal" aria-selected="false">
+                        <i class="fas fa-times-circle me-2"></i>İptal Edilenler
+                        <span class="badge bg-danger ms-2">@Model.Count(g => g.Durum == GorusmeDurumu.IptalEdildi)</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="gorusmelerTabContent">
+        <!-- Bekleyen Talepler -->
+        <div class="tab-pane fade show active" id="bekleyen" role="tabpanel" aria-labelledby="bekleyen-tab">
+            <div class="card shadow-sm mb-4 main-table">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-hourglass-half me-2 text-warning"></i> Bekleyen Talepler
+                    </h5>
+                    <a asp-action="Create" class="btn btn-warning">
+                        <i class="fas fa-plus me-1"></i> Yeni Görüşme Talebi
+                    </a>
+                </div>
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-striped animate-table">
-                            <thead class="table-dark">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Proje</th>
+                                    <th class="ps-3">Proje</th>
                                     <th>Akademisyen</th>
                                     <th>Başlık</th>
                                     <th>Görüşme Tarihi</th>
                                     <th>Görüşme Tipi</th>
                                     <th>Talep Sahibi</th>
-                                    <th>Durum</th>
-                                    <th>İşlemler</th>
+                                    <th class="text-end pe-3">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model)
+                                @{
+                                    var bekleyenTalepler = Model.Where(g => g.Durum == GorusmeDurumu.HocaOnayiBekliyor || g.Durum == GorusmeDurumu.OgrenciOnayiBekliyor);
+                                }
+                                @if (bekleyenTalepler.Any())
                                 {
-                                    <tr class="table-hover-item">
-                                        <td>@item.Proje?.Ad</td>
-                                        <td>@item.Akademisyen?.Ad @item.Akademisyen?.Soyad</td>
-                                        <td>@item.Baslik</td>
-                                        <td>@item.GorusmeTarihi.ToString("g")</td>
-                                        <td>@item.GorusmeTipi</td>
-                                        <td>
-                                            @if (item.TalepEden == "Ogrenci")
-                                            {
-                                                <span class="badge bg-info">Sizin Talebiniz</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-secondary">Akademisyen Talebi</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.Durum == "Beklemede")
-                                            {
-                                                <span class="badge bg-warning">Beklemede</span>
-                                            }
-                                            else if (item.Durum == "Onaylandı")
-                                            {
-                                                <span class="badge bg-success">Onaylandı</span>
-                                            }
-                                            else if (item.Durum == "Reddedildi")
-                                            {
-                                                <span class="badge bg-danger">Reddedildi</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary animate-button">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                
-                                                @if (item.Durum == "Beklemede")
+                                    @foreach (var item in bekleyenTalepler)
+                                    {
+                                        <tr class="project-row">
+                                            <td class="fw-medium ps-3">@item.Proje?.Ad</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                        @(item.Akademisyen?.Ad?.Substring(0,1) ?? "")@(item.Akademisyen?.Soyad?.Substring(0,1) ?? "")
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-medium">@item.Akademisyen?.Ad @item.Akademisyen?.Soyad</div>
+                                                        <small class="text-muted">@item.Akademisyen?.Unvan</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Baslik</td>
+                                            <td>
+                                                <div>
+                                                    <div>@item.GorusmeTarihi.ToString("dd.MM.yyyy")</div>
+                                                    <small class="text-muted">@item.GorusmeTarihi.ToString("HH:mm")</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-primary">@item.GorusmeTipi</span></td>
+                                            <td>
+                                                @if (item.TalepEden == "Ogrenci")
                                                 {
-                                                    @if (item.TalepEden == "Ogrenci")
-                                                    {
-                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary animate-button">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger animate-button">
-                                                            <i class="bi bi-trash"></i>
-                                                        </a>
-                                                    }
-                                                    else
-                                                    {
-                                                        <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
-                                                            <input type="hidden" name="id" value="@item.Id" />
-                                                            <input type="hidden" name="durum" value="Onaylandı" />
-                                                            <button type="submit" class="btn btn-sm btn-outline-success animate-button">
-                                                                <i class="bi bi-check-circle"></i> Onayla
-                                                            </button>
-                                                        </form>
-                                                        <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
-                                                            <input type="hidden" name="id" value="@item.Id" />
-                                                            <input type="hidden" name="durum" value="Reddedildi" />
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger animate-button">
-                                                                <i class="bi bi-x-circle"></i> Reddet
-                                                            </button>
-                                                        </form>
-                                                    }
+                                                    <span class="badge bg-info">Sizin Talebiniz</span>
                                                 }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Akademisyen Talebi</span>
+                                                }
+                                            </td>
+                                            <td class="text-end pe-3">
+                                                                                                 <div class="btn-group">
+                                                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Detay">
+                                                         <i class="fas fa-eye"></i>
+                                                     </a>
+                                                     @if (item.TalepEden == "Ogrenci")
+                                                     {
+                                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary" title="Düzenle">
+                                                             <i class="fas fa-edit"></i>
+                                                         </a>
+                                                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Sil">
+                                                             <i class="fas fa-trash"></i>
+                                                         </a>
+                                                     }
+                                                     else
+                                                     {
+                                                         <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                                             <input type="hidden" name="id" value="@item.Id" />
+                                                             <input type="hidden" name="durum" value="Onaylandı" />
+                                                             <button type="submit" class="btn btn-sm btn-outline-success" title="Onayla">
+                                                                 <i class="fas fa-check"></i>
+                                                             </button>
+                                                         </form>
+                                                         <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                                             <input type="hidden" name="id" value="@item.Id" />
+                                                             <input type="hidden" name="durum" value="Reddedildi" />
+                                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Reddet">
+                                                                 <i class="fas fa-times"></i>
+                                                             </button>
+                                                         </form>
+                                                     }
+                                                 </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5">
+                                            <div class="py-4">
+                                                <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                                                <p class="mb-0">Bekleyen görüşme talebiniz bulunmamaktadır.</p>
+                                                <a asp-action="Create" class="btn btn-primary mt-3">Yeni Görüşme Talebi Oluştur</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yaklaşan Görüşmeler -->
+        <div class="tab-pane fade" id="yakin" role="tabpanel" aria-labelledby="yakin-tab">
+            <div class="card shadow-sm mb-4 main-table">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-day me-2 text-primary"></i> Yaklaşan Görüşmeler (7 Gün İçinde)
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Proje</th>
+                                    <th>Akademisyen</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>Kalan Süre</th>
+                                    <th class="text-end pe-3">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var yakinGorusmeler = Model.Where(g => g.Durum == GorusmeDurumu.Onaylandi && g.GorusmeTarihi >= DateTime.Now && g.GorusmeTarihi <= DateTime.Now.AddDays(7));
+                                }
+                                @if (yakinGorusmeler.Any())
+                                {
+                                    @foreach (var item in yakinGorusmeler)
+                                    {
+                                        var kalanGun = (int)((item.GorusmeTarihi - DateTime.Now).TotalDays);
+                                        <tr class="project-row">
+                                            <td class="fw-medium ps-3">@item.Proje?.Ad</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                        @(item.Akademisyen?.Ad?.Substring(0,1) ?? "")@(item.Akademisyen?.Soyad?.Substring(0,1) ?? "")
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-medium">@item.Akademisyen?.Ad @item.Akademisyen?.Soyad</div>
+                                                        <small class="text-muted">@item.Akademisyen?.Unvan</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Baslik</td>
+                                            <td>
+                                                <div>
+                                                    <div>@item.GorusmeTarihi.ToString("dd.MM.yyyy")</div>
+                                                    <small class="text-muted">@item.GorusmeTarihi.ToString("HH:mm")</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-primary">@item.GorusmeTipi</span></td>
+                                            <td>
+                                                @if (kalanGun == 0)
+                                                {
+                                                    <span class="badge bg-danger">Bugün</span>
+                                                }
+                                                else if (kalanGun == 1)
+                                                {
+                                                    <span class="badge bg-warning">Yarın</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary">@kalanGun gün kaldı</span>
+                                                }
+                                            </td>
+                                            <td class="text-end pe-3">
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Detay">
+                                                                                                                 <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5">
+                                            <div class="py-4">
+                                                <i class="fas fa-calendar-day fa-3x text-muted mb-3"></i>
+                                                <p class="mb-0">Yaklaşan görüşmeniz bulunmamaktadır.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- İlerideki Görüşmeler -->
+        <div class="tab-pane fade" id="ilerideki" role="tabpanel" aria-labelledby="ilerideki-tab">
+            <div class="card shadow-sm mb-4 main-table">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-plus me-2 text-info"></i> İlerideki Görüşmeler
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Proje</th>
+                                    <th>Akademisyen</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>Kalan Süre</th>
+                                    <th class="text-end pe-3">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var ileridekiGorusmeler = Model.Where(g => g.Durum == GorusmeDurumu.Onaylandi && g.GorusmeTarihi > DateTime.Now.AddDays(7));
+                                }
+                                @if (ileridekiGorusmeler.Any())
+                                {
+                                    @foreach (var item in ileridekiGorusmeler)
+                                    {
+                                        var kalanGun = (int)(item.GorusmeTarihi - DateTime.Now).TotalDays;
+                                        <tr class="project-row">
+                                            <td class="fw-medium ps-3">@item.Proje?.Ad</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                        @(item.Akademisyen?.Ad?.Substring(0,1) ?? "")@(item.Akademisyen?.Soyad?.Substring(0,1) ?? "")
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-medium">@item.Akademisyen?.Ad @item.Akademisyen?.Soyad</div>
+                                                        <small class="text-muted">@item.Akademisyen?.Unvan</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Baslik</td>
+                                            <td>
+                                                <div>
+                                                    <div>@item.GorusmeTarihi.ToString("dd.MM.yyyy")</div>
+                                                    <small class="text-muted">@item.GorusmeTarihi.ToString("HH:mm")</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-primary">@item.GorusmeTipi</span></td>
+                                            <td>
+                                                <span class="badge bg-info">@kalanGun gün sonra</span>
+                                            </td>
+                                            <td class="text-end pe-3">
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Detay">
+                                                                                                                 <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5">
+                                            <div class="py-4">
+                                                <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                                                <p class="mb-0">İlerideki planlanmış görüşmeniz bulunmamaktadır.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geçmiş Görüşmeler -->
+        <div class="tab-pane fade" id="gecmis" role="tabpanel" aria-labelledby="gecmis-tab">
+            <div class="card shadow-sm mb-4 main-table">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-history me-2 text-secondary"></i> Geçmiş Görüşmeler
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Proje</th>
+                                    <th>Akademisyen</th>
+                                    <th>Başlık</th>
+                                    <th>Görüşme Tarihi</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th class="text-end pe-3">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var gecmisGorusmeler = Model.Where(g => g.Durum == GorusmeDurumu.Onaylandi && g.GorusmeTarihi < DateTime.Now);
+                                }
+                                @if (gecmisGorusmeler.Any())
+                                {
+                                    @foreach (var item in gecmisGorusmeler)
+                                    {
+                                        <tr class="project-row">
+                                            <td class="fw-medium ps-3">@item.Proje?.Ad</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                        @(item.Akademisyen?.Ad?.Substring(0,1) ?? "")@(item.Akademisyen?.Soyad?.Substring(0,1) ?? "")
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-medium">@item.Akademisyen?.Ad @item.Akademisyen?.Soyad</div>
+                                                        <small class="text-muted">@item.Akademisyen?.Unvan</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Baslik</td>
+                                            <td>
+                                                <div>
+                                                    <div>@item.GorusmeTarihi.ToString("dd.MM.yyyy")</div>
+                                                    <small class="text-muted">@item.GorusmeTarihi.ToString("HH:mm")</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-primary">@item.GorusmeTipi</span></td>
+                                            <td class="text-end pe-3">
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Detay">
+                                                                                                                 <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5">
+                                            <div class="py-4">
+                                                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                                <p class="mb-0">Geçmiş görüşmeniz bulunmamaktadır.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- İptal Edilenler -->
+        <div class="tab-pane fade" id="iptal" role="tabpanel" aria-labelledby="iptal-tab">
+            <div class="card shadow-sm mb-4 main-table">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-times-circle me-2 text-danger"></i> İptal Edilen Görüşmeler
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Proje</th>
+                                    <th>Akademisyen</th>
+                                    <th>Başlık</th>
+                                    <th>Planlanmış Tarih</th>
+                                    <th>Görüşme Tipi</th>
+                                    <th>İptal Tarihi</th>
+                                    <th class="text-end pe-3">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var iptalGorusmeler = Model.Where(g => g.Durum == GorusmeDurumu.IptalEdildi);
+                                }
+                                @if (iptalGorusmeler.Any())
+                                {
+                                    @foreach (var item in iptalGorusmeler)
+                                    {
+                                        <tr class="project-row">
+                                            <td class="fw-medium ps-3">@item.Proje?.Ad</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                                        @(item.Akademisyen?.Ad?.Substring(0,1) ?? "")@(item.Akademisyen?.Soyad?.Substring(0,1) ?? "")
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-medium">@item.Akademisyen?.Ad @item.Akademisyen?.Soyad</div>
+                                                        <small class="text-muted">@item.Akademisyen?.Unvan</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Baslik</td>
+                                            <td>
+                                                <div>
+                                                    <div>@item.GorusmeTarihi.ToString("dd.MM.yyyy")</div>
+                                                    <small class="text-muted">@item.GorusmeTarihi.ToString("HH:mm")</small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge bg-primary">@item.GorusmeTipi</span></td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    @(item.UpdatedAt != default(DateTime) ? item.UpdatedAt.ToString("dd.MM.yyyy HH:mm") : "-")
+                                                </small>
+                                            </td>
+                                            <td class="text-end pe-3">
+                                                <div class="btn-group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Detay">
+                                                                                                                 <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5">
+                                            <div class="py-4">
+                                                <i class="fas fa-times-circle fa-3x text-muted mb-3"></i>
+                                                <p class="mb-0">İptal edilen görüşmeniz bulunmamaktadır.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -130,12 +533,34 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
 
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+            // İstatistik sayılarını animasyonlu göster
+            $('.stat-number').each(function() {
+                var $this = $(this);
+                var countTo = $this.attr('data-count');
+                
+                $({ countNum: $this.text() }).animate({
+                    countNum: countTo
+                }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function() {
+                        $this.text(Math.floor(this.countNum));
+                    },
+                    complete: function() {
+                        $this.text(this.countNum);
+                    }
+                });
+            });
+
+            // Alert'leri 5 saniye sonra otomatik kapat
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
         });
     </script>
-} 
+}

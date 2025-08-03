@@ -20,19 +20,22 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         private readonly IOgrenciService _ogrenciService;
         private readonly IAkademisyenService _akademisyenService;
         private readonly IBildirimService _bildirimService;
+        private readonly ILogger<DanismanlikGorusmesiController> _logger;
 
         public DanismanlikGorusmesiController(
             ApplicationDbContext context, 
             IProjeService projeService,
             IOgrenciService ogrenciService,
             IAkademisyenService akademisyenService,
-            IBildirimService bildirimService)
+            IBildirimService bildirimService,
+            ILogger<DanismanlikGorusmesiController> logger)
         {
             _context = context;
             _projeService = projeService;
             _ogrenciService = ogrenciService;
             _akademisyenService = akademisyenService;
             _bildirimService = bildirimService;
+            _logger = logger;
         }
 
         // GET: DanismanlikGorusmesi
@@ -71,27 +74,27 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 
                 // ViewBag'e farklı görüşme türlerini ekle
                 ViewBag.BekleyenTalepler = akademisyenGorusmeleri
-                    .Where(g => g.Durum == "Beklemede" && g.TalepEden == "Ogrenci")
+                    .Where(g => g.Durum == GorusmeDurumu.HocaOnayiBekliyor && g.TalepEden == "Ogrenci")
                     .OrderBy(g => g.GorusmeTarihi)
                     .ToList();
                 
                 ViewBag.YakinGorusmeler = akademisyenGorusmeleri
-                    .Where(g => g.Durum == "Onaylandı" && (g.ZamanDurumu == "Bugun" || g.ZamanDurumu == "YakinGelecek"))
+                    .Where(g => g.Durum == GorusmeDurumu.Onaylandi && (g.ZamanDurumu == "Bugun" || g.ZamanDurumu == "YakinGelecek"))
                     .OrderBy(g => g.GorusmeTarihi)
                     .ToList();
                     
                 ViewBag.IleridekiGorusmeler = akademisyenGorusmeleri
-                    .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "UzakGelecek")
+                    .Where(g => g.Durum == GorusmeDurumu.Onaylandi && g.ZamanDurumu == "UzakGelecek")
                     .OrderBy(g => g.GorusmeTarihi)
                     .ToList();
                     
                 ViewBag.GecmisGorusmeler = akademisyenGorusmeleri
-                    .Where(g => g.Durum == "Onaylandı" && g.ZamanDurumu == "Gecmis")
+                    .Where(g => g.Durum == GorusmeDurumu.Onaylandi && g.ZamanDurumu == "Gecmis")
                     .OrderByDescending(g => g.GorusmeTarihi)
                     .ToList();
                 
                 ViewBag.IptalGorusmeler = akademisyenGorusmeleri
-                    .Where(g => g.Durum == "Reddedildi")
+                    .Where(g => g.Durum == GorusmeDurumu.IptalEdildi)
                     .OrderByDescending(g => g.GorusmeTarihi)
                     .ToList();
                 
@@ -288,7 +291,15 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Akademisyen,Ogrenci")]
-        public async Task<IActionResult> OnayveyaReddet(int id, string durum)
+        public async Task<IActionResult> OnayveyaReddet(int id, string karar)
+        {
+            return await GorusmeYanitla(id, karar);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Akademisyen,Ogrenci")]
+        public async Task<IActionResult> GorusmeYanitla(int id, string karar)
         {
             var danismanlikGorusmesi = await _context.DanismanlikGorusmeleri
                 .Include(d => d.Akademisyen)
@@ -306,45 +317,50 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 return Forbid();
             }
 
-            // Durumun geçerli bir değer olduğunu kontrol et
-            if (durum != "Onaylandı" && durum != "Reddedildi")
+            GorusmeDurumu yeniDurum;
+            if (karar == "Onayla")
             {
-                TempData["Error"] = "Geçersiz durum değeri.";
+                yeniDurum = GorusmeDurumu.Onaylandi;
+            }
+            else if (karar == "Reddet")
+            {
+                yeniDurum = GorusmeDurumu.IptalEdildi;
+            }
+            else
+            {
+                TempData["Error"] = "Geçersiz işlem.";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Sadece öğrenci, akademisyen taleplerini onaylayabilir/reddedebilir
-            // Sadece akademisyen, öğrenci taleplerini onaylayabilir/reddedebilir
-            bool yetkili = false;
-            
-            if (User.IsInRole("Ogrenci") && danismanlikGorusmesi.OgrenciId == (await _ogrenciService.GetOgrenciByUserName(User.Identity.Name)).Id && danismanlikGorusmesi.TalepEden == "Akademisyen")
-            {
-                yetkili = true;
-            }
-            else if (User.IsInRole("Akademisyen") && danismanlikGorusmesi.AkademisyenId == (await _akademisyenService.GetAkademisyenByUserName(User.Identity.Name)).Id && danismanlikGorusmesi.TalepEden == "Ogrenci")
-            {
-                yetkili = true;
-            }
+            var guncelleyenRol = User.IsInRole("Ogrenci") ? "Ogrenci" : "Akademisyen";
 
-            if (!yetkili)
+            // İş mantığına göre kimin onaylaması gerektiğini kontrol et
+            bool islemGecerli = (guncelleyenRol == "Ogrenci" && danismanlikGorusmesi.Durum == GorusmeDurumu.OgrenciOnayiBekliyor && danismanlikGorusmesi.SonGuncelleyenRol == "Akademisyen") ||
+                               (guncelleyenRol == "Akademisyen" && danismanlikGorusmesi.Durum == GorusmeDurumu.HocaOnayiBekliyor && danismanlikGorusmesi.SonGuncelleyenRol == "Ogrenci");
+
+            _logger.LogInformation("Onay/Reddet İşlemi Denetimi: \n ID: {Id}, \n Karar: {Karar}, \n Mevcut Durum: {MevcutDurum}, \n İşlemi Yapan Rol: {GuncelleyenRol}, \n Son Güncelleyen Rol: {SonGuncelleyenRol}, \n İşlem Geçerli mi: {IslemGecerli}", 
+                id, karar, danismanlikGorusmesi.Durum, guncelleyenRol, danismanlikGorusmesi.SonGuncelleyenRol, islemGecerli);
+
+            if (!islemGecerli)
             {
-                TempData["Error"] = "Bu görüşme talebini onaylama/reddetme yetkiniz bulunmamaktadır.";
+                TempData["Error"] = "Bu işlemi şu anda gerçekleştiremezsiniz.";
                 return RedirectToAction(nameof(Index));
             }
 
             // Durumu güncelle
-            string eskiDurum = danismanlikGorusmesi.Durum;
-            danismanlikGorusmesi.Durum = durum;
+            var eskiDurum = danismanlikGorusmesi.Durum;
+            danismanlikGorusmesi.Durum = yeniDurum;
+            danismanlikGorusmesi.SonGuncelleyenRol = guncelleyenRol;
             
             _context.Update(danismanlikGorusmesi);
             await _context.SaveChangesAsync();
 
             // Bildirim gönder
-            await SendStatusChangeNotification(danismanlikGorusmesi, eskiDurum);
+            await _bildirimService.GorusmeDurumuDegistiBildirimiGonder(danismanlikGorusmesi);
 
-            TempData["Message"] = durum == "Onaylandı" 
+            TempData["Message"] = yeniDurum == GorusmeDurumu.Onaylandi 
                 ? "Görüşme talebi başarıyla onaylandı." 
-                : "Görüşme talebi reddedildi.";
+                : "Görüşme talebi iptal edildi.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -373,7 +389,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     AkademisyenId = proje.MentorId ?? 0, // Add null-coalescing operator to handle nullable int
                     Baslik = "Danışmanlık Görüşmesi",
                     TalepEden = "Ogrenci",
-                    Durum = "Beklemede"
+                    Durum = GorusmeDurumu.HocaOnayiBekliyor, // İlk talep hocanın onayına gider
+                    SonGuncelleyenRol = "Ogrenci"
                 };
                 
                 gorusme.GuncelleZamanDurumu();
@@ -413,7 +430,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     AkademisyenId = akademisyen.Id,
                     Baslik = "Danışmanlık Görüşmesi",
                     TalepEden = "Akademisyen",
-                    Durum = "Beklemede"
+                    Durum = GorusmeDurumu.OgrenciOnayiBekliyor, // Hoca talep edince öğrenci onayına gider
+                    SonGuncelleyenRol = "Akademisyen"
                 };
                 
                 gorusme.GuncelleZamanDurumu();
@@ -435,8 +453,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         {
             var ogrenci = await _ogrenciService.GetOgrenciByUserName(User.Identity.Name);
             danismanlikGorusmesi.OgrenciId = ogrenci.Id;
-            danismanlikGorusmesi.Durum = "Beklemede";
+            danismanlikGorusmesi.Durum = GorusmeDurumu.HocaOnayiBekliyor;
             danismanlikGorusmesi.TalepEden = "Ogrenci";
+            danismanlikGorusmesi.SonGuncelleyenRol = "Ogrenci";
             
             // Zaman durumu güncellemesi
             danismanlikGorusmesi.GuncelleZamanDurumu();
@@ -459,8 +478,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         {
             var akademisyen = await _akademisyenService.GetAkademisyenByUserName(User.Identity.Name);
             danismanlikGorusmesi.AkademisyenId = akademisyen.Id;
-            danismanlikGorusmesi.Durum = "Beklemede";
+            danismanlikGorusmesi.Durum = GorusmeDurumu.OgrenciOnayiBekliyor;
             danismanlikGorusmesi.TalepEden = "Akademisyen";
+            danismanlikGorusmesi.SonGuncelleyenRol = "Akademisyen";
             
             // Zaman durumu güncellemesi
             danismanlikGorusmesi.GuncelleZamanDurumu();
@@ -544,7 +564,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
         private async Task<bool> CanEditMeeting(DanismanlikGorusmesi meeting)
         {
-            if (meeting.Durum == "Onaylandı")
+            if (meeting.Durum == GorusmeDurumu.Onaylandi)
             {
                 TempData["Error"] = "Onaylanmış görüşmeler düzenlenemez.";
                 return false;
@@ -558,9 +578,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     return false;
                 }
                 
-                if (meeting.Durum != "Beklemede")
+                if (meeting.Durum != GorusmeDurumu.HocaOnayiBekliyor && meeting.Durum != GorusmeDurumu.OgrenciOnayiBekliyor)
                 {
-                    TempData["Error"] = "Sadece beklemede olan görüşmeleri düzenleyebilirsiniz.";
+                    TempData["Error"] = "Sadece onay bekleyen görüşmeleri düzenleyebilirsiniz.";
                     return false;
                 }
             }
@@ -591,10 +611,18 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             danismanlikGorusmesi.TalepEden = mevcutGorusme.TalepEden;
             
             // Preserve certain fields based on user role
+            string guncelleyenRol = "";
             if (User.IsInRole("Ogrenci"))
             {
-                danismanlikGorusmesi.Durum = mevcutGorusme.Durum;
+                danismanlikGorusmesi.Durum = GorusmeDurumu.HocaOnayiBekliyor;
+                guncelleyenRol = "Ogrenci";
             }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                danismanlikGorusmesi.Durum = GorusmeDurumu.OgrenciOnayiBekliyor;
+                guncelleyenRol = "Akademisyen";
+            }
+            danismanlikGorusmesi.SonGuncelleyenRol = guncelleyenRol;
             
             // Zaman durumu güncellemesi
             danismanlikGorusmesi.GuncelleZamanDurumu();
@@ -605,48 +633,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             // Send notification if status changed
             if (mevcutGorusme.Durum != danismanlikGorusmesi.Durum)
             {
-                await SendStatusChangeNotification(danismanlikGorusmesi, mevcutGorusme.Durum);
+                await _bildirimService.GorusmeDurumuDegistiBildirimiGonder(danismanlikGorusmesi);
             }
-        }
-
-        private async Task SendStatusChangeNotification(DanismanlikGorusmesi meeting, string oldStatus)
-        {
-            string bildirimBaslik;
-            string bildirimIcerik;
-            
-            switch (meeting.Durum)
-            {
-                case "Onaylandı":
-                    bildirimBaslik = "Görüşme Talebi Onaylandı";
-                    bildirimIcerik = $"Görüşme talebiniz akademisyen tarafından onaylandı. Tarih: {meeting.GorusmeTarihi:g}";
-                    break;
-                case "Reddedildi":
-                    bildirimBaslik = "Görüşme Talebi Reddedildi";
-                    bildirimIcerik = "Görüşme talebiniz akademisyen tarafından reddedildi.";
-                    break;
-                default:
-                    bildirimBaslik = "Görüşme Talebi Güncellendi";
-                    bildirimIcerik = "Görüşme talebinizde değişiklik yapıldı.";
-                    break;
-            }
-            
-            var bildirim = new Bildirim
-            {
-                Baslik = bildirimBaslik,
-                Icerik = bildirimIcerik,
-                OgrenciId = meeting.OgrenciId,
-                BildirimTipi = "Bilgi"
-            };
-            
-            _context.Bildirimler.Add(bildirim);
-            await _context.SaveChangesAsync();
         }
 
         private bool DanismanlikGorusmesiExists(int id)
         {
             return _context.DanismanlikGorusmeleri.Any(e => e.Id == id);
         }
-
         #endregion
     }
 }

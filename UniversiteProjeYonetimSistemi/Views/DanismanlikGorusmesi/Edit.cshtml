@@ -1,80 +1,113 @@
 @model UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi
+@using UniversiteProjeYonetimSistemi.Models
 
 @{
     ViewData["Title"] = "Görüşme Düzenle";
 }
 
-<div class="container mt-4">
-    <div class="row mb-3">
-        <div class="col">
-            <h2>@ViewData["Title"]</h2>
-            <p>Görüşme detaylarını düzenleyin.</p>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header animate-header">
+        <div>
+            <h1><i class="fas fa-edit me-2 text-primary"></i> Görüşme Düzenle</h1>
+            <p class="text-muted mb-0">Görüşme detaylarını düzenleyin ve güncelleyin.</p>
+        </div>
+        <div>
+            <span class="badge bg-light text-dark border date-badge">
+                <i class="far fa-calendar me-1"></i> @DateTime.Now.ToString("dd MMMM yyyy")
+            </span>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card shadow-sm animate-card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-form me-2 text-primary"></i>Görüşme Bilgileri
+                    </h5>
+                </div>
                 <div class="card-body">
-                    <form asp-action="Edit">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <form asp-action="Edit" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger animate-card" role="alert"></div>
                         
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="OgrenciId" />
+                        <input type="hidden" asp-for="AkademisyenId" />
+                        <input type="hidden" asp-for="Durum" />
 
-                        <div class="mb-3">
-                            <label class="form-label">Proje</label>
-                            <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId"></select>
-                            <span asp-validation-for="ProjeId" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Baslik" class="form-label">Başlık</label>
-                            <input asp-for="Baslik" class="form-control" />
-                            <span asp-validation-for="Baslik" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="GorusmeTarihi" class="form-label">Görüşme Tarihi</label>
-                            <input asp-for="GorusmeTarihi" type="datetime-local" class="form-control" />
-                            <span asp-validation-for="GorusmeTarihi" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="GorusmeTipi" class="form-label">Görüşme Tipi</label>
-                            <select asp-for="GorusmeTipi" class="form-select">
-                                <option value="Online">Online</option>
-                                <option value="Yüz Yüze">Yüz Yüze</option>
-                            </select>
-                            <span asp-validation-for="GorusmeTipi" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Notlar" class="form-label">Notlar</label>
-                            <textarea asp-for="Notlar" class="form-control" rows="4"></textarea>
-                            <span asp-validation-for="Notlar" class="text-danger"></span>
-                        </div>
-
-                        @if (User.IsInRole("Akademisyen"))
-                        {
-                            <div class="mb-3">
-                                <label asp-for="Durum" class="form-label">Durum</label>
-                                <select asp-for="Durum" class="form-select">
-                                    <option value="Beklemede">Beklemede</option>
-                                    <option value="Onaylandı">Onaylandı</option>
-                                    <option value="Reddedildi">Reddedildi</option>
-                                </select>
-                                <span asp-validation-for="Durum" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-folder me-1 text-muted"></i>Proje
+                                    </label>
+                                    <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId">
+                                        <option value="">Proje Seçiniz</option>
+                                    </select>
+                                    <span asp-validation-for="ProjeId" class="text-danger small"></span>
+                                </div>
                             </div>
-                        }
-                        else
-                        {
-                            <input type="hidden" asp-for="Durum" />
-                        }
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="GorusmeTipi" class="form-label fw-bold">
+                                        <i class="fas fa-video me-1 text-muted"></i>Görüşme Tipi
+                                    </label>
+                                    <select asp-for="GorusmeTipi" class="form-select">
+                                        <option value="">Tip Seçiniz</option>
+                                        <option value="Online">Online</option>
+                                        <option value="Yüz Yüze">Yüz Yüze</option>
+                                    </select>
+                                    <span asp-validation-for="GorusmeTipi" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="mb-3">
-                            <input type="submit" value="Kaydet" class="btn btn-primary" />
-                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                            <label asp-for="Baslik" class="form-label fw-bold">
+                                <i class="fas fa-heading me-1 text-muted"></i>Başlık
+                            </label>
+                            <input asp-for="Baslik" class="form-control" placeholder="Görüşme konusunu açıklayın..." />
+                            <span asp-validation-for="Baslik" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GorusmeTarihi" class="form-label fw-bold">
+                                <i class="fas fa-calendar-alt me-1 text-muted"></i>Görüşme Tarihi
+                            </label>
+                            <input asp-for="GorusmeTarihi" type="datetime-local" class="form-control" id="GorusmeTarihi" />
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Görüşme tarihi bugünden sonra olmalıdır.
+                            </div>
+                            <span asp-validation-for="GorusmeTarihi" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notlar" class="form-label fw-bold">
+                                <i class="fas fa-sticky-note me-1 text-muted"></i>Notlar
+                            </label>
+                            <textarea asp-for="Notlar" class="form-control" rows="4" placeholder="Görüşme ile ilgili notlarınızı yazın..."></textarea>
+                            <span asp-validation-for="Notlar" class="text-danger small"></span>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="submit" class="btn btn-primary animate-button">
+                                <i class="fas fa-save me-1"></i> Değişiklikleri Kaydet
+                            </button>
+                            @if (User.IsInRole("Ogrenci"))
+                            {
+                                <a asp-action="OgrenciGorusmeleri" class="btn btn-outline-secondary animate-button">
+                                    <i class="fas fa-times me-1"></i> İptal
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="AkademisyenGorusmeleri" class="btn btn-outline-secondary animate-button">
+                                    <i class="fas fa-times me-1"></i> İptal
+                                </a>
+                            }
                         </div>
                     </form>
                 </div>
@@ -82,34 +115,6 @@
         </div>
         
         <div class="col-md-4">
-            @if (User.IsInRole("Ogrenci"))
-            {
-                <div class="card bg-light mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Bilgilendirme</h5>
-                        <p class="card-text">
-                            Sadece beklemede olan görüşme taleplerini düzenleyebilirsiniz.
-                        </p>
-                        <p class="card-text">
-                            Onaylanan veya reddedilen görüşme talepleri için yeni bir talep oluşturabilirsiniz.
-                        </p>
-                    </div>
-                </div>
-            }
-            @if (User.IsInRole("Akademisyen"))
-            {
-                <div class="card bg-light mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Akademisyen Bilgilendirme</h5>
-                        <p class="card-text">
-                            Görüşme talebini onaylayabilir, reddedebilir veya düzenleyebilirsiniz.
-                        </p>
-                        <p class="card-text">
-                            Görüşme tarihini değiştirip onayladığınızda öğrenciye otomatik bildirim gönderilecektir.
-                        </p>
-                    </div>
-                </div>
-            }
         </div>
     </div>
 </div>
@@ -118,8 +123,8 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-        // Minimum bugünün tarihini ayarlama
         document.addEventListener('DOMContentLoaded', function() {
+        // Minimum bugünün tarihini ayarlama
             var today = new Date();
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -128,13 +133,27 @@
             var min = String(today.getMinutes()).padStart(2, '0');
             
             today = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + min;
-            document.getElementById('GorusmeTarihi').setAttribute('min', today);
-        });
-    </script>
+            var dateInput = document.getElementById('GorusmeTarihi');
+            if (dateInput) {
+                dateInput.setAttribute('min', today);
+            }
 
-    <script>
-        $(document).ready(function() {
-            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+            // Form validation feedback
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Kaydediliyor...';
+                        submitBtn.disabled = true;
+                    }
+                });
+            }
+
+            // Alert'leri 5 saniye sonra otomatik kapat
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
         });
     </script>
 } 
