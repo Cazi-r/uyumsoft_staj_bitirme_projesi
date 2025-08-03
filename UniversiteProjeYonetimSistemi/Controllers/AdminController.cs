@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using UniversiteProjeYonetimSistemi.Data;
 using UniversiteProjeYonetimSistemi.Models;
 using UniversiteProjeYonetimSistemi.Services;
+using System.IO;
+using System.Text;
 
 namespace UniversiteProjeYonetimSistemi.Controllers
 {
@@ -335,7 +337,138 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             
             ViewBag.AylikKayitlar = aylikKayitVerileri;
         }
-        
+
+        // Rapor İndirme İşlevi
+        [HttpPost]
+        public async Task<IActionResult> RaporIndir()
+        {
+            try
+            {
+                // Dashboard verilerini yükle
+                await LoadKullaniciIstatistikleri();
+                await LoadProjeIstatistikleri();
+                await LoadAkademisyenProjeSayilari();
+                await LoadSonProjeler();
+                await LoadAylikKayitlar();
+
+                // CSV raporu oluştur
+                var csvContent = await GenerateDashboardReport();
+                
+                // Dosya adı oluştur
+                var fileName = $"Dashboard_Raporu_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+                
+                // UTF-8 BOM ile birlikte CSV dosyasını döndür
+                var utf8WithBom = new UTF8Encoding(true);
+                var bytes = utf8WithBom.GetBytes(csvContent);
+                
+                Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+                Response.Headers.Add("Content-Type", "text/csv; charset=utf-8");
+                
+                return File(bytes, "text/csv; charset=utf-8", fileName);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Rapor oluşturulurken hata oluştu: " + ex.Message });
+            }
+        }
+
+        // Sayfa Yenileme İşlevi
+        [HttpPost]
+        public async Task<IActionResult> SayfaYenile()
+        {
+            try
+            {
+                // Dashboard verilerini yeniden yükle
+                await LoadKullaniciIstatistikleri();
+                await LoadProjeIstatistikleri();
+                await LoadAkademisyenProjeSayilari();
+                await LoadSonProjeler();
+                await LoadAylikKayitlar();
+
+                return Json(new { success = true, message = "Sayfa başarıyla yenilendi" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Sayfa yenilenirken hata oluştu: " + ex.Message });
+            }
+        }
+
+        // Dashboard Raporu Olusturma
+        private async Task<string> GenerateDashboardReport()
+        {
+            var sb = new StringBuilder();
+            
+            // Baslik
+            sb.AppendLine("UNIVERSITE PROJE YONETIM SISTEMI - DASHBOARD RAPORU");
+            sb.AppendLine($"Rapor Tarihi: {DateTime.Now:dd.MM.yyyy HH:mm:ss}");
+            sb.AppendLine();
+            
+            // Kullanici Istatistikleri
+            sb.AppendLine("=== KULLANICI ISTATISTIKLERI ===");
+            sb.AppendLine($"Toplam Kullanici: {ViewBag.ToplamKullanici}");
+            sb.AppendLine($"Aktif Kullanici: {ViewBag.AktifKullanici}");
+            sb.AppendLine($"Pasif Kullanici: {ViewBag.PasifKullanici}");
+            sb.AppendLine($"Admin Sayisi: {ViewBag.AdminSayisi}");
+            sb.AppendLine($"Akademisyen Sayisi: {ViewBag.AkademisyenSayisi}");
+            sb.AppendLine($"Ogrenci Sayisi: {ViewBag.OgrenciSayisi}");
+            sb.AppendLine();
+            
+            // Proje Istatistikleri
+            sb.AppendLine("=== PROJE ISTATISTIKLERI ===");
+            sb.AppendLine($"Toplam Proje: {ViewBag.ToplamProje}");
+            sb.AppendLine($"Devam Eden Proje: {ViewBag.DevamEdenProjeSayisi}");
+            sb.AppendLine($"Tamamlanan Proje: {ViewBag.TamamlananProjeSayisi}");
+            sb.AppendLine($"Beklemede Proje: {ViewBag.BeklemedeProjeSayisi}");
+            sb.AppendLine($"Iptal Proje: {ViewBag.IptalProjeSayisi}");
+            sb.AppendLine();
+            
+            // En Aktif Akademisyenler
+            sb.AppendLine("=== EN AKTIF AKADEMIYENLER ===");
+            if (ViewBag.AkademisyenProjeSayilari != null)
+            {
+                foreach (var item in ViewBag.AkademisyenProjeSayilari)
+                {
+                    sb.AppendLine($"{item.Akademisyen.Ad} {item.Akademisyen.Soyad} ({item.Akademisyen.Unvan}): {item.ProjeSayisi} proje");
+                }
+            }
+            sb.AppendLine();
+            
+            // Son Eklenen Kullanicilar
+            sb.AppendLine("=== SON EKLENEN KULLANICILAR ===");
+            if (ViewBag.SonKullanicilar != null)
+            {
+                foreach (var kullanici in ViewBag.SonKullanicilar)
+                {
+                    sb.AppendLine($"{kullanici.Ad} {kullanici.Soyad} - {kullanici.Email} - {kullanici.Rol} - {kullanici.CreatedAt:dd.MM.yyyy HH:mm}");
+                }
+            }
+            sb.AppendLine();
+            
+            // Son Eklenen Projeler
+            sb.AppendLine("=== SON EKLENEN PROJELER ===");
+            if (ViewBag.SonProjeler != null)
+            {
+                foreach (var proje in ViewBag.SonProjeler)
+                {
+                    var ogrenciAdi = proje.Ogrenci != null ? $"{proje.Ogrenci.Ad} {proje.Ogrenci.Soyad}" : "-";
+                    var mentorAdi = proje.Mentor != null ? $"{proje.Mentor.Unvan} {proje.Mentor.Ad} {proje.Mentor.Soyad}" : "-";
+                    sb.AppendLine($"{proje.Ad} - Ogrenci: {ogrenciAdi} - Danisman: {mentorAdi} - Durum: {proje.Status}");
+                }
+            }
+            sb.AppendLine();
+            
+            // Aylik Kayit Istatistikleri
+            sb.AppendLine("=== AYLIK KAYIT ISTATISTIKLERI ===");
+            if (ViewBag.AylikKayitlar != null)
+            {
+                foreach (var kayit in ViewBag.AylikKayitlar)
+                {
+                    sb.AppendLine($"{kayit.Key}: {kayit.Value} kayit");
+                }
+            }
+            
+            return sb.ToString();
+        }
         private async Task<bool> KullaniciHasRelatedRecords(Kullanici kullanici)
         {
             bool hasRelatedRecords = false;

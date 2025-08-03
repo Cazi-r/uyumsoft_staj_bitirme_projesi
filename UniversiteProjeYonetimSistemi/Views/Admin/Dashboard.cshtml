@@ -4,6 +4,9 @@
 
 <br />
 
+<!-- CSRF Token -->
+@Html.AntiForgeryToken()
+
 <!-- Dashboard İçeriği -->
 <div class="row mb-4 animate-header">
     <div class="col-12">
@@ -15,10 +18,10 @@
                         <p class="mb-0 text-muted small">Son giriş: @DateTime.Now.AddDays(-1).ToString("dd.MM.yyyy HH:mm")</p>
                     </div>
                     <div class="col-lg-auto mt-3 mt-lg-0">
-                        <button class="btn btn-sm btn-falcon-primary me-2 animate-button">
+                        <button class="btn btn-sm btn-falcon-primary me-2 animate-button" id="raporIndirBtn">
                             <i class="fas fa-download me-1"></i> Rapor İndir
                         </button>
-                        <button class="btn btn-sm btn-outline-primary animate-button">
+                        <button class="btn btn-sm btn-outline-primary animate-button" id="sayfaYenileBtn">
                             <i class="fas fa-sync-alt me-1"></i> Yenile
                         </button>
                     </div>
@@ -29,90 +32,68 @@
 </div>
 
 <!-- İstatistik Kartları -->
-<div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100 animate-card">
-            <div class="card-body stats-card">
-                <div class="d-flex align-items-center justify-content-between">
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="stats-card-label text-uppercase">Toplam Kullanıcı</h6>
-                        <h2 class="stats-card-value mb-2">@ViewBag.ToplamKullanici</h2>
-                        <p class="mb-0 text-muted small">Aktif: @ViewBag.AktifKullanici / Pasif: @ViewBag.PasifKullanici</p>
+                        <h6 class="fw-bold mb-2" style="color: #0d6efd;">Toplam Kullanıcı</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.ToplamKullanici">@ViewBag.ToplamKullanici</h3>
+                        <p class="text-muted mt-1 mb-0 small">Aktif: @ViewBag.AktifKullanici / Pasif: @ViewBag.PasifKullanici</p>
                     </div>
-                    <div class="stats-card-icon text-primary">
-                        <i class="fas fa-users"></i>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-users fa-lg" style="color: #0d6efd;"></i>
                     </div>
-                </div>
-                <div class="mt-2">
-                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm btn-falcon-default w-100 animate-button">
-                        Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100 animate-card">
-            <div class="card-body stats-card">
-                <div class="d-flex align-items-center justify-content-between">
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="stats-card-label text-uppercase">Toplam Proje</h6>
-                        <h2 class="stats-card-value mb-2">@ViewBag.ToplamProje</h2>
-                        <p class="mb-0 text-muted small">Devam Eden: @ViewBag.DevamEdenProjeSayisi / Tamamlanan: @ViewBag.TamamlananProjeSayisi</p>
+                        <h6 class="text-success fw-bold mb-2">Toplam Proje</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.ToplamProje">@ViewBag.ToplamProje</h3>
+                        <p class="text-muted mt-1 mb-0 small">Devam Eden: @ViewBag.DevamEdenProjeSayisi / Tamamlanan: @ViewBag.TamamlananProjeSayisi</p>
                     </div>
-                    <div class="stats-card-icon text-success">
-                        <i class="fas fa-project-diagram"></i>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-project-diagram fa-lg text-success"></i>
                     </div>
-                </div>
-                <div class="mt-2">
-                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-falcon-default w-100 animate-button">
-                        Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100 animate-card">
-            <div class="card-body stats-card">
-                <div class="d-flex align-items-center justify-content-between">
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="stats-card-label text-uppercase">Akademisyenler</h6>
-                        <h2 class="stats-card-value mb-2">@ViewBag.AkademisyenSayisi</h2>
-                        <p class="mb-0 text-muted small">Aktif Danışmanlık: @ViewBag.AktifDanismanlikSayisi</p>
+                        <h6 class="text-info fw-bold mb-2">Akademisyenler</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.AkademisyenSayisi">@ViewBag.AkademisyenSayisi</h3>
                     </div>
-                    <div class="stats-card-icon text-info">
-                        <i class="fas fa-user-tie"></i>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-user-tie fa-lg text-info"></i>
                     </div>
-                </div>
-                <div class="mt-2">
-                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Akademisyen" class="btn btn-sm btn-falcon-default w-100 animate-button">
-                        Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xxl-3">
-        <div class="card h-100 animate-card">
-            <div class="card-body stats-card">
-                <div class="d-flex align-items-center justify-content-between">
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="stats-card-label text-uppercase">Öğrenciler</h6>
-                        <h2 class="stats-card-value mb-2">@ViewBag.OgrenciSayisi</h2>
-                        <p class="mb-0 text-muted small">Aktif Proje: @ViewBag.AktifOgrenciProjeSayisi</p>
+                        <h6 class="text-warning fw-bold mb-2">Öğrenciler</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.OgrenciSayisi">@ViewBag.OgrenciSayisi</h3>
                     </div>
-                    <div class="stats-card-icon text-warning">
-                        <i class="fas fa-user-graduate"></i>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-user-graduate fa-lg text-warning"></i>
                     </div>
-                </div>
-                <div class="mt-2">
-                    <a asp-controller="Admin" asp-action="Kullanicilar" asp-route-rol="Ogrenci" class="btn btn-sm btn-falcon-default w-100 animate-button">
-                        Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
                 </div>
             </div>
         </div>
@@ -126,18 +107,6 @@
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">Aylık Kullanıcı Kayıtları</h5>
-                    <div class="dropdown">
-                        <button class="btn btn-falcon-default btn-sm dropdown-toggle animate-button" type="button" id="chartOptions" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="chartOptions">
-                            <li><button class="dropdown-item" type="button">Bu ay</button></li>
-                            <li><button class="dropdown-item" type="button">Son 3 ay</button></li>
-                            <li><button class="dropdown-item" type="button">Son 6 ay</button></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><button class="dropdown-item" type="button">PDF olarak indir</button></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -198,11 +167,6 @@
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">En Aktif Akademisyenler</h5>
-                    <div>
-                        <button class="btn btn-falcon-default btn-sm animate-button" type="button">
-                            <i class="fas fa-filter"></i> Filtrele
-                        </button>
-                    </div>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -213,7 +177,6 @@
                                 <th class="border-0">Ad Soyad</th>
                                 <th class="border-0">Unvan</th>
                                 <th class="border-0 text-center">Proje Sayısı</th>
-                                <th class="border-0 text-center">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -234,11 +197,6 @@
                                         <td class="align-middle text-center">
                                             <span class="badge bg-info rounded-pill">@item.ProjeSayisi</span>
                                         </td>
-                                        <td class="align-middle text-center">
-                                            <button class="btn btn-sm btn-falcon-default animate-button" data-bs-toggle="tooltip" title="Detaylı Bilgi">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                        </td>
                                     </tr>
                                 }
                             }
@@ -252,7 +210,7 @@
 
 <div class="row g-3">
     <!-- Son Eklenen Kullanıcılar -->
-    <div class="col-lg-6 mb-3">
+    <div class="col-12 mb-3">
         <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
@@ -303,7 +261,7 @@
     </div>
 
     <!-- Son Eklenen Projeler -->
-    <div class="col-lg-6 mb-3">
+    <div class="col-12 mb-3">
         <div class="card h-100 animate-card">
             <div class="card-header border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
@@ -362,6 +320,119 @@
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
+            
+            // Rapor İndir Butonu
+            document.getElementById('raporIndirBtn').addEventListener('click', function() {
+                var btn = this;
+                var originalText = btn.innerHTML;
+                
+                // Buton durumunu güncelle
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Rapor Hazırlanıyor...';
+                
+                // AJAX isteği gönder
+                fetch('/Admin/RaporIndir', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Rapor oluşturulamadı');
+                })
+                .then(blob => {
+                    // Dosyayı indir
+                    var url = window.URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Dashboard_Raporu_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    // Başarı mesajı göster
+                    showNotification('Rapor başarıyla indirildi!', 'success');
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    showNotification('Rapor indirilirken hata oluştu!', 'error');
+                })
+                .finally(() => {
+                    // Buton durumunu geri yükle
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+            });
+            
+            // Sayfa Yenile Butonu
+            document.getElementById('sayfaYenileBtn').addEventListener('click', function() {
+                var btn = this;
+                var originalText = btn.innerHTML;
+                
+                // Buton durumunu güncelle
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Yenileniyor...';
+                
+                // AJAX isteği gönder
+                fetch('/Admin/SayfaYenile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        // Sayfayı yenile
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    showNotification('Sayfa yenilenirken hata oluştu!', 'error');
+                })
+                .finally(() => {
+                    // Buton durumunu geri yükle
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+            });
+            
+            // Bildirim gösterme fonksiyonu
+            function showNotification(message, type) {
+                var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+                var icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+                
+                var alert = document.createElement('div');
+                alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+                alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                alert.innerHTML = `
+                    <i class="${icon} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(alert);
+                
+                // 5 saniye sonra otomatik kaldır
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 5000);
+            }
             
             // Kullanıcı Kayıt Grafiği
             var kullaniciCtx = document.getElementById('kullaniciGrafik').getContext('2d');

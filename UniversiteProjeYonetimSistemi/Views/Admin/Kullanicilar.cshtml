@@ -21,38 +21,86 @@
 
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card bg-primary text-white h-100 animate-card">
-                <div class="card-body text-center">
-                    <h6 class="card-title">Toplam Kullanıcı</h6>
-                    <h2>@ViewBag.ToplamKullanici</h2>
-                    <a asp-action="Kullanicilar" class="stretched-link text-white"></a>
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body text-center py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-2" style="color: #0d6efd;">Toplam Kullanıcı</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.ToplamKullanici">@ViewBag.ToplamKullanici</h3>
+                            <p class="text-muted mt-1 mb-0 small">Aktif: @ViewBag.AktifKullanici | Pasif: @ViewBag.PasifKullanici</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-users fa-lg" style="color: #0d6efd;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-action="Kullanicilar" class="btn btn-sm btn-primary w-100">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white h-100 animate-card">
-                <div class="card-body text-center">
-                    <h6 class="card-title">Öğrenci</h6>
-                    <h2>@ViewBag.OgrenciSayisi</h2>
-                    <a asp-action="Kullanicilar" asp-route-rol="Ogrenci" class="stretched-link text-white"></a>
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body text-center py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-success fw-bold mb-2">Öğrenci</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.OgrenciSayisi">@ViewBag.OgrenciSayisi</h3>
+                            <p class="text-muted mt-1 mb-0 small">Öğrenci Kullanıcılar</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-user-graduate fa-lg text-success"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-action="Kullanicilar" asp-route-rol="Ogrenci" class="btn btn-sm btn-success w-100">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-info text-white h-100 animate-card">
-                <div class="card-body text-center">
-                    <h6 class="card-title">Akademisyen</h6>
-                    <h2>@ViewBag.AkademisyenSayisi</h2>
-                    <a asp-action="Kullanicilar" asp-route-rol="Akademisyen" class="stretched-link text-white"></a>
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body text-center py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-info fw-bold mb-2">Akademisyen</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.AkademisyenSayisi">@ViewBag.AkademisyenSayisi</h3>
+                            <p class="text-muted mt-1 mb-0 small">Akademik Personel</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-user-tie fa-lg text-info"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-action="Kullanicilar" asp-route-rol="Akademisyen" class="btn btn-sm btn-info w-100">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-danger text-white h-100 animate-card">
-                <div class="card-body text-center">
-                    <h6 class="card-title">Admin</h6>
-                    <h2>@ViewBag.AdminSayisi</h2>
-                    <a asp-action="Kullanicilar" asp-route-rol="Admin" class="stretched-link text-white"></a>
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body text-center py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-danger fw-bold mb-2">Admin</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.AdminSayisi">@ViewBag.AdminSayisi</h3>
+                            <p class="text-muted mt-1 mb-0 small">Sistem Yöneticileri</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-user-shield fa-lg text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-action="Kullanicilar" asp-route-rol="Admin" class="btn btn-sm btn-danger w-100">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
                 </div>
             </div>
         </div>
@@ -80,11 +128,15 @@
             </h5>
         </div>
         <div class="card-body">
+            <!-- Modern Filtreleme ve Arama Bölümü -->
             <div class="row mb-4">
-                <div class="col-md-8">
-                    <!-- Filtreleme bölümü -->
-                    <div class="d-flex flex-wrap align-items-center mb-2">
-                        <span class="me-2">Filtreler:</span>
+                <div class="col-lg-8 mb-3">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-3">
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <span class="fw-bold text-muted me-2">
+                                    <i class="fas fa-filter me-1"></i>Filtreler:
+                                </span>
                         
                         <!-- Rol filtresi -->
                         <div class="btn-group me-3 mb-2">
@@ -93,7 +145,7 @@
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
                                class="btn @(string.IsNullOrEmpty(rolFilter) ? "btn-primary" : "btn-outline-primary") btn-sm animate-button">
-                                Tümü
+                                        <i class="fas fa-users me-1"></i>Tümü
                             </a>
                             <a asp-action="Kullanicilar" 
                                asp-route-rol="Admin"
@@ -101,7 +153,7 @@
                                asp-route-siralama="@siralamaFilter" 
                                asp-route-arama="@aramaFilter"
                                class="btn @(rolFilter == "Admin" ? "btn-danger" : "btn-outline-danger") btn-sm animate-button">
-                                Admin
+                                        <i class="fas fa-user-shield me-1"></i>Admin
                             </a>
                             <a asp-action="Kullanicilar" 
                                asp-route-rol="Akademisyen"
@@ -109,7 +161,7 @@
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
                                class="btn @(rolFilter == "Akademisyen" ? "btn-info" : "btn-outline-info") btn-sm animate-button">
-                                Akademisyen
+                                        <i class="fas fa-user-tie me-1"></i>Akademisyen
                             </a>
                             <a asp-action="Kullanicilar" 
                                asp-route-rol="Ogrenci"
@@ -117,7 +169,7 @@
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
                                class="btn @(rolFilter == "Ogrenci" ? "btn-success" : "btn-outline-success") btn-sm animate-button">
-                                Öğrenci
+                                        <i class="fas fa-user-graduate me-1"></i>Öğrenci
                             </a>
                         </div>
                         
@@ -128,7 +180,7 @@
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
                                class="btn @(string.IsNullOrEmpty(durumFilter) ? "btn-secondary" : "btn-outline-secondary") btn-sm animate-button">
-                                Tüm Durumlar
+                                        <i class="fas fa-list me-1"></i>Tüm Durumlar
                             </a>
                             <a asp-action="Kullanicilar" 
                                asp-route-rol="@rolFilter"
@@ -136,7 +188,7 @@
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
                                class="btn @(durumFilter == "aktif" ? "btn-success" : "btn-outline-success") btn-sm animate-button">
-                                Aktif
+                                        <i class="fas fa-check-circle me-1"></i>Aktif
                             </a>
                             <a asp-action="Kullanicilar" 
                                asp-route-rol="@rolFilter"
@@ -144,22 +196,31 @@
                                asp-route-siralama="@siralamaFilter"
                                asp-route-arama="@aramaFilter"
                                class="btn @(durumFilter == "pasif" ? "btn-danger" : "btn-outline-danger") btn-sm animate-button">
-                                Pasif
+                                        <i class="fas fa-times-circle me-1"></i>Pasif
                             </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-md-4">
+                <div class="col-lg-4 mb-3">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-3">
                     <!-- Arama formu -->
                     <form asp-action="Kullanicilar" method="get" class="d-flex">
                         <input type="hidden" name="rol" value="@rolFilter" />
                         <input type="hidden" name="durum" value="@durumFilter" />
                         <input type="hidden" name="siralama" value="@siralamaFilter" />
-                        <input type="text" name="arama" value="@aramaFilter" class="form-control form-control-sm me-2" 
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <i class="fas fa-search text-muted"></i>
+                                    </span>
+                                    <input type="text" name="arama" value="@aramaFilter" 
+                                           class="form-control border-start-0 ps-0" 
                                placeholder="Ad, soyad veya email ara..." />
-                        <button type="submit" class="btn btn-primary btn-sm animate-button">
-                            <i class="fas fa-search"></i>
+                                    <button type="submit" class="btn btn-primary animate-button">
+                                        Ara
                         </button>
                         @if (!string.IsNullOrEmpty(aramaFilter))
                         {
@@ -167,23 +228,35 @@
                                asp-route-rol="@rolFilter"
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="@siralamaFilter"
-                               class="btn btn-outline-secondary btn-sm ms-1 animate-button">
+                                           class="btn btn-outline-secondary animate-button" title="Aramayı Temizle">
                                 <i class="fas fa-times"></i>
                             </a>
                         }
+                                </div>
                     </form>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="text-end mb-3">
-                <div class="btn-group">
-                    <a asp-controller="Auth" asp-action="Register" class="btn btn-primary btn-sm animate-button">
-                        <i class="fas fa-plus-circle me-1"></i> Yeni Kullanıcı
+            <!-- Modern Eylem Butonları -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-2">
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Auth" asp-action="Register" class="btn btn-primary animate-button">
+                        <i class="fas fa-plus-circle me-2"></i>Yeni Kullanıcı Ekle
                     </a>
-                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle animate-button" data-bs-toggle="dropdown">
-                        <i class="fas fa-sort me-1"></i> Sırala
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle animate-button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-sort me-2"></i>Sırala
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li class="dropdown-header">
+                                <i class="fas fa-sort-amount-down me-1"></i>Sıralama Seçenekleri
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item @(siralamaFilter == "id_asc" ? "active" : "")" 
                                asp-action="Kullanicilar" 
@@ -191,7 +264,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="id_asc"
                                asp-route-arama="@aramaFilter">
-                                <i class="fas fa-sort-numeric-down me-1"></i> ID (Artan)
+                                    <i class="fas fa-sort-numeric-up me-2"></i>ID (Küçükten Büyüğe)
                             </a>
                         </li>
                         <li>
@@ -201,7 +274,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="id_desc"
                                asp-route-arama="@aramaFilter">
-                                <i class="fas fa-sort-numeric-down-alt me-1"></i> ID (Azalan)
+                                    <i class="fas fa-sort-numeric-down me-2"></i>ID (Büyükten Küçüğe)
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
@@ -212,7 +285,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="ad_asc"
                                asp-route-arama="@aramaFilter">
-                                <i class="fas fa-sort-alpha-down me-1"></i> Ad (A-Z)
+                                    <i class="fas fa-sort-alpha-up me-2"></i>Ad (A-Z)
                             </a>
                         </li>
                         <li>
@@ -222,7 +295,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="ad_desc"
                                asp-route-arama="@aramaFilter">
-                                <i class="fas fa-sort-alpha-down-alt me-1"></i> Ad (Z-A)
+                                    <i class="fas fa-sort-alpha-down me-2"></i>Ad (Z-A)
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
@@ -233,7 +306,7 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="tarih_asc"
                                asp-route-arama="@aramaFilter">
-                                <i class="fas fa-calendar me-1"></i> Kayıt Tarihi (Eski-Yeni)
+                                    <i class="fas fa-calendar-plus me-2"></i>Kayıt Tarihi (Eski-Yeni)
                             </a>
                         </li>
                         <li>
@@ -243,56 +316,103 @@
                                asp-route-durum="@durumFilter"
                                asp-route-siralama="tarih_desc"
                                asp-route-arama="@aramaFilter">
-                                <i class="fas fa-calendar-alt me-1"></i> Kayıt Tarihi (Yeni-Eski)
+                                    <i class="fas fa-calendar-minus me-2"></i>Kayıt Tarihi (Yeni-Eski)
                             </a>
                         </li>
                     </ul>
+                    </div>
                 </div>
             </div>
 
+            <!-- Modern Tablo -->
             <div class="table-responsive">
-                <table class="table table-hover table-striped mb-0 animate-table">
+                <table class="table table-hover mb-0 animate-table">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Ad Soyad</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Durum</th>
-                            <th>Son Giriş</th>
-                            <th>Kayıt Tarihi</th>
-                            <th class="text-end">İşlemler</th>
+                            <th class="border-0 fw-bold text-muted">
+                                <i class="fas fa-hashtag me-1"></i>ID
+                            </th>
+                            <th class="border-0 fw-bold text-muted">
+                                <i class="fas fa-user me-1"></i>Kullanıcı Bilgileri
+                            </th>
+                            <th class="border-0 fw-bold text-muted">
+                                <i class="fas fa-envelope me-1"></i>Email
+                            </th>
+                            <th class="border-0 fw-bold text-muted">
+                                <i class="fas fa-user-tag me-1"></i>Rol
+                            </th>
+                            <th class="border-0 fw-bold text-muted">
+                                <i class="fas fa-toggle-on me-1"></i>Durum
+                            </th>
+                            <th class="border-0 fw-bold text-muted">
+                                <i class="fas fa-clock me-1"></i>Son Giriş
+                            </th>
+                            <th class="border-0 fw-bold text-muted">
+                                <i class="fas fa-calendar-plus me-1"></i>Kayıt Tarihi
+                            </th>
+                            <th class="border-0 fw-bold text-muted text-end">
+                                <i class="fas fa-cogs me-1"></i>İşlemler
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var kullanici in Model)
                         {
-                            <tr class="table-hover-item">
-                                <td>@kullanici.Id</td>
-                                <td>@kullanici.Ad @kullanici.Soyad</td>
-                                <td>@kullanici.Email</td>
-                                <td><span class="badge @GetRoleBadgeClass(kullanici.Rol)">@kullanici.Rol</span></td>
-                                <td>
+                            <tr class="table-hover-item border-0" style="border-bottom: 1px solid #e9ecef !important;">
+                                <td class="py-3">
+                                    <span class="fw-bold text-primary">#@kullanici.Id</span>
+                                </td>
+                                <td class="py-3">
+                                    <div class="fw-bold user-name-display">@kullanici.Ad @kullanici.Soyad</div>
+                                </td>
+                                <td class="py-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-envelope text-muted me-2"></i>
+                                        <span class="text-dark">@kullanici.Email</span>
+                                    </div>
+                                </td>
+                                <td class="py-3">
+                                    <span class="badge rounded-pill @GetRoleBadgeClass(kullanici.Rol) px-3 py-2">
+                                        <i class="@GetRoleIcon(kullanici.Rol) me-1"></i>@kullanici.Rol
+                                    </span>
+                                </td>
+                                <td class="py-3">
                                     @if (kullanici.Aktif)
                                     {
-                                        <span class="badge bg-success">Aktif</span>
+                                        <span class="badge rounded-pill bg-success px-3 py-2">
+                                            <i class="fas fa-check-circle me-1"></i>Aktif
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">Pasif</span>
+                                        <span class="badge rounded-pill bg-danger px-3 py-2">
+                                            <i class="fas fa-times-circle me-1"></i>Pasif
+                                        </span>
                                     }
                                 </td>
-                                <td>@(kullanici.SonGiris.HasValue ? kullanici.SonGiris.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
-                                <td>@kullanici.CreatedAt.ToString("dd.MM.yyyy")</td>
-                                <td class="text-end">
-                                    <div class="btn-group">
+                                <td class="py-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-clock text-muted me-2"></i>
+                                        <span class="text-dark">
+                                            @(kullanici.SonGiris.HasValue ? kullanici.SonGiris.Value.ToString("dd.MM.yyyy HH:mm") : "Hiç girmedi")
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="py-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-calendar text-muted me-2"></i>
+                                        <span class="text-dark">@kullanici.CreatedAt.ToString("dd.MM.yyyy")</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 text-end">
+                                    <div class="d-flex flex-column gap-1">
                                         <a asp-action="KullaniciDuzenle" asp-route-id="@kullanici.Id" 
                                            class="btn btn-outline-primary btn-sm animate-button" title="Düzenle">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-edit me-1"></i>Düzenle
                                         </a>
                                         <a asp-action="KullaniciSil" asp-route-id="@kullanici.Id" 
                                            class="btn btn-outline-danger btn-sm animate-button" title="Sil">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-trash me-1"></i>Sil
                                         </a>
                                     </div>
                                 </td>
@@ -302,23 +422,46 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-light">
-            <div class="row">
+        <!-- Modern Footer -->
+        <div class="card-footer bg-light border-0">
+            <div class="row align-items-center">
                 <div class="col-md-6">
-                    <div class="text-muted small">
+                    <div class="d-flex align-items-center">
                         @if (Model.Count() == 0)
                         {
-                            <span>Sonuç bulunamadı</span>
+                            <div class="d-flex align-items-center text-muted">
+                                <i class="fas fa-search me-2"></i>
+                                <span>Arama kriterlerinize uygun sonuç bulunamadı</span>
+                            </div>
                         }
                         else
                         {
-                            <span>Toplam @Model.Count() kullanıcı listeleniyor</span>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary p-2 me-3">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">@Model.Count() Kullanıcı</div>
+                                    <div class="text-muted small">Toplam listelenen kullanıcı sayısı</div>
+                                </div>
+                            </div>
                         }
                     </div>
                 </div>
-                <div class="col-md-6 text-end">
-                    <div class="text-muted small">
-                        <span>Aktif: @ViewBag.AktifKullanici | Pasif: @ViewBag.PasifKullanici</span>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-end align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-success rounded-pill me-2">
+                                <i class="fas fa-check-circle me-1"></i>@ViewBag.AktifKullanici
+                            </span>
+                            <span class="text-muted small">Aktif</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-danger rounded-pill me-2">
+                                <i class="fas fa-times-circle me-1"></i>@ViewBag.PasifKullanici
+                            </span>
+                            <span class="text-muted small">Pasif</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -327,9 +470,43 @@
 </div>
 
 @section Scripts {
+    <style>
+        /* Tablo butonları alt alta için genişlik */
+        .d-flex.flex-column .btn {
+            width: 100px;
+        }
+        
+        /* Mobil responsive */
+        @@media (max-width: 768px) {
+            .d-flex.flex-column .btn {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+                width: 80px;
+            }
+        }
+    </style>
+    
     <script>
         $(document).ready(function () {
-            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+            // Sayı animasyonu
+            $('.stat-number').each(function() {
+                var $this = $(this);
+                var countTo = parseInt($this.attr('data-count') || $this.text());
+                
+                $({ countNum: 0 }).animate(
+                    { countNum: countTo },
+                    {
+                        duration: 1000,
+                        easing: 'swing',
+                        step: function() {
+                            $this.text(Math.floor(this.countNum));
+                        },
+                        complete: function() {
+                            $this.text(countTo);
+                        }
+                    }
+                );
+            });
         });
     </script>
 }
@@ -345,4 +522,17 @@
             _ => "bg-secondary"
         };
     }
+    
+    private string GetRoleIcon(string rol)
+    {
+        return rol switch
+        {
+            "Admin" => "fas fa-user-shield",
+            "Akademisyen" => "fas fa-user-tie",
+            "Ogrenci" => "fas fa-user-graduate",
+            _ => "fas fa-user"
+        };
+    }
+    
+
 } 
