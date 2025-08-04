@@ -213,10 +213,6 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View();
         }
 
-        public IActionResult Ayarlar()
-        {
-            ViewData["Title"] = "Görünüm Ayarları";
-            return View();
-        }
+
     }
 } 

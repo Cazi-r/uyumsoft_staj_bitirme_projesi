@@ -12,103 +12,48 @@
         </div>
     </div>
     
-    <!-- İki Kart Yan Yana -->
-    <div class="row g-4 mb-4">
-        <!-- Kullanıcı Bilgisi Kartı -->
-        <div class="col-md-6">
-            <div class="card dashboard-card stat-card animate-card">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
+    <!-- Özet İstatistikler -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="stat-title text-uppercase text-muted">TOPLAM KULLANICI</div>
-                            <h1 class="display-5 stat-value mt-2 mb-1">@ViewBag.KullaniciSayisi</h1>
-                            <div class="text-muted small">Aktif: @ViewBag.KullaniciSayisi / Pasif: 0</div>
+                            <h6 class="fw-bold mb-2" style="color: #0d6efd;">Toplam Kullanıcılar</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.KullaniciSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Sistem genelindeki kullanıcı sayısı</p>
                         </div>
-                        <div class="micro-chart">
-                            <canvas id="userChart" width="80" height="80"></canvas>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-users fa-lg" style="color: #0d6efd;"></i>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <a href="@Url.Action("Kullanicilar", "Admin")" class="details-link animate-button">
-                            Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm details-btn w-100" style="background-color: #0d6efd; color: #fff;">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
                 </div>
             </div>
         </div>
         
-        <!-- Proje Bilgisi Kartı -->
-        <div class="col-md-6">
-            <div class="card dashboard-card stat-card animate-card">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="stat-title text-uppercase text-muted">PROJELER</div>
-                            <h1 class="display-5 stat-value mt-2 mb-1">@ViewBag.ProjeSayisi</h1>
-                            <div class="text-muted small">Devam Eden: @ViewBag.DevamEdenProjeSayisi / Tamamlanan: @ViewBag.TamamlananProjeSayisi</div>
+                            <h6 class="text-success fw-bold mb-2">Toplam Projeler</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.ProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Sistemdeki proje sayısı</p>
                         </div>
-                        <div class="micro-chart">
-                            <canvas id="projectChart" width="80" height="80"></canvas>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-project-diagram fa-lg text-success"></i>
                         </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="@Url.Action("Index", "Proje")" class="details-link animate-button">
-                            Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- İkinci Sıra -->
-    <div class="row g-4 mb-4">
-        <!-- Öğrenci Bilgisi Kartı -->
-        <div class="col-md-6">
-            <div class="card dashboard-card stat-card animate-card">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="stat-title text-uppercase text-muted">ÖĞRENCİLER</div>
-                            <h1 class="display-5 stat-value mt-2 mb-1">@ViewBag.OgrenciSayisi</h1>
-                            <div class="text-muted small">Toplam kayıtlı öğrenciler</div>
-                        </div>
-                        <div class="micro-chart">
-                            <div class="micro-icon bg-info">
-                                <i class="fas fa-user-graduate"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="@Url.Action("Kullanicilar", "Admin", new { rol = "Ogrenci" })" class="details-link animate-button">
-                            Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Akademisyen Bilgisi Kartı -->
-        <div class="col-md-6">
-            <div class="card dashboard-card stat-card animate-card">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="stat-title text-uppercase text-muted">AKADEMİSYENLER</div>
-                            <h1 class="display-5 stat-value mt-2 mb-1">@ViewBag.AkademisyenSayisi</h1>
-                            <div class="text-muted small">Toplam kayıtlı akademisyenler</div>
-                        </div>
-                        <div class="micro-chart">
-                            <div class="micro-icon bg-warning">
-                                <i class="fas fa-chalkboard-teacher"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="@Url.Action("Kullanicilar", "Admin", new { rol = "Akademisyen" })" class="details-link animate-button">
-                            Detaylar <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-success details-btn w-100">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
                 </div>
             </div>
         </div>
@@ -205,6 +150,9 @@
 @section Scripts {
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Sayı animasyonları
+        animateStatNumbers();
+        
         // Chart.js tooltip pozisyonunu düzeltme - kart dışına taşmaması için
         Chart.Tooltip.positioners.custom = function(elements, position) {
             if (!elements.length) {
@@ -332,8 +280,8 @@
     
     // Sayıların animasyonla artması
     function animateStatNumbers() {
-        document.querySelectorAll('.stat-value').forEach(counter => {
-            const target = parseInt(counter.innerText);
+        document.querySelectorAll('.stat-number').forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-count'));
             if (isNaN(target)) return;
             
             const duration = 1500; // ms

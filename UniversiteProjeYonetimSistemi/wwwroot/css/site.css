@@ -2637,3 +2637,742 @@ body {
 .btn-lg {
   border-radius: 10px !important;
 }
+
+/* =====================================================
+   DARK THEME STYLES
+   ===================================================== */
+
+.dark-theme {
+  /* Dark theme color variables */
+  --body-bg: #1a1d20;
+  --body-color: #e9ecef;
+  --card-bg: #2d3439;
+  --card-border: #495057;
+  --card-header-bg: #343a40;
+  --card-header-border: #495057;
+  
+  /* Form elements dark */
+  --input-bg: #343a40;
+  --input-color: #e9ecef;
+  --input-border: #495057;
+  
+  /* Navigation dark */
+  --nav-link-color: #adb5bd;
+  --nav-link-hover-color: #0d6efd;
+  --nav-link-active-bg: rgba(13, 110, 253, 0.1);
+  
+  /* Dropdown dark */
+  --dropdown-bg: #343a40;
+  --dropdown-color: #e9ecef;
+  --dropdown-border: rgba(255, 255, 255, 0.15);
+  --dropdown-link-hover-bg: #495057;
+  --dropdown-divider-bg: #495057;
+  
+  /* Table dark */
+  --table-bg: #2d3439;
+  --table-border: #495057;
+  --table-hover-bg: rgba(255, 255, 255, 0.075);
+  
+  /* Sidebar dark */
+  --sidebar-bg: #212529;
+  --content-bg: #1a1d20;
+}
+
+.dark-theme body {
+  background-color: var(--body-bg) !important;
+  color: var(--body-color) !important;
+}
+
+.dark-theme .card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--body-color) !important;
+}
+
+.dark-theme .card-header {
+  background-color: var(--card-header-bg) !important;
+  border-color: var(--card-header-border) !important;
+  color: var(--body-color) !important;
+}
+
+.dark-theme .card-footer {
+  background-color: var(--card-header-bg) !important;
+  border-color: var(--card-header-border) !important;
+}
+
+.dark-theme .bg-light {
+  background-color: var(--card-bg) !important;
+}
+
+.dark-theme .table {
+  background-color: var(--table-bg) !important;
+  color: var(--body-color) !important;
+}
+
+.dark-theme .table th,
+.dark-theme .table td {
+  border-color: var(--table-border) !important;
+}
+
+.dark-theme .table-hover tbody tr:hover {
+  background-color: var(--table-hover-bg) !important;
+}
+
+.dark-theme .sidebar {
+  background-color: var(--sidebar-bg) !important;
+}
+
+.dark-theme .sidebar-link {
+  color: var(--nav-link-color) !important;
+}
+
+.dark-theme .sidebar-link:hover {
+  color: var(--nav-link-hover-color) !important;
+  background-color: var(--nav-link-active-bg) !important;
+}
+
+.dark-theme .main-content {
+  background-color: var(--content-bg) !important;
+}
+
+.dark-theme .navbar {
+  background-color: #1a1d20 !important;
+  border-color: #495057 !important;
+}
+
+.dark-theme .topbar {
+  background-color: #1a1d20 !important;
+  border-bottom: 1px solid #495057 !important;
+}
+
+.dark-theme .form-control,
+.dark-theme .form-select {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-color) !important;
+}
+
+.dark-theme .form-control:focus,
+.dark-theme .form-select:focus {
+  background-color: var(--input-bg) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--input-color) !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+.dark-theme .dropdown-menu {
+  background-color: var(--dropdown-bg) !important;
+  border-color: var(--dropdown-border) !important;
+}
+
+.dark-theme .dropdown-item {
+  color: var(--dropdown-color) !important;
+}
+
+.dark-theme .dropdown-item:hover {
+  background-color: var(--dropdown-link-hover-bg) !important;
+  color: var(--dropdown-color) !important;
+}
+
+.dark-theme .dropdown-divider {
+  border-color: var(--dropdown-divider-bg) !important;
+}
+
+.dark-theme .text-muted {
+  color: #6c757d !important;
+}
+
+.dark-theme .border {
+  border-color: var(--card-border) !important;
+}
+
+.dark-theme .border-top {
+  border-top-color: var(--card-border) !important;
+}
+
+.dark-theme .border-bottom {
+  border-bottom-color: var(--card-border) !important;
+}
+
+/* Badge dark theme overrides */
+.dark-theme .badge.bg-light {
+  background-color: var(--card-header-bg) !important;
+  color: var(--body-color) !important;
+}
+
+/* Alert dark theme */
+.dark-theme .alert {
+  border-color: var(--card-border) !important;
+}
+
+.dark-theme .alert-info {
+  background-color: rgba(13, 202, 240, 0.1) !important;
+  border-color: rgba(13, 202, 240, 0.2) !important;
+  color: #0dcaf0 !important;
+}
+
+.dark-theme .alert-success {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+  border-color: rgba(25, 135, 84, 0.2) !important;
+  color: #198754 !important;
+}
+
+.dark-theme .alert-warning {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+  border-color: rgba(255, 193, 7, 0.2) !important;
+  color: #ffc107 !important;
+}
+
+.dark-theme .alert-danger {
+  background-color: rgba(220, 53, 69, 0.1) !important;
+  border-color: rgba(220, 53, 69, 0.2) !important;
+  color: #dc3545 !important;
+}
+
+/* Table ve Liste öğeleri için karanlık tema */
+.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > td,
+.dark-theme .table-striped > tbody > tr:nth-of-type(odd) > th {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark-theme .table-striped > tbody > tr:nth-of-type(even) > td,
+.dark-theme .table-striped > tbody > tr:nth-of-type(even) > th {
+  background-color: var(--table-bg) !important;
+}
+
+.dark-theme .table thead th {
+  background-color: var(--card-header-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--table-border) !important;
+}
+
+.dark-theme .table tbody td {
+  background-color: var(--table-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--table-border) !important;
+}
+
+.dark-theme .table-responsive {
+  background-color: var(--table-bg) !important;
+}
+
+/* Liste grubu için karanlık tema */
+.dark-theme .list-group-item {
+  background-color: var(--card-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-theme .list-group-item:hover {
+  background-color: var(--table-hover-bg) !important;
+}
+
+.dark-theme .list-group-item.active {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Aktivite listesi öğeleri */
+.dark-theme .table-hover-item:hover {
+  background-color: var(--table-hover-bg) !important;
+}
+
+/* Tablodaki linkler */
+.dark-theme .table a {
+  color: var(--primary-color) !important;
+}
+
+.dark-theme .table a:hover {
+  color: var(--nav-link-hover-color) !important;
+}
+
+/* Badge'ler için karanlık tema düzeltmesi */
+.dark-theme .badge.bg-info {
+  background-color: #0dcaf0 !important;
+  color: #000 !important;
+}
+
+.dark-theme .badge.bg-success {
+  background-color: #198754 !important;
+  color: #fff !important;
+}
+
+.dark-theme .badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+.dark-theme .badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+}
+
+.dark-theme .badge.bg-primary {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+}
+
+.dark-theme .badge.bg-secondary {
+  background-color: #6c757d !important;
+  color: #fff !important;
+}
+
+/* Tablo satırları için özel animasyon koruması */
+.dark-theme .animate-table tr {
+  transition: background-color 0.2s ease !important;
+}
+
+/* Small text için karanlık tema */
+.dark-theme .small,
+.dark-theme small {
+  color: #adb5bd !important;
+}
+
+/* Loading ve Spinner elementleri için karanlık tema */
+.dark-theme .spinner-text {
+  color: #e9ecef !important;
+  text-shadow: 0 0 10px rgba(13, 110, 253, 0.3) !important;
+}
+
+.dark-theme .single-icon-spinner {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: 2px solid rgba(13, 110, 253, 0.4) !important;
+}
+
+.dark-theme .single-icon-spinner i {
+  color: #0d6efd !important;
+  text-shadow: 0 0 25px rgba(13, 110, 253, 0.8) !important;
+}
+
+.dark-theme .loading-spinner {
+  color: #e9ecef !important;
+}
+
+/* Bootstrap spinner'lar için karanlık tema */
+.dark-theme .spinner-border {
+  color: #0d6efd !important;
+}
+
+.dark-theme .spinner-grow {
+  color: #0d6efd !important;
+}
+
+/* Button loading durumları için karanlık tema */
+.dark-theme .btn-loading::after {
+  border-color: #e9ecef rgba(233, 236, 239, 0.2) rgba(233, 236, 239, 0.2) rgba(233, 236, 239, 0.2) !important;
+}
+
+/* Page transition overlay için karanlık tema */
+.dark-theme .page-transition {
+  background-color: rgba(26, 29, 32, 0.9) !important;
+}
+
+/* Notification ve alert metinleri */
+.dark-theme .text-white {
+  color: #ffffff !important;
+}
+
+.dark-theme .text-dark {
+  color: #e9ecef !important;
+}
+
+/* Profile dropdown ve user bilgileri */
+.dark-theme .profile-name {
+  color: #e9ecef !important;
+}
+
+.dark-theme .user-name-display {
+  color: #e9ecef !important;
+}
+
+.dark-theme .dropdown-item-text {
+  color: #e9ecef !important;
+}
+
+/* Navbar ve header alanları için sabit koyu renkler */
+.dark-theme .bg-white {
+  background-color: #1a1d20 !important;
+}
+
+.dark-theme .shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-theme .nav-link {
+  color: #adb5bd !important;
+}
+
+.dark-theme .nav-link:hover {
+  color: #0d6efd !important;
+}
+
+.dark-theme .navbar-light .navbar-nav .nav-link {
+  color: #adb5bd !important;
+}
+
+.dark-theme .navbar-light .navbar-nav .nav-link:hover {
+  color: #0d6efd !important;
+}
+
+/* Avatar ve profile elementleri */
+.dark-theme .avatar {
+  border: 2px solid #495057 !important;
+}
+
+.dark-theme .profile-dropdown {
+  color: #e9ecef !important;
+}
+
+/* Header card'ları */
+.dark-theme .card.bg-light {
+  background-color: #2d3439 !important;
+}
+
+.dark-theme .animate-header .card {
+  background-color: #2d3439 !important;
+  border-color: #495057 !important;
+}
+
+/* Buton metinleri ve iconları için karanlık tema - Daha güçlü kurallar */
+.dark-theme .btn,
+.dark-theme .btn:link,
+.dark-theme .btn:visited,
+.dark-theme .btn:active,
+.dark-theme .btn:focus {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn i,
+.dark-theme .btn:link i,
+.dark-theme .btn:visited i,
+.dark-theme .btn:active i,
+.dark-theme .btn:focus i {
+  color: #ffffff !important;
+}
+
+/* Tüm buton durumları için beyaz metin zorlaması */
+.dark-theme button,
+.dark-theme button i,
+.dark-theme input[type="submit"],
+.dark-theme input[type="button"],
+.dark-theme .btn-primary,
+.dark-theme .btn-secondary,
+.dark-theme .btn-success,
+.dark-theme .btn-danger,
+.dark-theme .btn-light,
+.dark-theme .btn-dark {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-primary i,
+.dark-theme .btn-secondary i,
+.dark-theme .btn-success i,
+.dark-theme .btn-danger i,
+.dark-theme .btn-light i,
+.dark-theme .btn-dark i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-primary i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-secondary {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-secondary i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-success {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-success i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-danger i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #000000 !important;
+}
+
+.dark-theme .btn-warning i {
+  color: #000000 !important;
+}
+
+.dark-theme .btn-info {
+  background-color: #0dcaf0 !important;
+  border-color: #0dcaf0 !important;
+  color: #000000 !important;
+}
+
+.dark-theme .btn-info i {
+  color: #000000 !important;
+}
+
+.dark-theme .btn-light {
+  background-color: #495057 !important;
+  border-color: #495057 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-light i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-dark {
+  background-color: #212529 !important;
+  border-color: #212529 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-dark i {
+  color: #ffffff !important;
+}
+
+/* Outline butonları */
+.dark-theme .btn-outline-primary {
+  border-color: #0d6efd !important;
+  color: #0d6efd !important;
+}
+
+.dark-theme .btn-outline-primary:hover {
+  background-color: #0d6efd !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-primary:hover i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-secondary {
+  border-color: #6c757d !important;
+  color: #6c757d !important;
+}
+
+.dark-theme .btn-outline-secondary:hover {
+  background-color: #6c757d !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-secondary:hover i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-success {
+  border-color: #198754 !important;
+  color: #198754 !important;
+}
+
+.dark-theme .btn-outline-success:hover {
+  background-color: #198754 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-success:hover i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-danger {
+  border-color: #dc3545 !important;
+  color: #dc3545 !important;
+}
+
+.dark-theme .btn-outline-danger:hover {
+  background-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-outline-danger:hover i {
+  color: #ffffff !important;
+}
+
+/* Özel buton sınıfları */
+.dark-theme .btn-falcon-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-falcon-primary i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-falcon-default {
+  background-color: #495057 !important;
+  border-color: #495057 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-falcon-default i {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-blue {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-blue i {
+  color: #ffffff !important;
+}
+
+/* Animate button sınıfları */
+.dark-theme .animate-button {
+  color: #ffffff !important;
+}
+
+.dark-theme .animate-button i {
+  color: #ffffff !important;
+}
+
+/* Buton hover durumları */
+.dark-theme .btn:hover {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn:hover i {
+  color: #ffffff !important;
+}
+
+/* Dropdown toggle butonları */
+.dark-theme .dropdown-toggle {
+  color: #ffffff !important;
+}
+
+.dark-theme .dropdown-toggle i {
+  color: #ffffff !important;
+}
+
+.dark-theme .dropdown-toggle::after {
+  border-top-color: #ffffff !important;
+}
+
+/* Link butonları */
+.dark-theme .btn-link {
+  color: #0d6efd !important;
+}
+
+.dark-theme .btn-link:hover {
+  color: #0a58ca !important;
+}
+
+.dark-theme .btn-link i {
+  color: #0d6efd !important;
+}
+
+.dark-theme .btn-link:hover i {
+  color: #0a58ca !important;
+}
+
+/* Close butonları */
+.dark-theme .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+/* Buton grupları */
+.dark-theme .btn-group .btn {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-group .btn i {
+  color: #ffffff !important;
+}
+
+/* Card footer'daki butonlar */
+.dark-theme .card-footer .btn {
+  color: #ffffff !important;
+}
+
+.dark-theme .card-footer .btn i {
+  color: #ffffff !important;
+}
+
+/* Küçük butonlar */
+.dark-theme .btn-sm {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-sm i {
+  color: #ffffff !important;
+}
+
+/* Büyük butonlar */
+.dark-theme .btn-lg {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-lg i {
+  color: #ffffff !important;
+}
+
+/* ÖNEMLI: Tüm buton metinleri için son ve kesin kural */
+body.dark-theme .btn,
+body.dark-theme .btn *,
+body.dark-theme button,
+body.dark-theme button *,
+body.dark-theme .btn-primary,
+body.dark-theme .btn-primary *,
+body.dark-theme .btn-secondary,
+body.dark-theme .btn-secondary *,
+body.dark-theme .btn-success,
+body.dark-theme .btn-success *,
+body.dark-theme .btn-danger,
+body.dark-theme .btn-danger *,
+body.dark-theme .btn-info,
+body.dark-theme .btn-info *,
+body.dark-theme .btn-light,
+body.dark-theme .btn-light *,
+body.dark-theme .btn-dark,
+body.dark-theme .btn-dark *,
+body.dark-theme .btn-falcon-primary,
+body.dark-theme .btn-falcon-primary *,
+body.dark-theme .btn-falcon-default,
+body.dark-theme .btn-falcon-default *,
+body.dark-theme .btn-blue,
+body.dark-theme .btn-blue *,
+body.dark-theme .animate-button,
+body.dark-theme .animate-button * {
+  color: #ffffff !important;
+}
+
+/* Warning ve info butonları için istisna (kontrast) */
+body.dark-theme .btn-warning,
+body.dark-theme .btn-warning * {
+  color: #000000 !important;
+}
+
+body.dark-theme .btn-info,
+body.dark-theme .btn-info * {
+  color: #000000 !important;
+}
+
+/* Link butonları için mavi renk korunsun */
+body.dark-theme .btn-link,
+body.dark-theme .btn-link * {
+  color: #0d6efd !important;
+}
