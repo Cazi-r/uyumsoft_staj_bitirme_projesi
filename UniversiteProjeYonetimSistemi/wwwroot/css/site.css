@@ -579,6 +579,29 @@ body {
   background-color: var(--body-bg);
 }
 
+/* No sidebar layout for anonymous users */
+.main-content.no-sidebar {
+  margin-left: 0;
+  width: 100%;
+}
+
+/* Welcome/Hero tweaks */
+.welcome-hero {
+  background: linear-gradient(135deg, rgba(var(--primary-color-rgb),0.08), rgba(13,110,253,0.02));
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-border-radius);
+  padding: 2.5rem;
+}
+
+.welcome-hero .display-4 {
+  letter-spacing: -0.02em;
+}
+
+.welcome-gallery img {
+  border-radius: 0.75rem;
+  box-shadow: var(--box-shadow);
+}
+
 /* Topbar - Sticky at top */
 .topbar,
 .navbar.topbar {

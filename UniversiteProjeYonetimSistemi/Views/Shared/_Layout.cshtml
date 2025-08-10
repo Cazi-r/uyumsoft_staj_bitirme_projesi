@@ -106,6 +106,8 @@
     
     <div class="app-container d-flex flex-column min-vh-100">
         <!-- Sidebar -->
+        @if (User.Identity?.IsAuthenticated == true)
+        {
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-brand d-flex flex-column align-items-center text-center">
@@ -226,10 +228,13 @@
 
             </div>
         </div>
+        }
 
         <!-- Main Content -->
-        <div class="main-content d-flex flex-column">
+        <div class="main-content d-flex flex-column @(User.Identity?.IsAuthenticated == true ? string.Empty : "no-sidebar")">
             <!-- Topbar -->
+            @if (User.Identity?.IsAuthenticated == true)
+            {
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow-sm">
                 <div class="container-fluid">
                     <button id="mobileSidebarToggler" class="btn d-md-none me-3">
@@ -334,6 +339,7 @@
                     </ul>
                 </div>
             </nav>
+            }
 
             <!-- Page Content -->
             <div class="container-fluid px-4 flex-grow-1 d-flex flex-column">

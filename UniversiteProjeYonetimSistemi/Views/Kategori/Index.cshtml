@@ -5,6 +5,13 @@
 }
 
 <div class="container mt-4">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="fas fa-lock me-2"></i>
+            <div>Bu sayfayi gormek icin lutfen giris yapiniz.</div>
+        </div>
+    }
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">

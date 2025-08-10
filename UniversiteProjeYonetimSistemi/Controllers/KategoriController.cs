@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace UniversiteProjeYonetimSistemi.Controllers
 {
-    [Authorize(Roles = "Admin,Akademisyen")]
+    [Authorize]
     public class KategoriController : Controller
     {
         private readonly IRepository<ProjeKategori> _kategoriRepository;
@@ -24,7 +24,6 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // GET: Kategori
-        [AllowAnonymous] // Öğrenciler de dahil herkes görebilsin
         public async Task<IActionResult> Index()
         {
             var kategoriler = await _kategoriRepository.GetAllAsync();
@@ -32,7 +31,6 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // GET: Kategori/Details/5
-        [AllowAnonymous] // Öğrenciler de dahil herkes görebilsin
         public async Task<IActionResult> Details(int id)
         {
             var kategori = await _kategoriRepository.GetByIdWithIncludeAsync(id, k => k.Projeler);
@@ -45,6 +43,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // GET: Kategori/Create
+        [Authorize(Roles = "Admin,Akademisyen")]
         public IActionResult Create()
         {
             return View();
@@ -52,6 +51,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
         // POST: Kategori/Create
         [HttpPost]
+        [Authorize(Roles = "Admin,Akademisyen")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProjeKategori kategori)
         {
@@ -67,6 +67,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // GET: Kategori/Edit/5
+        [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Edit(int id)
         {
             var kategori = await _kategoriRepository.GetByIdAsync(id);
@@ -79,6 +80,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
         // POST: Kategori/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Admin,Akademisyen")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProjeKategori kategori)
         {
@@ -122,6 +124,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // GET: Kategori/Delete/5
+        [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Delete(int id)
         {
             var kategori = await _kategoriRepository.GetByIdWithIncludeAsync(id, k => k.Projeler);
@@ -147,6 +150,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
         // POST: Kategori/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin,Akademisyen")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, int? transferKategoriId)
         {
