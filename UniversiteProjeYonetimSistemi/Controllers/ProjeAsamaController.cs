@@ -61,7 +61,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
-        // GET: ProjeAsama/Add/5
+        // Asama ekleme formu: Yalnizca admin veya projenin danismani erisebilir.
         [HttpGet]
         [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Add(int id)
@@ -88,7 +88,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // POST: ProjeAsama/Add
+        // Asama ekleme POST: asama olusturur ve listeye doner.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -115,7 +115,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
         }
 
-        // POST: ProjeAsama/UpdateStatus/5
+        // Asama durumunu gunceller (tamamlandi/devam). rol bazli izin kontrolu yapilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
@@ -141,7 +141,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Details", "Proje", new { id = projeId });
         }
 
-        // GET: ProjeAsama/Index/5
+        // Projeye ait tum asamalari listeler; erisim admin/akademisyen/ogrenciye aciktir.
         [HttpGet]
         [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
         public async Task<IActionResult> Index(int id)
@@ -156,7 +156,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(asamalar);
         }
 
-        // GET: ProjeAsama/Edit/5
+        // Asama duzenleme formu: Yalnizca admin veya projenin danismani.
         [HttpGet]
         [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Edit(int id)
@@ -182,7 +182,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(asama);
         }
 
-        // POST: ProjeAsama/Edit
+        // Asama duzenleme POST: danisman/admin yetkisi dogrulanir ve guncellenir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -216,7 +216,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
         }
 
-        // GET: ProjeAsama/Delete/5
+        // Asama silme onayi: Yalnizca admin veya projenin danismani.
         [HttpGet]
         [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Delete(int id)
@@ -242,7 +242,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(asama);
         }
 
-        // POST: ProjeAsama/Delete/5
+        // Asama silme POST: danisman/admin yetkisi ile asama silinir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]

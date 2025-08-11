@@ -4,157 +4,159 @@
     ViewData["Title"] = "Profil Düzenle";
 }
 
-<br />
-<br />
-
-<div class="card shadow-sm border-0 animate-card">
-    <div class="card-header bg-white py-3 animate-header">
-        <h5 class="card-title mb-0">
-            <i class="fas fa-edit text-primary me-2"></i>@ViewData["Title"]
-        </h5>
-    </div>
-    <div class="card-body">
-        <form asp-action="Edit" method="post" class="animate-form">
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="Rol" />
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="card shadow-sm border-0 animate-card">
+                <div class="card-header bg-white py-3 animate-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-edit text-primary me-2"></i>@ViewData["Title"]
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" class="animate-form">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Rol" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3 p-2 text-danger" role="alert"></div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h6 class="text-uppercase text-muted fw-bold small mb-3">Temel Bilgiler</h6>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="Ad" class="form-control" placeholder="Ad" />
+                                    <label asp-for="Ad"></label>
+                                </div>
+                                <span asp-validation-for="Ad" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="Soyad" class="form-control" placeholder="Soyad" />
+                                    <label asp-for="Soyad"></label>
+                                </div>
+                                <span asp-validation-for="Soyad" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="Email" class="form-control" placeholder="E-posta" />
+                                    <label asp-for="Email"></label>
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
             
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3 p-2 text-danger" role="alert"></div>
+                        @if (Model.Rol == "Ogrenci")
+                        {
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Öğrenci Bilgileri</h6>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input asp-for="OgrenciNo" class="form-control" placeholder="Öğrenci Numarası" />
+                                        <label asp-for="OgrenciNo"></label>
+                                    </div>
+                                    <span asp-validation-for="OgrenciNo" class="text-danger small"></span>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input asp-for="Telefon" class="form-control" placeholder="Telefon" />
+                                        <label asp-for="Telefon"></label>
+                                    </div>
+                                    <span asp-validation-for="Telefon" class="text-danger small"></span>
+                                </div>
+                                
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-floating">
+                                        <input asp-for="Adres" class="form-control" placeholder="Adres" />
+                                        <label asp-for="Adres"></label>
+                                    </div>
+                                    <span asp-validation-for="Adres" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        }
             
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Temel Bilgiler</h6>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <div class="form-floating">
-                        <input asp-for="Ad" class="form-control" placeholder="Ad" />
-                        <label asp-for="Ad"></label>
-                    </div>
-                    <span asp-validation-for="Ad" class="text-danger small"></span>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <div class="form-floating">
-                        <input asp-for="Soyad" class="form-control" placeholder="Soyad" />
-                        <label asp-for="Soyad"></label>
-                    </div>
-                    <span asp-validation-for="Soyad" class="text-danger small"></span>
-                </div>
-                
-                <div class="col-md-12 mb-3">
-                    <div class="form-floating">
-                        <input asp-for="Email" class="form-control" placeholder="E-posta" />
-                        <label asp-for="Email"></label>
-                    </div>
-                    <span asp-validation-for="Email" class="text-danger small"></span>
-                </div>
+                        @if (Model.Rol == "Akademisyen")
+                        {
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Akademisyen Bilgileri</h6>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input asp-for="Unvan" class="form-control" placeholder="Unvan" />
+                                        <label asp-for="Unvan"></label>
+                                    </div>
+                                    <span asp-validation-for="Unvan" class="text-danger small"></span>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input asp-for="Telefon" class="form-control" placeholder="Telefon" />
+                                        <label asp-for="Telefon"></label>
+                                    </div>
+                                    <span asp-validation-for="Telefon" class="text-danger small"></span>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input asp-for="Ofis" class="form-control" placeholder="Ofis" />
+                                        <label asp-for="Ofis"></label>
+                                    </div>
+                                    <span asp-validation-for="Ofis" class="text-danger small"></span>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input asp-for="UzmanlikAlani" class="form-control" placeholder="Uzmanlık Alanı" />
+                                        <label asp-for="UzmanlikAlani"></label>
+                                    </div>
+                                    <span asp-validation-for="UzmanlikAlani" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        }
+            
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h6 class="text-uppercase text-muted fw-bold small mb-3">Şifre Değiştirme (İsteğe Bağlı)</h6>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="NewPassword" class="form-control" placeholder="Yeni Şifre" />
+                                    <label asp-for="NewPassword"></label>
+                                </div>
+                                <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Yeni Şifre Tekrar" />
+                                    <label asp-for="ConfirmPassword"></label>
+                                </div>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-primary animate-button">
+                                <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </form>
             </div>
-            
-            @if (Model.Rol == "Ogrenci")
-            {
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <h6 class="text-uppercase text-muted fw-bold small mb-3">Öğrenci Bilgileri</h6>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="OgrenciNo" class="form-control" placeholder="Öğrenci Numarası" />
-                            <label asp-for="OgrenciNo"></label>
-                        </div>
-                        <span asp-validation-for="OgrenciNo" class="text-danger small"></span>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="Telefon" class="form-control" placeholder="Telefon" />
-                            <label asp-for="Telefon"></label>
-                        </div>
-                        <span asp-validation-for="Telefon" class="text-danger small"></span>
-                    </div>
-                    
-                    <div class="col-md-12 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="Adres" class="form-control" placeholder="Adres" />
-                            <label asp-for="Adres"></label>
-                        </div>
-                        <span asp-validation-for="Adres" class="text-danger small"></span>
-                    </div>
-                </div>
-            }
-            
-            @if (Model.Rol == "Akademisyen")
-            {
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <h6 class="text-uppercase text-muted fw-bold small mb-3">Akademisyen Bilgileri</h6>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="Unvan" class="form-control" placeholder="Unvan" />
-                            <label asp-for="Unvan"></label>
-                        </div>
-                        <span asp-validation-for="Unvan" class="text-danger small"></span>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="Telefon" class="form-control" placeholder="Telefon" />
-                            <label asp-for="Telefon"></label>
-                        </div>
-                        <span asp-validation-for="Telefon" class="text-danger small"></span>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="Ofis" class="form-control" placeholder="Ofis" />
-                            <label asp-for="Ofis"></label>
-                        </div>
-                        <span asp-validation-for="Ofis" class="text-danger small"></span>
-                    </div>
-                    
-                    <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                            <input asp-for="UzmanlikAlani" class="form-control" placeholder="Uzmanlık Alanı" />
-                            <label asp-for="UzmanlikAlani"></label>
-                        </div>
-                        <span asp-validation-for="UzmanlikAlani" class="text-danger small"></span>
-                    </div>
-                </div>
-            }
-            
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <h6 class="text-uppercase text-muted fw-bold small mb-3">Şifre Değiştirme (İsteğe Bağlı)</h6>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <div class="form-floating">
-                        <input asp-for="NewPassword" class="form-control" placeholder="Yeni Şifre" />
-                        <label asp-for="NewPassword"></label>
-                    </div>
-                    <span asp-validation-for="NewPassword" class="text-danger small"></span>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <div class="form-floating">
-                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Yeni Şifre Tekrar" />
-                        <label asp-for="ConfirmPassword"></label>
-                    </div>
-                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
-                </div>
-            </div>
-            
-            <div class="d-flex justify-content-between mt-4">
-                <a asp-action="Index" class="btn btn-outline-secondary animate-button">
-                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
-                </a>
-                <button type="submit" class="btn btn-primary animate-button">
-                    <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 

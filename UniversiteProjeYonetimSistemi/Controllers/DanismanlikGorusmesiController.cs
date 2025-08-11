@@ -38,7 +38,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _logger = logger;
         }
 
-        // GET: DanismanlikGorusmesi
+        // Index: Rol'e gore (Ogrenci/Akademisyen/Admin) farkli gorunum ve veri setleri dondurur.
         public async Task<IActionResult> Index()
         {
             var kullanici = HttpContext.User;
@@ -114,7 +114,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return Forbid();
         }
 
-        // GET: DanismanlikGorusmesi/Details/5
+        // Details: Gorusme detaylarini gosterir; sadece alaka duyan kullanicilar (ogrenci/danisman/admin) gorebilir.
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -142,7 +142,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(danismanlikGorusmesi);
         }
 
-        // GET: DanismanlikGorusmesi/Create
+        // Create GET: Ogrenci/Akademisyen icin farkli form akislari; [Authorize(Roles = "Ogrenci,Akademisyen")] ile korunur.
         [Authorize(Roles = "Ogrenci,Akademisyen")]
         public async Task<IActionResult> Create(int? projeId)
         {
@@ -158,7 +158,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return Forbid();
         }
 
-        // POST: DanismanlikGorusmesi/Create
+        // Create POST: Ogrenci/Akademisyen icin ayri post akislari calistirilir, bildirim gonderilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Ogrenci,Akademisyen")]
@@ -176,7 +176,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return Forbid();
         }
 
-        // GET: DanismanlikGorusmesi/Edit/5
+        // Edit GET: Yetki ve is kurali kontrolleri (onaylanmis gorusme duzenlenemez vb.) sonra formu dondurur.
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -200,7 +200,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(danismanlikGorusmesi);
         }
 
-        // POST: DanismanlikGorusmesi/Edit/5
+        // Edit POST: rol'e gore yeni durumu ayarlar, zaman durumunu ve bildirimleri gunceller.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ProjeId,AkademisyenId,OgrenciId,Baslik,GorusmeTarihi,GorusmeTipi,Notlar,Durum")] DanismanlikGorusmesi danismanlikGorusmesi)
@@ -243,7 +243,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(danismanlikGorusmesi);
         }
 
-        // GET: DanismanlikGorusmesi/Delete/5
+        // Delete GET: Silme onayi; sadece erisim izni olan kullanicilar gorebilir.
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -270,7 +270,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(danismanlikGorusmesi);
         }
 
-        // POST: DanismanlikGorusmesi/Delete/5
+        // Delete POST: sadece erisim izni olan kullanicilar silebilir.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -287,7 +287,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: DanismanlikGorusmesi/OnayveyaReddet
+        // Onay/Reddet: Hem Ogrenci hem Akademisyen icin is kurallarina gore karar uygular.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Akademisyen,Ogrenci")]
@@ -296,6 +296,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return await GorusmeYanitla(id, karar);
         }
 
+        // Onay/Reddet islemini yapan ortak metod; yetki kontrolu ve bildirim gonderimi icerir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Akademisyen,Ogrenci")]

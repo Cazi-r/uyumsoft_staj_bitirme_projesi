@@ -23,14 +23,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _projeService = projeService;
         }
 
-        // GET: Kategori
+        // Kategori listesi: Girisli kullanicilara tum kategorileri listeler.
         public async Task<IActionResult> Index()
         {
             var kategoriler = await _kategoriRepository.GetAllAsync();
             return View(kategoriler);
         }
 
-        // GET: Kategori/Details/5
+        // Kategori detayi: Ilgili kategori ve projelerini gosterir.
         public async Task<IActionResult> Details(int id)
         {
             var kategori = await _kategoriRepository.GetByIdWithIncludeAsync(id, k => k.Projeler);
@@ -42,14 +42,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kategori);
         }
 
-        // GET: Kategori/Create
+        // Kategori olusturma formu: Admin/Akademisyen erisimlidir.
         [Authorize(Roles = "Admin,Akademisyen")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Kategori/Create
+        // Kategori olusturma POST: yeni kategori ekler.
         [HttpPost]
         [Authorize(Roles = "Admin,Akademisyen")]
         [ValidateAntiForgeryToken]
@@ -66,7 +66,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kategori);
         }
 
-        // GET: Kategori/Edit/5
+        // Kategori duzenleme formu: Admin/Akademisyen erisimlidir.
         [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -78,7 +78,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kategori);
         }
 
-        // POST: Kategori/Edit/5
+        // Kategori duzenleme POST: mevcut kategoriyi gunceller.
         [HttpPost]
         [Authorize(Roles = "Admin,Akademisyen")]
         [ValidateAntiForgeryToken]
@@ -123,7 +123,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kategori);
         }
 
-        // GET: Kategori/Delete/5
+        // Kategori silme onayi: Kategoriye bagli projeler varsa aktarim uyarisi yapar.
         [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -148,7 +148,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kategori);
         }
 
-        // POST: Kategori/Delete/5
+        // Kategori silme POST: projeleri aktarimla birlikte silme islemini yapar.
         [HttpPost, ActionName("Delete")]
         [Authorize(Roles = "Admin,Akademisyen")]
         [ValidateAntiForgeryToken]

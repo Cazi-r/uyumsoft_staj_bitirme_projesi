@@ -59,7 +59,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
-        // GET: ProjeAtama/Assign/5
+        // Atama formu: Proje durumuna gore admin/danisman yetkisi kontrol edilir; dropdown'lar doldurulur.
         public async Task<IActionResult> Assign(int id)
         {
             var proje = await _projeService.GetByIdAsync(id);
@@ -98,7 +98,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // POST: ProjeAtama/Assign/5
+        // Atama POST: ogrenci atamasi ve/veya mentor atamasi yapar, durumu guncelleyebilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Assign(int id, int ogrenciId, int mentorId)

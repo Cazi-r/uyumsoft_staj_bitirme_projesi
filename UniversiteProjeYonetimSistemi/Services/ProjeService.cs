@@ -27,6 +27,7 @@ namespace UniversiteProjeYonetimSistemi.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
+        /// Tum projeleri iliskili Ogrenci, Mentor ve Kategori ile birlikte listeler.
         public async Task<IEnumerable<Proje>> GetAllAsync()
         {
             return await _context.Projeler
@@ -36,6 +37,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// Id'ye gore projeyi iliskili tum detaylariyla (dosya, yorum, asama, kaynak, degerlendirme) birlikte dondurur.
         public async Task<Proje> GetByIdAsync(int id)
         {
             return await _context.Projeler
@@ -54,6 +56,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        /// Ogrenci Id'ye gore projeleri dondurur.
         public async Task<IEnumerable<Proje>> GetByOgrenciIdAsync(int ogrenciId)
         {
             return await _context.Projeler
@@ -63,6 +66,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// Mentor Id'ye gore projeleri dondurur.
         public async Task<IEnumerable<Proje>> GetByMentorIdAsync(int mentorId)
         {
             return await _context.Projeler
@@ -72,6 +76,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// Kategori Id'ye gore projeleri dondurur.
         public async Task<IEnumerable<Proje>> GetByKategoriIdAsync(int kategoriId)
         {
             return await _context.Projeler
@@ -81,6 +86,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// Duruma gore projeleri dondurur (Beklemede/Atanmis/Devam/Tamamlandi/Iptal).
         public async Task<IEnumerable<Proje>> GetByStatusAsync(string status)
         {
             return await _context.Projeler
@@ -91,6 +97,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// Yeni proje olusturur ve olusturma tarihini isaretler.
         public async Task<Proje> AddAsync(Proje proje)
         {
             proje.OlusturmaTarihi = DateTime.Now;
@@ -98,16 +105,19 @@ namespace UniversiteProjeYonetimSistemi.Services
             return proje;
         }
 
+        /// Proje kaydini gunceller.
         public async Task UpdateAsync(Proje proje)
         {
             await _projeRepository.UpdateAsync(proje);
         }
 
+        /// Id'ye gore proje kaydini siler.
         public async Task DeleteAsync(int id)
         {
             await _projeRepository.DeleteAsync(id);
         }
 
+        /// Projeyi belirtilen ogrenciye atar ve durumu "Atanmis" yapar.
         public async Task AssignToOgrenciAsync(int projeId, int ogrenciId)
         {
             var proje = await _projeRepository.GetByIdAsync(projeId);
@@ -116,6 +126,7 @@ namespace UniversiteProjeYonetimSistemi.Services
             await _projeRepository.UpdateAsync(proje);
         }
 
+        /// Projeye belirtilen mentor'u atar.
         public async Task AssignToMentorAsync(int projeId, int mentorId)
         {
             var proje = await _projeRepository.GetByIdAsync(projeId);
@@ -123,6 +134,7 @@ namespace UniversiteProjeYonetimSistemi.Services
             await _projeRepository.UpdateAsync(proje);
         }
 
+        /// Proje durumunu verilen yeni durum degerine gunceller.
         public async Task UpdateStatusAsync(int projeId, string newStatus)
         {
             var proje = await _projeRepository.GetByIdAsync(projeId);
@@ -131,6 +143,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Dosya işlemleri
+        /// Proje icin dosya yukler; fiziksel dosyayi kaydeder ve veritabanina dosya kaydi ekler.
         public async Task<ProjeDosya> UploadFileAsync(int projeId, IFormFile file, string aciklama, int? yukleyenId, string yukleyenTipi)
         {
             // Dosya yükleme klasörünü oluştur
@@ -169,11 +182,17 @@ namespace UniversiteProjeYonetimSistemi.Services
             return projeDosya;
         }
 
+        /// 
+        /// Dosya Id'sine gore dosya kaydini dondurur.
+        /// 
         public async Task<ProjeDosya> GetFileByIdAsync(int fileId)
         {
             return await _context.ProjeDosyalari.FindAsync(fileId);
         }
 
+        /// 
+        /// Dosya Id'sine gore hem fiziksel dosyayi hem veritabanindaki kaydi siler.
+        /// 
         public async Task DeleteFileAsync(int fileId)
         {
             var dosya = await _context.ProjeDosyalari.FindAsync(fileId);
@@ -192,6 +211,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             }
         }
 
+        /// 
+        /// Projeye ait tum dosyalari yuklenme tarihine gore dondurur.
+        /// 
         public async Task<IEnumerable<ProjeDosya>> GetFilesByProjeIdAsync(int projeId)
         {
             return await _context.ProjeDosyalari
@@ -201,6 +223,9 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Yorum işlemleri
+        /// 
+        /// Projeye yorum ekler (Ogrenci/Akademisyen kaynakli) ve kaydi dondurur.
+        /// 
         public async Task<ProjeYorum> AddCommentAsync(int projeId, string icerik, string yorumTipi, int? ogrenciId, int? akademisyenId)
         {
             var yorum = new ProjeYorum
@@ -221,6 +246,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             return yorum;
         }
 
+        /// 
+        /// Projeye ait tum yorumlari, iliskili Ogrenci/Akademisyen ile birlikte tarihe gore dondurur.
+        /// 
         public async Task<IEnumerable<ProjeYorum>> GetCommentsByProjeIdAsync(int projeId)
         {
             return await _context.ProjeYorumlari
@@ -233,6 +261,9 @@ namespace UniversiteProjeYonetimSistemi.Services
 
 
 
+        /// 
+        /// Yorum Id'sine gore proje yorumunu siler.
+        /// 
         public async Task DeleteCommentAsync(int yorumId)
         {
             var yorum = await _context.ProjeYorumlari.FindAsync(yorumId);
@@ -244,6 +275,9 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Değerlendirme işlemleri
+        /// 
+        /// Projeye degerlendirme ekler ve kaydi dondurur.
+        /// 
         public async Task<Degerlendirme> AddEvaluationAsync(int projeId, int puan, string aciklama, string degerlendirmeTipi, int akademisyenId)
         {
             var degerlendirme = new Degerlendirme
@@ -264,6 +298,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             return degerlendirme;
         }
 
+        /// 
+        /// Projeye ait tum degerlendirmeleri iliskili Akademisyen ile birlikte dondurur.
+        /// 
         public async Task<IEnumerable<Degerlendirme>> GetEvaluationsByProjeIdAsync(int projeId)
         {
             return await _context.Degerlendirmeler
@@ -273,6 +310,9 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// 
+        /// Degerlendirme Id'sine gore tek kaydi proje ve akademisyen bilgileriyle getirir.
+        /// 
         public async Task<Degerlendirme> GetEvaluationByIdAsync(int degerlendirmeId)
         {
             return await _context.Degerlendirmeler
@@ -281,6 +321,9 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(d => d.Id == degerlendirmeId);
         }
 
+        /// 
+        /// Degerlendirme kaydini gunceller (puan, aciklama, tip).
+        /// 
         public async Task UpdateEvaluationAsync(int degerlendirmeId, int puan, string aciklama, string degerlendirmeTipi)
         {
             var degerlendirme = await _context.Degerlendirmeler.FindAsync(degerlendirmeId);
@@ -296,6 +339,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             }
         }
 
+        /// 
+        /// Degerlendirme Id'sine gore kaydi siler.
+        /// 
         public async Task DeleteEvaluationAsync(int degerlendirmeId)
         {
             var degerlendirme = await _context.Degerlendirmeler.FindAsync(degerlendirmeId);
@@ -307,6 +353,9 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Proje aşamaları işlemleri
+        /// 
+        /// Projeye yeni asama ekler ve olusturma tarihlerini isaretler.
+        /// 
         public async Task<ProjeAsamasi> AddStageAsync(int projeId, string asamaAdi, string aciklama, DateTime? baslangicTarihi, DateTime? bitisTarihi, int siraNo)
         {
             var asama = new ProjeAsamasi
@@ -328,6 +377,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             return asama;
         }
 
+        /// 
+        /// Projeye ait asamalari sira numarasina gore dondurur.
+        /// 
         public async Task<IEnumerable<ProjeAsamasi>> GetStagesByProjeIdAsync(int projeId)
         {
             return await _context.ProjeAsamalari
@@ -336,6 +388,9 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// 
+        /// Asama bilgilerini ve tamamlanma durumunu gunceller; tamamlandiysa tamamlanma tarihini isaretler.
+        /// 
         public async Task UpdateStageAsync(int asamaId, string asamaAdi, string aciklama, DateTime? baslangicTarihi, DateTime? bitisTarihi, int siraNo, bool tamamlandi)
         {
             var asama = await _context.ProjeAsamalari.FindAsync(asamaId);
@@ -363,6 +418,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             }
         }
 
+        /// 
+        /// Sadece asama tamamlanma durumunu gunceller ve uygun tarih alanlarini ayarlar.
+        /// 
         public async Task UpdateStageStatusAsync(int asamaId, bool tamamlandi)
         {
             var asama = await _context.ProjeAsamalari.FindAsync(asamaId);
@@ -384,6 +442,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             }
         }
 
+        /// 
+        /// Asama Id'sine gore asama kaydini siler.
+        /// 
         public async Task DeleteStageAsync(int asamaId)
         {
             var asama = await _context.ProjeAsamalari.FindAsync(asamaId);
@@ -394,6 +455,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             }
         }
         
+        /// 
+        /// Belirtilen mentor icin tamamlanmis ancak degerlendirilmemis asama sayisini dondurur.
+        /// 
         public async Task<int> GetDegerlendirilmeyenAsamaSayisiByMentorIdAsync(int mentorId)
         {
             return await _context.ProjeAsamalari
@@ -402,6 +466,9 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .CountAsync();
         }
         
+        /// 
+        /// Asamanin degerlendirildi bilgisini ve ilgili tarih alanini gunceller.
+        /// 
         public async Task UpdateStageEvaluatedStatusAsync(int asamaId, bool degerlendirildi)
         {
             var asama = await _context.ProjeAsamalari.FindAsync(asamaId);
@@ -424,6 +491,9 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Proje Kaynakları işlemleri
+        /// 
+        /// Projeye yeni kaynak bilgisi ekler ve kaydi dondurur.
+        /// 
         public async Task<ProjeKaynagi> AddResourceAsync(int projeId, string kaynakAdi, string kaynakTipi, string url, string aciklama, string yazar, DateTime? yayinTarihi)
         {
             var kaynak = new ProjeKaynagi
@@ -446,6 +516,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             return kaynak;
         }
 
+        /// 
+        /// Projeye ait tum kaynaklari ekleme tarihine gore dondurur.
+        /// 
         public async Task<IEnumerable<ProjeKaynagi>> GetResourcesByProjeIdAsync(int projeId)
         {
             return await _context.ProjeKaynaklari
@@ -454,11 +527,17 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// 
+        /// Kaynak Id'sine gore tek kaynak kaydini dondurur.
+        /// 
         public async Task<ProjeKaynagi> GetResourceByIdAsync(int kaynakId)
         {
             return await _context.ProjeKaynaklari.FindAsync(kaynakId);
         }
 
+        /// 
+        /// Kaynak kaydini gunceller.
+        /// 
         public async Task UpdateResourceAsync(ProjeKaynagi kaynak)
         {
             kaynak.UpdatedAt = DateTime.Now;
@@ -466,6 +545,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             await _context.SaveChangesAsync();
         }
 
+        /// 
+        /// Kaynak Id'sine gore kaynak kaydini siler.
+        /// 
         public async Task DeleteResourceAsync(int kaynakId)
         {
             var kaynak = await _context.ProjeKaynaklari.FindAsync(kaynakId);

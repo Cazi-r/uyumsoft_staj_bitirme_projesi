@@ -53,7 +53,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return false;
         }
 
-        // GET: ProjeKaynagi/Add
+        // Projeye kaynak ekleme formu: Erişim izni Admin/danisman/ogrenci-sahip kombinasyonuna gore kontrol edilir.
         public async Task<IActionResult> Add(int projeId)
         {
             if (!await HasProjectPermission(projeId))
@@ -78,7 +78,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // POST: ProjeKaynagi/Add
+        // Kaynak ekleme POST: form hatalari kontrol edilir; izni olan kullanici icin kayit olusturulur.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(ProjeKaynagiViewModel model)
@@ -129,7 +129,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // GET: ProjeKaynagi/Index
+        // Projeye ait tum kaynaklari listeler; erisim yetkisi kontrol edilir.
         public async Task<IActionResult> Index(int projeId)
         {
             if (!await HasProjectPermission(projeId))
@@ -142,7 +142,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kaynaklar);
         }
 
-        // GET: ProjeKaynagi/Details/5
+        // Tek kaynak detayini gosterir; proje erisim yetkisi olmayan kullanicilar icin engeller.
         public async Task<IActionResult> Details(int id)
         {
             var kaynak = await _projeService.GetResourceByIdAsync(id);
@@ -160,7 +160,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kaynak);
         }
 
-        // GET: ProjeKaynagi/Edit/5
+        // Kaynak duzenleme formu: Erişim izni kontrol edilir ve model doldurulur.
         public async Task<IActionResult> Edit(int id)
         {
             var kaynak = await _projeService.GetResourceByIdAsync(id);
@@ -191,7 +191,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // POST: ProjeKaynagi/Edit
+        // Kaynak duzenleme POST: model dogrulanir ve degisiklikler kaydedilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProjeKaynagiViewModel model)
@@ -238,7 +238,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // GET: ProjeKaynagi/Delete/5
+        // Kaynak silme onayi: Erişim izni kontrol edilir; kaynak varligi dogrulanir.
         public async Task<IActionResult> Delete(int id)
         {
             var kaynak = await _projeService.GetResourceByIdAsync(id);
@@ -256,7 +256,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kaynak);
         }
 
-        // POST: ProjeKaynagi/Delete/5
+        // Kaynak silme POST: izni olan kullanici icin kaydi siler.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, int projeId)

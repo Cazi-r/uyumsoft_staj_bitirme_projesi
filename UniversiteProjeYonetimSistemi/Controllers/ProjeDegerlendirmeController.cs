@@ -57,7 +57,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
-        // GET: ProjeDegerlendirme/Add/5
+        // Degerlendirme ekleme formu: Yalnizca admin veya projenin danismani erisebilir.
         [HttpGet]
         [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Add(int id)
@@ -80,7 +80,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // POST: ProjeDegerlendirme/Add
+        // Degerlendirme ekleme POST: alanlar dogrulanir ve kayit olusur, bildirim gonderilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -121,7 +121,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Details", "Proje", new { id = projeId });
         }
 
-        // GET: ProjeDegerlendirme/Index
+        // Projenin tum degerlendirmelerini listeler; admin/ogrenci-sahip/danisman erisim kontrolu yapilir.
         public async Task<IActionResult> Index(int projeId)
         {
             // Proje var mı kontrol et
@@ -158,7 +158,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(degerlendirmeler);
         }
 
-        // GET: ProjeDegerlendirme/Details/5
+        // Tek degerlendirme detayini gosterir; admin/ogrenci-sahip/danisman erisim kontrolu yapilir.
         public async Task<IActionResult> Details(int id)
         {
             var degerlendirme = await _projeService.GetEvaluationByIdAsync(id);
@@ -194,7 +194,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(degerlendirme);
         }
 
-        // GET: ProjeDegerlendirme/Edit/5
+        // Degerlendirme duzenleme formu: Yalnizca admin veya projenin danismani.
         public async Task<IActionResult> Edit(int id)
         {
             var degerlendirme = await _projeService.GetEvaluationByIdAsync(id);
@@ -215,7 +215,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(degerlendirme);
         }
 
-        // POST: ProjeDegerlendirme/Edit
+        // Degerlendirme duzenleme POST: danisman/admin yetkisi dogrulanir ve kayit guncellenir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -240,7 +240,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Index", "ProjeDegerlendirme", new { projeId = projeId });
         }
 
-        // GET: ProjeDegerlendirme/Delete/5
+        // Degerlendirme silme onayi: Yalnizca admin veya projenin danismani erisebilir.
         public async Task<IActionResult> Delete(int id)
         {
             var degerlendirme = await _projeService.GetEvaluationByIdAsync(id);
@@ -261,7 +261,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(degerlendirme);
         }
 
-        // POST: ProjeDegerlendirme/Delete/5
+        // Degerlendirme silme POST: yalnizca admin veya projenin danismani silebilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]

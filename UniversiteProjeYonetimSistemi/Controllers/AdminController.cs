@@ -37,7 +37,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _projeService = projeService;
         }
 
-        // Kullanıcı listesi - Filtreleme, Sıralama ve Arama özellikleri ile
+        // Admin paneli: kullanici listesini filtre/sirala/ara ozellikleriyle gosterir ve ust seviye istatistikleri yukler.
         public async Task<IActionResult> Kullanicilar(string rol = "", string durum = "", string siralama = "id_asc", string arama = "")
         {
             ViewData["RolFilter"] = rol;
@@ -89,7 +89,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(await kullanicilar.ToListAsync());
         }
 
-        // Kullanıcı düzenleme formu
+        // Kullanici duzenleme formu: Id ile kullaniciyi getirir; Admin yetkisi bu controller seviyesinde zorunludur.
         public async Task<IActionResult> KullaniciDuzenle(int id)
         {
             var kullanici = await _context.Kullanicilar.FindAsync(id);
@@ -101,7 +101,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kullanici);
         }
 
-        // Kullanıcı düzenleme POST işlemi
+        // Kullanici duzenleme POST: Mevcut kullaniciyi gunceller, rol/aktiflik degisimini bagli kayitlara yansitir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> KullaniciDuzenle(int id, Kullanici kullanici)
@@ -151,7 +151,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kullanici);
         }
 
-        // Kullanıcı silme onayı
+        // Kullanici silme onayi: Iliskili kayit varsa pasiflestirme, yoksa kalici silme onayi sayfasi.
         public async Task<IActionResult> KullaniciSil(int id)
         {
             var kullanici = await _context.Kullanicilar.FindAsync(id);
@@ -163,7 +163,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(kullanici);
         }
 
-        // Kullanıcı silme POST işlemi
+        // Kullanici silme POST: Iliskili kayit varsa pasiflestirir, yoksa kaydi siler.
         [HttpPost, ActionName("KullaniciSil")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> KullaniciSilOnay(int id)
@@ -195,7 +195,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction(nameof(Kullanicilar));
         }
         
-        // Admin Dashboard - İstatistiksel grafikler ve raporlar
+        // Admin Dashboard: kullanici/proje istatistikleri, grafikler ve son kayitlar icin verileri hazirlar.
         public async Task<IActionResult> Dashboard()
         {
             // Kullanıcı istatistikleri
@@ -216,7 +216,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View();
         }
         
-        // Kullanıcı Etkinlikleri Sayfası
+        // Kullanici Etkinlikleri: filtreler ve sayfalama ile etkinlik listesini gosterir.
         public async Task<IActionResult> KullaniciEtkinlikleri(int? kullaniciId = null, string tip = "", int sayfa = 1)
         {
             int sayfaBoyutu = 20;
@@ -338,7 +338,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             ViewBag.AylikKayitlar = aylikKayitVerileri;
         }
 
-        // Rapor İndirme İşlevi
+        // Dashboard raporu indirme: mevcut dashboard verilerinden CSV uretip dosya olarak dondurur.
         [HttpPost]
         public async Task<IActionResult> RaporIndir()
         {
@@ -361,8 +361,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 var utf8WithBom = new UTF8Encoding(true);
                 var bytes = utf8WithBom.GetBytes(csvContent);
                 
-                Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
-                Response.Headers.Add("Content-Type", "text/csv; charset=utf-8");
+                Response.Headers["Content-Disposition"] = $"attachment; filename=\"{fileName}\"";
+                Response.Headers["Content-Type"] = "text/csv; charset=utf-8";
                 
                 return File(bytes, "text/csv; charset=utf-8", fileName);
             }
@@ -372,7 +372,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             }
         }
 
-        // Sayfa Yenileme İşlevi
+        // Sayfayi yenile: dashboard verilerini tekrar yukleyip basarili mesaj dondurur.
         [HttpPost]
         public async Task<IActionResult> SayfaYenile()
         {
@@ -394,7 +394,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // Dashboard Raporu Olusturma
-        private async Task<string> GenerateDashboardReport()
+        private Task<string> GenerateDashboardReport()
         {
             var sb = new StringBuilder();
             
@@ -467,7 +467,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 }
             }
             
-            return sb.ToString();
+            return Task.FromResult(sb.ToString());
         }
         private async Task<bool> KullaniciHasRelatedRecords(Kullanici kullanici)
         {

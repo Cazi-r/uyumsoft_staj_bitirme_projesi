@@ -38,6 +38,7 @@ public class HomeController : Controller
         _akademisyenService = akademisyenService;
     }
 
+    // Ana sayfa: Giris yoksa "Welcome", varsa role gore (Admin/Akademisyen/Ogrenci) farkli dashboard.
     public async Task<IActionResult> Index()
     {
         // Kullanıcı giriş yapmamışsa standart sayfayı göster
@@ -192,6 +193,7 @@ public class HomeController : Controller
         }
     }
 
+    // Akademisyen ozel dashboard; mentorluk bilgileri, bekleyen degerlendirmeler ve gorusmelerin ozetleri.
     public async Task<IActionResult> AkademisyenDashboard()
     {
         var akademisyen = await _akademisyenService.GetAkademisyenByUserName(User.Identity.Name);
@@ -310,6 +312,7 @@ public class HomeController : Controller
         return View();
     }
 
+    // Ogrenci ozel dashboard; projeleri, bildirimleri ve son gorusmeleri listeler.
     public async Task<IActionResult> OgrenciDashboard()
     {
         var ogrenci = await _ogrenciService.GetOgrenciByUserName(User.Identity.Name);

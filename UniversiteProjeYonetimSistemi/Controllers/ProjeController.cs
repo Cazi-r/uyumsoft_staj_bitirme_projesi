@@ -36,14 +36,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _bildirimService = bildirimService;
         }
 
-        // GET: Proje
+        // Tum projeleri listeler. [Authorize] ile sadece girisli kullanicilar erisebilir.
         public async Task<IActionResult> Index()
         {
             var projeler = await _projeService.GetAllAsync();
             return View(projeler);
         }
 
-        // GET: Proje/Details/5
+        // Tek proje detayini gosterir; ViewBag ile danismanlik ve yorum bolumu isaretleri doldurulur.
         public async Task<IActionResult> Details(int id, bool? highlightYorum = false)
         {
             var proje = await _projeService.GetByIdAsync(id);
@@ -61,7 +61,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // GET: Proje/Create
+        // Proje olusturma formu; Admin/Akademisyen/Ogrenci erisebilir. Ogrenci icin otomatik alan doldurma yapilir.
         [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
         public async Task<IActionResult> Create()
         {
@@ -81,7 +81,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View();
         }
 
-        // POST: Proje/Create
+        // Proje olusturma POST: olusturan role gore bildirim gonderilir, durum 'Beklemede' atanir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
@@ -134,7 +134,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // GET: Proje/Edit/5
+        // Proje duzenleme formu: Yalnizca admin veya projenin danismani erisebilir.
         [Authorize(Roles = "Admin,Akademisyen")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -155,7 +155,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // POST: Proje/Edit/5
+        // Proje duzenleme POST: yalnizca projenin danismani duzenleyebilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -198,7 +198,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // GET: Proje/Delete/5
+        // Proje silme onayi: Yalnizca admin erisebilir.
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -211,7 +211,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(proje);
         }
 
-        // POST: Proje/Delete/5
+        // Proje silme POST: yalnizca admin silebilir.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -253,7 +253,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
-        // POST: Proje/UpdateStatusToInProgress/5
+        // Durumu 'Atanmis' -> 'Devam' yapar; yalnizca admin veya projenin danismani ve CSRF korumali.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -291,7 +291,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
         
-        // POST: Proje/CompleteProject/5
+        // Durumu 'Devam' -> 'Tamamlandi' yapar; yalnizca admin veya projenin danismani ve CSRF korumali.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -329,7 +329,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
         
-        // POST: Proje/CancelProject/5
+        // Projeyi iptal eder; 'Tamamlandi' ise iptal edilemez. Admin/danisman yetkisi ve CSRF korumasi vardir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]

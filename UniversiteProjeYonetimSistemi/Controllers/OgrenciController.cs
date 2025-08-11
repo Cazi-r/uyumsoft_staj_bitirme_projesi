@@ -22,7 +22,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _projeService = projeService;
         }
 
-        // Öğrencinin projelerini listeler
+        // Ogrencinin kendi projelerini listeler. [Authorize(Roles = "Ogrenci")] ile yalnizca Ogrenci rolune aciktir.
+        // Durum filtresi ve siralama parametreleri ile listeyi ozellestirir, istatistikleri ViewBag'e koyar.
         public async Task<IActionResult> Projeler(string durum = "Tumu", string sirala = "Yeni")
         {
             // Giriş yapmış kullanıcının ID'sini al

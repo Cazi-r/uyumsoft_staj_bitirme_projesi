@@ -11,12 +11,18 @@ namespace UniversiteProjeYonetimSistemi.Services
     {
         private readonly ApplicationDbContext _context;
         
+        /// 
+        /// ZamanDurumu islemleri icin veritabani baglami enjekte eder.
+        /// 
         public ZamanDurumuService(ApplicationDbContext context)
         {
             _context = context;
         }
         
         // Tüm görüşmelerin zaman durumlarını günceller
+        /// 
+        /// Tum danismanlik gorusmelerinin zaman durumunu gunceller ve degisiklikleri kaydeder.
+        /// 
         public async Task UpdateAllZamanDurumuAsync()
         {
             var allMeetings = await _context.DanismanlikGorusmeleri
@@ -31,6 +37,9 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
         
         // Görüşme detayları sayfasına erişildiğinde kullanılabilir
+        /// 
+        /// Tek bir gorusmenin zaman durumunu gunceller ve degisiklikleri kaydeder.
+        /// 
         public async Task UpdateSingleZamanDurumuAsync(int gorusmeId)
         {
             var meeting = await _context.DanismanlikGorusmeleri

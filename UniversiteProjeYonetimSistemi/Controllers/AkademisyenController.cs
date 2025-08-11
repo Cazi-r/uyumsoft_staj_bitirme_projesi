@@ -30,7 +30,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _authService = authService;
         }
 
-        // Akademisyenin danışmanlığını yaptığı projeleri listeler
+        // Bu action, [Authorize(Roles = "Akademisyen")] kapsaminda; yalnizca Akademisyen roller erisebilir.
+        // Akademisyenin danismanlik ettigi projeleri listeleyip filtre/istatistikleri hazirlar.
         public async Task<IActionResult> Danismanliklar(string durum = "", string kategori = "", string search = "")
         {
             // Giriş yapmış akademisyeni bul
@@ -131,7 +132,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(projeler.ToList());
         }
 
-        // Proje detaylarını gösterir
+        // Bu action, yalnizca projenin danismani olan akademisyenin projeyi detayli gorebilmesi icindir.
+        // Dosyalar, yorumlar, degerlendirmeler ve asamalari ViewBag ile doldurur.
         public async Task<IActionResult> ProjeDetay(int id)
         {
             // Giriş yapmış akademisyeni bul
@@ -181,7 +183,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
 
         
-        // Yorum ekleme 
+        // Projeye yorum ekler.
+        // Yalnizca ilgili projenin danismani olan akademisyen yorum ekleyebilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> YorumEkle(int projeId, string icerik, string yorumTipi)

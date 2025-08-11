@@ -1,21 +1,23 @@
 @model IEnumerable<UniversiteProjeYonetimSistemi.Models.Proje>
 
-@{
-    ViewData["Title"] = "Projeler";
-}
+@{ 
+    ViewData["Title"] = "Projeler"; 
+} 
 
 <div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-2 page-header animate-header">
-        <h4 class="mb-0">
-            <i class="fas fa-tasks text-primary me-2"></i>@ViewData["Title"]
-        </h4>
-    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="d-flex justify-content-between align-items-center mb-2 page-header animate-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-tasks text-primary me-2"></i>@ViewData["Title"]
+                </h4>
+            </div>
 
-    <!-- Sticky page toolbar -->
-    <div class="page-toolbar shadow-sm border rounded bg-white mb-3">
-        <div class="d-flex flex-wrap align-items-center gap-2">
-            <!-- Search -->
-            <div class="flex-grow-1" style="min-width: 240px;">
+            <!-- Sticky page toolbar -->
+            <div class="page-toolbar shadow-sm border rounded bg-white mb-3">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <!-- Search -->
+                    <div class="flex-grow-1" style="min-width: 240px;">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
                     <input type="text" id="searchInput" class="form-control border-0 bg-light" placeholder="Projelerde ara...">
@@ -216,6 +218,8 @@
                     <p class="text-muted">Lütfen farklı arama kriterleri deneyin.</p>
                 </div>
             </div>
+        </div>
+    </div>
         </div>
     </div>
 </div>

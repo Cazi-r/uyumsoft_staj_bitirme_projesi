@@ -26,6 +26,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // POST: ProjeYorum/Add
+        // Projeye yorum ekleme POST: kullanici rolune gore (Ogrenci/Akademisyen/Admin) is mantigi uygulanir ve bildirim gonderilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(ProjeYorumViewModel model)
@@ -76,6 +77,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         }
 
         // GET: ProjeYorum/Index
+        // Projeye ait yorumlari listeler (detay sayfasi icin kullaniliyor olabilir).
         public async Task<IActionResult> Index(int projeId)
         {
             // Proje var mı kontrol et
@@ -116,6 +118,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
 
         // POST: ProjeYorum/Delete/5
+        // Yorum silme POST: rol ve sahiplik durumuna gore silme yapilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, int projeId)

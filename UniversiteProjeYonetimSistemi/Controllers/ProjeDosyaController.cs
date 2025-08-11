@@ -55,7 +55,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
-        // GET: ProjeDosya/Add
+        // Dosya ekleme formu: Proje ve kullanici yetkisi kontrol edilir (Admin, projenin ogrencisi veya danismani).
+        // Proje adi ViewBag'e set edilir.
         public async Task<IActionResult> Add(int projeId)
         {
             // Proje var mı kontrol et
@@ -104,7 +105,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
-        // POST: ProjeDosya/Add
+        // Dosya ekleme POST: CSRF korumali. Boyut/tur kontrolleri yapilir, yetkili ise dosya yuklenir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(ProjeDosyaViewModel model)
@@ -215,7 +216,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Details", "Proje", new { id = model.ProjeId });
         }
 
-        // GET: ProjeDosya/Download/5
+        // Dosya indirme: Erişim yetkisi (Admin/Ogrenci-sahip/Akademisyen-danisman) kontrol edilir, uygun content type ile dosya dondurulur.
         public async Task<IActionResult> Download(int id)
         {
             var dosya = await _projeService.GetFileByIdAsync(id);
@@ -303,7 +304,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             };
         }
 
-        // GET: ProjeDosya/Index
+        // Projeye ait dosyalari listeler; erisim yetkisi rol ve sahiplik/danismanlik durumuna gore kontrol edilir.
         public async Task<IActionResult> Index(int projeId)
         {
             // Proje var mı kontrol et
@@ -374,7 +375,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(dosyalar);
         }
 
-        // GET: ProjeDosya/Details/5
+        // Tek dosya detayini gosterir; yukleyen kisinin adini ViewBag'e koyar, yetki kontrolu yapar.
         public async Task<IActionResult> Details(int id)
         {
             var dosya = await _projeService.GetFileByIdAsync(id);
@@ -441,7 +442,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(dosya);
         }
 
-        // GET: ProjeDosya/Delete/5
+        // Dosya silme onayi: Sadece projenin danismani veya admin gorebilir; yukleyen bilgisini ViewBag'e ekler.
         public async Task<IActionResult> Delete(int id)
         {
             var dosya = await _projeService.GetFileByIdAsync(id);
@@ -485,7 +486,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(dosya);
         }
 
-        // POST: ProjeDosya/Delete/5
+        // Dosya silme POST: yalnizca projenin danismani veya admin silebilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Akademisyen")]

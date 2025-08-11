@@ -16,12 +16,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _authService = authService;
         }
 
+        // Login formunu gosterir. returnUrl varsa, basarili giristen sonra oraya geri yonlendirir.
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
+        // Login POST: Model dogruysa AuthService ile giris yapar, cookie olusturulur.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
@@ -41,6 +43,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
+        // Cikis yapar: cookie'yi/oturumu siler. [Authorize] ile sadece girisli kullanici erisir.
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -50,7 +53,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // Yeni Register metodları
+        // Register formunu gosterir. Roller listesi (Ogrenci/Akademisyen/Admin) ViewBag ile saglanir.
         public IActionResult Register()
         {
             var model = new RegisterViewModel();
@@ -58,6 +61,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
+        // Register POST: Model dogruysa kullaniciyi olusturur (rolune gore bagli tabloyu ekler).
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -80,6 +84,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
+        // Yetki yetersizliginde cookie ayarlarindaki AccessDeniedPath ile yonlendirilen sayfayi dondurur.
         public IActionResult AccessDenied()
         {
             return View();

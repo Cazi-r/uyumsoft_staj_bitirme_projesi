@@ -24,6 +24,7 @@ namespace UniversiteProjeYonetimSistemi.Services
             _projeService = projeService;
         }
 
+        /// Tum ogrencileri iliskili Kullanici bilgisiyle birlikte listeler.
         public async Task<IEnumerable<Ogrenci>> GetAllAsync()
         {
             return await _context.Ogrenciler
@@ -31,6 +32,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
+        /// Id'ye gore ogrenciyi iliskili Kullanici bilgisiyle birlikte dondurur.
         public async Task<Ogrenci> GetByIdAsync(int id)
         {
             return await _context.Ogrenciler
@@ -38,6 +40,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
+        /// KullaniciId'ye gore ogrenci kaydini dondurur.
         public async Task<Ogrenci> GetByKullaniciIdAsync(int kullaniciId)
         {
             return await _context.Ogrenciler
@@ -45,6 +48,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(o => o.KullaniciId == kullaniciId);
         }
 
+        /// Ogrenci numarasina gore ogrenci kaydini dondurur.
         public async Task<Ogrenci> GetByOgrenciNoAsync(string ogrenciNo)
         {
             return await _context.Ogrenciler
@@ -52,6 +56,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(o => o.OgrenciNo == ogrenciNo);
         }
 
+        /// Kullanici e-postasina gore bagli ogrenciyi dondurur.
         public async Task<Ogrenci> GetOgrenciByUserName(string userName)
         {
             // Direkt olarak _context kullanarak arama yapalım
@@ -66,27 +71,32 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(o => o.KullaniciId == kullanici.Id);
         }
 
+        /// Yeni ogrenci kaydi olusturur.
         public async Task<Ogrenci> AddAsync(Ogrenci ogrenci)
         {
             await _ogrenciRepository.AddAsync(ogrenci);
             return ogrenci;
         }
 
+        /// Ogrenci kaydini gunceller.
         public async Task UpdateAsync(Ogrenci ogrenci)
         {
             await _ogrenciRepository.UpdateAsync(ogrenci);
         }
 
+        /// Id'ye gore ogrenci kaydini siler.
         public async Task DeleteAsync(int id)
         {
             await _ogrenciRepository.DeleteAsync(id);
         }
 
+        /// Ogrencinin projelerini dondurur.
         public async Task<IEnumerable<Proje>> GetProjelerAsync(int ogrenciId)
         {
             return await _projeService.GetByOgrenciIdAsync(ogrenciId);
         }
 
+        /// Ogrencinin projelerini iliskili tum detaylariyla (dosyalar, asamalar, yorumlar, degerlendirmeler) birlikte dondurur.
         public async Task<IEnumerable<Proje>> GetProjelerWithDetailsAsync(int ogrenciId)
         {
             return await _context.Projeler

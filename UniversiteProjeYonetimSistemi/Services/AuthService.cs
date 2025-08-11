@@ -25,6 +25,8 @@ namespace UniversiteProjeYonetimSistemi.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// Kullanici email ve sifre ile giris yapar; rol ve diger claim'leri olusturarak cookie tabanli oturumu baslatir.
+        /// Basarili olursa true, aksi halde false dondurur.
         public async Task<bool> LoginAsync(string email, string password)
         {
             var kullanici = await _context.Kullanicilar
@@ -66,11 +68,14 @@ namespace UniversiteProjeYonetimSistemi.Services
             return false;
         }
 
+        /// Mevcut kullanicinin oturumunu sonlandirir ve ilgili cookie/claim bilgilerini temizler.
         public async Task LogoutAsync()
         {
             await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
+        /// HttpContext uzerindeki claim'lerden kullanici kimligini okuyup veritabanindan mevcut Kullanici kaydini dondurur.
+        /// Kimlik bulunamazsa null dondurur.
         public async Task<Kullanici> GetCurrentUserAsync()
         {
             if (_httpContextAccessor.HttpContext.User.Identity?.IsAuthenticated != true)
@@ -84,6 +89,7 @@ namespace UniversiteProjeYonetimSistemi.Services
             return await _context.Kullanicilar.FindAsync(id);
         }
 
+        /// Aktif kullanici Ogrenci rolundeyse bagli Ogrenci kaydini dondurur; degilse null dondurur.
         public async Task<Ogrenci> GetCurrentOgrenciAsync()
         {
             var kullanici = await GetCurrentUserAsync();
@@ -94,6 +100,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(o => o.KullaniciId == kullanici.Id);
         }
 
+        /// Aktif kullanici Akademisyen rolundeyse bagli Akademisyen kaydini dondurur; degilse null dondurur.
         public async Task<Akademisyen> GetCurrentAkademisyenAsync()
         {
             var kullanici = await GetCurrentUserAsync();
@@ -104,6 +111,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(a => a.KullaniciId == kullanici.Id);
         }
 
+        /// Verilen Id'ye ait Ogrenci kaydini iliskili Kullanici bilgisi ile birlikte getirir.
         public async Task<Ogrenci> GetOgrenciByIdAsync(int id)
         {
             return await _context.Ogrenciler
@@ -111,6 +119,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
+        /// Verilen Id'ye ait Akademisyen kaydini iliskili Kullanici bilgisi ile birlikte getirir.
         public async Task<Akademisyen> GetAkademisyenByIdAsync(int id)
         {
             return await _context.Akademisyenler
@@ -119,6 +128,8 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Yeni kayıt metodu - Admin rolü için düzeltildi
+        /// Yeni kullanici kaydi olusturur; role gore Ogrenci/Akademisyen tablolarina bagli kaydi ekler.
+        /// Islem, transaction ve execution strategy ile guvenli sekilde yapilir.
         public async Task<(bool Success, string Message)> RegisterAsync(RegisterViewModel model)
         {
             // E-posta adresinin benzersiz olduğunu kontrol et
@@ -261,6 +272,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Şifre hash'leme (örnek amaçlı, gerçek uygulamalar için daha güvenli yöntemler kullanılmalı)
+        /// Verilen sifreyi SHA-256 ile hash'ler. Ornek amaclidir; uretimde PBKDF2/BCrypt/Argon2 gibi yavas hash onerilir.
         public string HashPassword(string password)
         {
             return ComputeSha256Hash(password);

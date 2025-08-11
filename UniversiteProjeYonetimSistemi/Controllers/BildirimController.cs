@@ -19,7 +19,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _context = context;
         }
 
-        // Bildirimler sayfası
+        // [Authorize] ile giris zorunlu. Kullanici rolune gore (Ogrenci/Akademisyen) kendi bildirimlerini listeler.
+        // tip ve okundu parametreleriyle filtre uygular, en yeni bildirimler ustte olacak sekilde siralar.
         public async Task<IActionResult> Index(string tip, bool? okundu)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -68,7 +69,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(await bildirimler.ToListAsync());
         }
 
-        // Bildirimi okundu/okunmadı olarak işaretle
+        // Bir bildirimi okundu/okunmadi olarak isaretler. Rol/kullanici yetkisi kontrol edilir.
         [HttpPost]
         public async Task<IActionResult> OkunduDurumu(int id, bool okundu)
         {
@@ -106,7 +107,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Tüm bildirimleri okundu olarak işaretle
+        // Aktif kullanicinin butun okunmamis bildirimlerini okundu yapar.
+        // [HttpPost] ile tetiklenir; rol bazli filtreleme icinde calisir.
         [HttpPost]
         public async Task<IActionResult> TumunuOkunduYap()
         {

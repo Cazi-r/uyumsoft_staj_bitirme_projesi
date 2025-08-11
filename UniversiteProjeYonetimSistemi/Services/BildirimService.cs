@@ -17,6 +17,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // 1. Proje oluşturulduğunda bildirim gönder
+        /// Proje olusturma olayindan sonra ilgili tarafa bildirim gonderir (ogrenci/akademisyen rolune gore).
         public async Task ProjeOlusturulduBildirimiGonder(Proje proje, string olusturanRol)
         {
             if (proje == null)
@@ -43,6 +44,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // 2. Proje yorumu yapıldığında bildirim gönder
+        /// Projeye yeni yorum yapildiginda karsit tarafa bilgilendirme bildirimi gonderir.
         public async Task ProjeYorumYapildiBildirimiGonder(ProjeYorum yorum, int projeId)
         {
             if (yorum == null)
@@ -88,6 +90,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // 3. Değerlendirme yapıldığında bildirim gönder
+        /// Proje degerlendirmesi yapildiginda ogrenciyi bilgilendirir.
         public async Task DegerlendirmeYapildiBildirimiGonder(Degerlendirme degerlendirme)
         {
             if (degerlendirme == null)
@@ -111,6 +114,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // 4. Proje ilerlemesi değiştiğinde bildirim gönder
+        /// Proje durum degisikliklerinde ogrenciyi bilgilendirir.
         public async Task ProjeIlerlemesiDegistiBildirimiGonder(Proje proje)
         {
             if (proje == null || !proje.OgrenciId.HasValue)
@@ -124,6 +128,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // 5. Danışmanlık görüşmesi planlandığında bildirim gönder
+        /// Danismanlik gorusmesi planlandiginda taraflara (ogrenci/akademisyen) bildirim gonderir.
         public async Task GorusmePlanlandiBildirimiGonder(DanismanlikGorusmesi gorusme)
         {
             if (gorusme == null)
@@ -154,6 +159,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // 6. Proje aşaması tamamlandığında bildirim gönder
+        /// Proje asamasi tamamlandiginda danismani degerlendirme icin bilgilendirir.
         public async Task ProjeAsamasiTamamlandiBildirimiGonder(ProjeAsamasi projeAsamasi)
         {
             if (projeAsamasi == null)
@@ -177,6 +183,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // 7. Görüşme durumu değiştiğinde bildirim gönder
+        /// Danismanlik gorusmesi durum degisikliklerinde karsi tarafi bilgilendirir.
         public async Task GorusmeDurumuDegistiBildirimiGonder(DanismanlikGorusmesi gorusme)
         {
             if (gorusme == null)
@@ -234,6 +241,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Okunmamış bildirim sayısını getir
+        /// Kullanici rolune gore okunmamis bildirim sayisini dondurur.
         public async Task<int> OkunmamisBildirimSayisiniGetir(string kullaniciId, string rol)
         {
             if (string.IsNullOrEmpty(kullaniciId) || string.IsNullOrEmpty(rol))
@@ -262,6 +270,7 @@ namespace UniversiteProjeYonetimSistemi.Services
         }
 
         // Yardımcı metotlar
+        /// Yardimci: Bildirim tablosuna yeni kayit olusturur.
         private async Task BildirimOlustur(string baslik, string icerik, string bildirimTipi, int? ogrenciId = null, int? akademisyenId = null)
         {
             var bildirim = new Bildirim

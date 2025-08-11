@@ -14,22 +14,34 @@ namespace UniversiteProjeYonetimSistemi.Services
         protected readonly ApplicationDbContext _context;
         protected readonly DbSet<T> _dbSet;
 
+        /// 
+        /// Generic repository icin temel baglam ve DbSet referanslarini olusturur.
+        /// 
         public Repository(ApplicationDbContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();
         }
 
+        /// 
+        /// T tipindeki tum kayitlari dondurur.
+        /// 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
+        /// 
+        /// Birincil anahtara gore tek kaydi dondurur.
+        /// 
         public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
         
+        /// 
+        /// Iliskili navigation property'leri include ederek tek kaydi dondurur.
+        /// 
         public async Task<T> GetByIdWithIncludeAsync(int id, params Expression<Func<T, object>>[] includeProperties)
         {
             IQueryable<T> query = _dbSet;
@@ -42,6 +54,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        /// 
+        /// Yeni kayit ekler; CreatedAt/UpdatedAt alanlarini set eder ve kaydeder.
+        /// 
         public async Task AddAsync(T entity)
         {
             entity.CreatedAt = DateTime.Now;
@@ -50,6 +65,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             await _context.SaveChangesAsync();
         }
 
+        /// 
+        /// Var olan kaydi gunceller; UpdatedAt'i set eder ve yalnizca degisen alanlari uygular.
+        /// 
         public async Task UpdateAsync(T entity)
         {
             entity.UpdatedAt = DateTime.Now;
@@ -69,6 +87,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             await _context.SaveChangesAsync();
         }
         
+        /// 
+        /// Verilen entity kaydini siler ve degisikligi kaydeder.
+        /// 
         public async Task DeleteAsync(T entity)
         {
             if (entity != null)
@@ -78,6 +99,9 @@ namespace UniversiteProjeYonetimSistemi.Services
             }
         }
 
+        /// 
+        /// Id'ye gore kaydi bulup siler ve degisikligi kaydeder.
+        /// 
         public async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);

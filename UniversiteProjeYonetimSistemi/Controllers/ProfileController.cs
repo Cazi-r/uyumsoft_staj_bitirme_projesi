@@ -22,6 +22,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             _authService = authService;
         }
 
+        // Profil anasayfasi: aktif kullanicinin profil bilgilerini ve rolune gore ek alanlari gosterir.
         public async Task<IActionResult> Index()
         {
             var kullanici = await _authService.GetCurrentUserAsync();
@@ -74,6 +75,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
+        // Profil duzenleme formu: aktif kullanicinin bilgilerini form olarak doldurur.
         public async Task<IActionResult> Edit()
         {
             var kullanici = await _authService.GetCurrentUserAsync();
@@ -123,6 +125,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
+        // Profil duzenleme POST: e-posta benzersizlik kontrolu ve rol bazli alan guncellemeleri yapar.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditProfileViewModel model)
@@ -208,6 +211,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(model);
         }
 
+        // Sifre degistirme formu (placeholder)
         public IActionResult ChangePassword()
         {
             return View();
