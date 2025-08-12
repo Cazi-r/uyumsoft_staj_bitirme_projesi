@@ -196,18 +196,9 @@
                                     </a>
                                 }
                                 
-                                @if (User.IsInRole("Ogrenci"))
-                                {
-                                    <a asp-action="OgrenciGorusmeleri" class="btn btn-outline-secondary animate-button">
-                                        <i class="fas fa-arrow-left me-1"></i> Geri
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a asp-action="AkademisyenGorusmeleri" class="btn btn-outline-secondary animate-button">
-                                        <i class="fas fa-arrow-left me-1"></i> Geri
-                                    </a>
-                                }
+                                <a asp-action="Index" class="btn btn-outline-secondary animate-button">
+                                    <i class="fas fa-arrow-left me-1"></i> Geri
+                                </a>
                             </div>
                         </div>
                     </div>

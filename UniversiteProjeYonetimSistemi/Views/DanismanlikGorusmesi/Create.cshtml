@@ -33,13 +33,13 @@
                             {
                                 <div class="mb-3">
                                     <label asp-for="ProjeId" class="control-label">Proje</label>
-                                    <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId"></select>
+                                    <select asp-for="ProjeId" class="form-select" asp-items="@((SelectList)ViewData["ProjeId"])"></select>
                                     <span asp-validation-for="ProjeId" class="text-danger"></span>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label asp-for="AkademisyenId" class="control-label">Akademisyen</label>
-                                    <select asp-for="AkademisyenId" class="form-select" asp-items="ViewBag.AkademisyenId"></select>
+                                    <select asp-for="AkademisyenId" class="form-select" asp-items="@((SelectList)ViewData["AkademisyenId"])"></select>
                                     <span asp-validation-for="AkademisyenId" class="text-danger"></span>
                                 </div>
                             }
@@ -64,13 +64,13 @@
                             {
                                 <div class="mb-3">
                                     <label asp-for="ProjeId" class="control-label">Proje</label>
-                                    <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId"></select>
+                                    <select asp-for="ProjeId" class="form-select" asp-items="@((SelectList)ViewData["ProjeId"])"></select>
                                     <span asp-validation-for="ProjeId" class="text-danger"></span>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label asp-for="OgrenciId" class="control-label">Öğrenci</label>
-                                    <select asp-for="OgrenciId" class="form-select" asp-items="ViewBag.OgrenciId"></select>
+                                    <select asp-for="OgrenciId" class="form-select" asp-items="@((SelectList)ViewData["OgrenciId"])"></select>
                                     <span asp-validation-for="OgrenciId" class="text-danger"></span>
                                 </div>
                             }

@@ -41,7 +41,7 @@
                                     <label class="form-label fw-bold">
                                         <i class="fas fa-folder me-1 text-muted"></i>Proje
                                     </label>
-                                    <select asp-for="ProjeId" class="form-select" asp-items="ViewBag.ProjeId">
+                                    <select asp-for="ProjeId" class="form-select" asp-items="@((SelectList)ViewData["ProjeId"])">
                                         <option value="">Proje Seçiniz</option>
                                     </select>
                                     <span asp-validation-for="ProjeId" class="text-danger small"></span>
