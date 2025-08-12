@@ -1905,7 +1905,39 @@ td.text-end .btn-group .btn { white-space: nowrap; }
 }
 
 /* =====================================================
-   22. REDUCED MOTION
+   22. SAYFA BASLIGI ORTAK STIL SISTEMI
+   ===================================================== */
+
+/* Tum sayfa basliklari icin ortak boyut */
+.page-title {
+  font-size: 1.75rem !important; /* h2 boyutu */
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 0 !important;
+  color: var(--body-color) !important;
+}
+
+/* Dark mode icin ozel renk */
+.dark-theme .page-title {
+  color: var(--body-color) !important;
+}
+
+/* Ikinci seviye basliklar */
+.section-title {
+  font-size: 1.25rem !important; /* h5 boyutu */
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  margin-bottom: 0 !important;
+  color: var(--body-color) !important;
+}
+
+/* Dark mode icin ikinci seviye basliklar */
+.dark-theme .section-title {
+  color: var(--body-color) !important;
+}
+
+/* =====================================================
+   23. REDUCED MOTION
    ===================================================== */
 
 @media (prefers-reduced-motion: reduce) {
