@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UniversiteProjeYonetimSistemi.Models;
 using UniversiteProjeYonetimSistemi.Services;
+using UniversiteProjeYonetimSistemi.Data;
 
 namespace UniversiteProjeYonetimSistemi.Controllers
 {
@@ -21,9 +22,12 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 		private readonly IAiNlpService _nlp;
 		private readonly IOgrenciService _ogrenciService;
 		private readonly IAkademisyenService _akademisyenService;
+        private readonly ApplicationDbContext _db;
+        private readonly IBildirimService _bildirimService;
 
 		private static readonly ConcurrentDictionary<string, CreateProjectState> _sessions = new();
 		private static readonly ConcurrentDictionary<string, CreateCategoryState> _categorySessions = new();
+        private static readonly ConcurrentDictionary<string, CreateMeetingState> _meetingSessions = new();
 
 		public AssistantController(
 			IProjeService projeService,
@@ -31,7 +35,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			AuthService authService,
 			IAiNlpService nlp,
 			IOgrenciService ogrenciService,
-			IAkademisyenService akademisyenService)
+			IAkademisyenService akademisyenService,
+            ApplicationDbContext db,
+            IBildirimService bildirimService)
 		{
 			_projeService = projeService;
 			_kategoriRepository = kategoriRepository;
@@ -39,6 +45,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			_nlp = nlp;
 			_ogrenciService = ogrenciService;
 			_akademisyenService = akademisyenService;
+            _db = db;
+            _bildirimService = bildirimService;
 		}
 
 		public class ChatRequest { public string message { get; set; } }
@@ -46,6 +54,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
 		private enum CreateProjectStep { AskAd, AskAciklama, AskKategori, AskMentor, AskOgrenci, AskTeslimTarihi }
 		private enum CreateCategoryStep { AskAd, AskAciklama, AskRenk }
+        private enum CreateMeetingStep { AskProje, AskKarsiTaraf, AskBaslik, AskTarih, AskTip, AskNot }
 
 		private class CreateProjectState
 		{
@@ -70,6 +79,20 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			public CreateCategoryStep? Pending { get; set; }
 		}
 
+        private class CreateMeetingState
+        {
+            public int? ProjeId { get; set; }
+            public string ProjeAd { get; set; }
+            public int? OgrenciId { get; set; }
+            public int? AkademisyenId { get; set; }
+            public string KarsiTarafAdSoyad { get; set; }
+            public string Baslik { get; set; }
+            public DateTime? GorusmeTarihi { get; set; }
+            public string GorusmeTipi { get; set; } // Online, Yüz Yüze
+            public string Notlar { get; set; }
+            public CreateMeetingStep? Pending { get; set; }
+        }
+
 		[HttpPost("chat")]
 		public async Task<IActionResult> Chat([FromBody] ChatRequest req)
 		{
@@ -81,6 +104,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			{
 				_sessions.TryRemove(userKey, out _);
 				_categorySessions.TryRemove(userKey, out _);
+                _meetingSessions.TryRemove(userKey, out _);
 				return Ok(new ChatResponse { reply = "Tamamdır, bu adımı iptal ettim. Hazır olduğunuzda yeniden başlayabiliriz.", executed = false });
 			}
 
@@ -167,13 +191,22 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 				return Ok(new ChatResponse { reply = $"Harika! '{yeni.Ad}' kategorisini oluşturdum.", executed = true, data = new { categoryId = yeni.Id, detailsUrl = urlCat } });
 			}
 
-			// 2) Proje olusturma akisi
+			// 2) Görüşme oluşturma akışı (öğrenci/akademisyen/admin)
+            _meetingSessions.TryGetValue(userKey, out var meetState);
+            if (meetState != null)
+            {
+                // Akışı yürüt
+                var meetReply = await HandleMeetingFlow(userKey, text, meetState);
+                if (meetReply != null) return meetReply;
+            }
+
+			// 3) Proje olusturma akisi
 
 			// Mevcut oturum var mı?
 			_sessions.TryGetValue(userKey, out var state);
 
 			// Kategori oluşturma niyeti algıla
-			if (catState == null && IsCreateCategoryIntent(text))
+            if (catState == null && IsCreateCategoryIntent(text))
 			{
 				if (!(User.IsInRole("Admin") || User.IsInRole("Akademisyen")))
 					return Ok(new ChatResponse { reply = "Kategori oluşturma için yetkiniz bulunmuyor. Proje oluşturma veya görüşme planlama konusunda yardımcı olabilirim.", executed = false });
@@ -183,7 +216,16 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 				return Ok(new ChatResponse { reply = "Yeni kategorimizin adı ne olsun?", executed = false });
 			}
 
-			if (state == null)
+            // 3-b) Meeting intent detection
+            if (meetState == null && IsCreateMeetingIntent(text))
+            {
+                meetState = new CreateMeetingState();
+                _meetingSessions[userKey] = meetState;
+                meetState.Pending = CreateMeetingStep.AskProje;
+                return Ok(new ChatResponse { reply = "Hangi proje için görüşme planlayalım? Proje adını paylaşır mısınız?", executed = false });
+            }
+
+            if (state == null)
 			{
 				// Yeni niyet algıla
 				var llmCmd = await _nlp.ExtractCreateProjectAsync(text);
@@ -419,6 +461,16 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			return Ok(new ChatResponse { reply = summary, executed = true, data = new { projeId = projeToCreate.Id, detailsUrl } });
 		}
 
+		[HttpPost("reset")]
+		public IActionResult Reset()
+		{
+			var userKey = User?.Identity?.Name ?? HttpContext.Connection.RemoteIpAddress?.ToString() ?? Guid.NewGuid().ToString();
+			_sessions.TryRemove(userKey, out _);
+			_categorySessions.TryRemove(userKey, out _);
+			_meetingSessions.TryRemove(userKey, out _);
+			return Ok();
+		}
+
 		private CreateProjectCommand TryParseCreateProject(string text)
 		{
 			if (string.IsNullOrWhiteSpace(text)) return null;
@@ -450,6 +502,13 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			var l = text.ToLower(new System.Globalization.CultureInfo("tr-TR"));
 			return (l.Contains("kategori") || l.Contains("kategorİ")) && (l.Contains("oluştur") || l.Contains("olustur") || l.Contains("ekle") || l.Contains("kur") || l.Contains("yeni"));
 		}
+
+        private bool IsCreateMeetingIntent(string text)
+        {
+            var l = text.ToLower(new System.Globalization.CultureInfo("tr-TR"));
+            return (l.Contains("görüşme") || l.Contains("gorusme") || l.Contains("randevu")) &&
+                   (l.Contains("planla") || l.Contains("olustur") || l.Contains("oluştur") || l.Contains("talep") || l.Contains("ekle"));
+        }
 
 		private async Task<ProjeKategori> EnsureKategoriAsync(string ad)
 		{
@@ -582,6 +641,317 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 					// Bilinmeyen ise null dön
 					return null;
 			}
+		}
+        private async Task<IActionResult> HandleMeetingFlow(string userKey, string text, CreateMeetingState state)
+        {
+            // Role-specific available projects
+            var roleIsOgrenci = User.IsInRole("Ogrenci");
+            var roleIsAkademisyen = User.IsInRole("Akademisyen");
+            var roleIsAdmin = User.IsInRole("Admin");
+
+            // Capture step answers
+            if (state.Pending.HasValue)
+            {
+                switch (state.Pending.Value)
+                {
+                    case CreateMeetingStep.AskProje:
+                    {
+                        var inputText = (text ?? string.Empty).Trim();
+                        // Cok kisa girdilerde (3 karakterden az) otomatik eslestirme yapmayalim; liste sunalim
+                        if (string.IsNullOrWhiteSpace(inputText) || inputText.Length < 3)
+                        {
+                            var names = await GetAvailableProjectNamesForPromptAsync();
+                            var listText = names.Count > 0
+                                ? "Mevcut projeleriniz: " + string.Join(", ", names.Count > 10 ? names.GetRange(0, 10) : names) + (names.Count > 10 ? " ve digerleri..." : string.Empty) + "."
+                                : "Su anda sizinle iliskili listelenebilir proje bulunmuyor.";
+                            return Ok(new ChatResponse { reply = listText + " Lutfen proje adindan en az 3 harf yazin ya da tam adini girin.", executed = false });
+                        }
+
+                        var proj = await FindProjectByNameForCurrentUserAsync(inputText);
+                        if (proj == null)
+                        {
+                            var names = await GetAvailableProjectNamesForPromptAsync();
+                            var listText = names.Count > 0
+                                ? " Mevcut projeleriniz: " + string.Join(", ", names.Count > 10 ? names.GetRange(0, 10) : names) + (names.Count > 10 ? " ve digerleri..." : string.Empty) + "."
+                                : " Su anda sizinle iliskili listelenebilir proje bulunmuyor.";
+                            return Ok(new ChatResponse { reply = "Bu ada yakin bir proje bulamadim." + listText + " Proje adini yazmaniz yeterli.", executed = false });
+                        }
+                        state.ProjeId = proj.Id;
+                        state.ProjeAd = proj.Ad;
+                        if (proj.OgrenciId.HasValue) state.OgrenciId = proj.OgrenciId.Value;
+                        if (proj.MentorId.HasValue) state.AkademisyenId = proj.MentorId.Value;
+                        state.Pending = null;
+                        break;
+                    }
+                    case CreateMeetingStep.AskKarsiTaraf:
+                    {
+                        // When missing participant for admin
+                        var parts = text.Trim();
+                        // Try first as Student, then as Akademisyen
+                        if (!state.OgrenciId.HasValue)
+                        {
+                            var ogr = await FindOgrenciByFullNameAsync(parts);
+                            if (ogr != null)
+                            {
+                                state.OgrenciId = ogr.Id;
+                                state.Pending = null;
+                                break;
+                            }
+                        }
+                        if (!state.AkademisyenId.HasValue)
+                        {
+                            var aka = await FindAkademisyenByFullNameAsync(parts);
+                            if (aka != null)
+                            {
+                                state.AkademisyenId = aka.Id;
+                                state.Pending = null;
+                                break;
+                            }
+                        }
+                        return Ok(new ChatResponse { reply = "İsmi eşleştiremedim. Lütfen Ad Soyad şeklinde tekrar paylaşır mısınız?", executed = false });
+                    }
+                    case CreateMeetingStep.AskBaslik:
+                    {
+                        var t = text.Trim();
+                        if (string.IsNullOrWhiteSpace(t))
+                            return Ok(new ChatResponse { reply = "Görüşme için kısa bir başlık yazar mısınız?", executed = false });
+                        state.Baslik = t;
+                        state.Pending = null;
+                        break;
+                    }
+                    case CreateMeetingStep.AskTarih:
+                    {
+                        // 1) LLM ile esnek tarih/saat cikarimi
+                        var dtFromNlp = await _nlp.ExtractDateTimeAsync(text, DateTime.Now);
+                        if (dtFromNlp.HasValue)
+                        {
+                            state.GorusmeTarihi = dtFromNlp.Value;
+                            state.Pending = null;
+                            break;
+                        }
+
+                        // 2) Standart TryParse yedek
+                        if (DateTime.TryParse(text, new System.Globalization.CultureInfo("tr-TR"), System.Globalization.DateTimeStyles.None, out var dt))
+                        {
+                            state.GorusmeTarihi = dt;
+                            state.Pending = null;
+                            break;
+                        }
+
+                        // 3) Orneklerle tekrar iste
+                        return Ok(new ChatResponse { reply = "Tarihi tam anlayamadim. Su orneklerden birini yazabilir misiniz? (21.08.2026 14:30, 'yarin 14:00', '28 agustos 14:00')", executed = false });
+                    }
+                    case CreateMeetingStep.AskTip:
+                    {
+                        var l = text.Trim().ToLower(new System.Globalization.CultureInfo("tr-TR"));
+                        if (l.Contains("online")) state.GorusmeTipi = "Online";
+                        else if (l.Contains("yuz") || l.Contains("yüz") || l.Contains("yuz yuze") || l.Contains("yüz yüze") || l.Contains("ofis") || l.Contains("fizik")) state.GorusmeTipi = "Yüz Yüze";
+                        else if (Regex.IsMatch(l, "^yok$", RegexOptions.IgnoreCase)) state.GorusmeTipi = "Online";
+                        else return Ok(new ChatResponse { reply = "Görüşme tipi 'Online' mı 'Yüz Yüze' mi olsun?", executed = false });
+                        state.Pending = null;
+                        break;
+                    }
+                    case CreateMeetingStep.AskNot:
+                    {
+                        var t = text.Trim();
+                        state.Notlar = Regex.IsMatch(t, "^yok$", RegexOptions.IgnoreCase) ? string.Empty : t;
+                        state.Pending = null;
+                        break;
+                    }
+                }
+            }
+
+            // Ask missing info in order: Proje -> Baslik -> Tarih -> Tip -> Not
+            if (!state.ProjeId.HasValue)
+            {
+                state.Pending = CreateMeetingStep.AskProje;
+                var names = await GetAvailableProjectNamesForPromptAsync();
+                var listText = names.Count > 0
+                    ? "Mevcut projeleriniz: " + string.Join(", ", names.Count > 10 ? names.GetRange(0, 10) : names) + (names.Count > 10 ? " ve digerleri..." : string.Empty)
+                    : "Henuz listelenebilir projeniz yok.";
+                var prompt = "Hangi proje icin gorusme planlayalim? " + listText + " (Proje adini yazmaniz yeterli.)";
+                return Ok(new ChatResponse { reply = prompt, executed = false });
+            }
+
+            if (string.IsNullOrWhiteSpace(state.Baslik))
+            {
+                state.Pending = CreateMeetingStep.AskBaslik;
+                return Ok(new ChatResponse { reply = "Görüşme için kısa bir başlık yazar mısınız?", executed = false });
+            }
+
+            if (!state.GorusmeTarihi.HasValue)
+            {
+                state.Pending = CreateMeetingStep.AskTarih;
+                return Ok(new ChatResponse { reply = "Görüşme tarihi ve saati nedir? Or: 21.08.2026 14:30, 'yarin 14:00', '28 agustos 14:00'", executed = false });
+            }
+
+            if (string.IsNullOrWhiteSpace(state.GorusmeTipi))
+            {
+                state.Pending = CreateMeetingStep.AskTip;
+                return Ok(new ChatResponse { reply = "Görüşme tipi 'Online' mı 'Yüz Yüze' mi olsun?", executed = false });
+            }
+
+            if (state.Notlar == null)
+            {
+                state.Pending = CreateMeetingStep.AskNot;
+                return Ok(new ChatResponse { reply = "İsterseniz not ekleyebilirsiniz. (Yoksa 'yok' yazabilirsiniz)", executed = false });
+            }
+
+            // Participants per role
+            if (roleIsOgrenci)
+            {
+                var ogr = await _authService.GetCurrentOgrenciAsync();
+                if (ogr == null) return Ok(new ChatResponse { reply = "Öğrenci bilginize erişemedim.", executed = false });
+                state.OgrenciId = ogr.Id;
+                if (!state.AkademisyenId.HasValue)
+                {
+                    var proj = await _db.Projeler.FindAsync(state.ProjeId.Value);
+                    if (proj?.MentorId == null) return Ok(new ChatResponse { reply = "Projenize atanmış bir danışman bulunamadı. Lütfen önce projeye danışman atayın.", executed = false });
+                    state.AkademisyenId = proj.MentorId.Value;
+                }
+            }
+            else if (roleIsAkademisyen)
+            {
+                var aka = await _authService.GetCurrentAkademisyenAsync();
+                if (aka == null) return Ok(new ChatResponse { reply = "Akademisyen bilginize erişemedim.", executed = false });
+                state.AkademisyenId = aka.Id;
+                if (!state.OgrenciId.HasValue)
+                {
+                    var proj = await _db.Projeler.FindAsync(state.ProjeId.Value);
+                    if (proj?.OgrenciId == null) return Ok(new ChatResponse { reply = "Projeye atanmış bir öğrenci bulunamadı.", executed = false });
+                    state.OgrenciId = proj.OgrenciId.Value;
+                }
+            }
+            else if (roleIsAdmin)
+            {
+                // Admin: proje seçiliyse katılımcıları tamamlamaya çalış
+                var proj = await _db.Projeler.FindAsync(state.ProjeId.Value);
+                if (!state.AkademisyenId.HasValue && proj?.MentorId != null) state.AkademisyenId = proj.MentorId.Value;
+                if (!state.OgrenciId.HasValue && proj?.OgrenciId != null) state.OgrenciId = proj.OgrenciId.Value;
+
+                if (!state.OgrenciId.HasValue || !state.AkademisyenId.HasValue)
+                {
+                    state.Pending = CreateMeetingStep.AskKarsiTaraf;
+                    return Ok(new ChatResponse { reply = "Görüşme katılımcılarından eksik olanın Ad Soyad bilgisini yazar mısınız?", executed = false });
+                }
+            }
+
+            // Create meeting
+            var meeting = new DanismanlikGorusmesi
+            {
+                ProjeId = state.ProjeId.Value,
+                OgrenciId = state.OgrenciId.Value,
+                AkademisyenId = state.AkademisyenId.Value,
+                Baslik = state.Baslik,
+                GorusmeTarihi = state.GorusmeTarihi.Value,
+                GorusmeTipi = state.GorusmeTipi,
+                Notlar = state.Notlar,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+
+            if (roleIsOgrenci)
+            {
+                meeting.TalepEden = "Ogrenci";
+                meeting.Durum = GorusmeDurumu.HocaOnayiBekliyor;
+                meeting.SonGuncelleyenRol = "Ogrenci";
+            }
+            else if (roleIsAkademisyen)
+            {
+                meeting.TalepEden = "Akademisyen";
+                meeting.Durum = GorusmeDurumu.OgrenciOnayiBekliyor;
+                meeting.SonGuncelleyenRol = "Akademisyen";
+            }
+            else
+            {
+                meeting.TalepEden = "Admin";
+                meeting.Durum = GorusmeDurumu.Onaylandi;
+                meeting.SonGuncelleyenRol = "Admin";
+            }
+
+            meeting.GuncelleZamanDurumu();
+            _db.DanismanlikGorusmeleri.Add(meeting);
+            await _db.SaveChangesAsync();
+
+            // Notify
+            await _bildirimService.GorusmePlanlandiBildirimiGonder(meeting);
+
+            _meetingSessions.TryRemove(userKey, out _);
+            var detailsUrl = Url.Action("Details", "DanismanlikGorusmesi", new { id = meeting.Id });
+            var reply = $"Görüşme talebini oluşturdum. Başlık: '{meeting.Baslik}', Tarih: {meeting.GorusmeTarihi:dd.MM.yyyy HH:mm}, Tip: {meeting.GorusmeTipi}. Detaylara buradan geçebilirsiniz.";
+            return Ok(new ChatResponse { reply = reply, executed = true, data = new { meetingId = meeting.Id, detailsUrl } });
+        }
+
+        private async Task<Proje> FindProjectByNameForCurrentUserAsync(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return null;
+            var normInput = Normalize(input);
+            IQueryable<Proje> q = _db.Projeler;
+            if (User.IsInRole("Ogrenci"))
+            {
+                var ogr = await _authService.GetCurrentOgrenciAsync();
+                if (ogr == null) return null;
+                q = q.Where(p => p.OgrenciId == ogr.Id);
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                var aka = await _authService.GetCurrentAkademisyenAsync();
+                if (aka == null) return null;
+                q = q.Where(p => p.MentorId == aka.Id);
+            }
+            var list = await Task.FromResult(q.ToList());
+            Proje best = null;
+            int bestDist = int.MaxValue;
+            foreach (var p in list)
+            {
+                var n = Normalize(p.Ad);
+                if (n == normInput) return p;
+            }
+            var starts = list.Where(p => Normalize(p.Ad).StartsWith(normInput)).ToList();
+            if (starts.Count == 1) return starts[0];
+            if (starts.Count > 1)
+            {
+                foreach (var p in starts)
+                {
+                    var d = Levenshtein(Normalize(p.Ad), normInput);
+                    if (d < bestDist) { best = p; bestDist = d; }
+                }
+                return best;
+            }
+            var contains = list.Where(p => Normalize(p.Ad).Contains(normInput)).ToList();
+            if (contains.Count == 1) return contains[0];
+            if (contains.Count > 1)
+            {
+                foreach (var p in contains)
+                {
+                    var d = Levenshtein(Normalize(p.Ad), normInput);
+                    if (d < bestDist) { best = p; bestDist = d; }
+                }
+                return best;
+            }
+            foreach (var p in list)
+            {
+                var d = Levenshtein(Normalize(p.Ad), normInput);
+                if (d < bestDist) { best = p; bestDist = d; }
+            }
+            return best;
+        }
+
+		private async Task<List<string>> GetAvailableProjectNamesForPromptAsync()
+		{
+			IQueryable<Proje> q = _db.Projeler;
+			if (User.IsInRole("Ogrenci"))
+			{
+				var ogr = await _authService.GetCurrentOgrenciAsync();
+				if (ogr != null) q = q.Where(p => p.OgrenciId == ogr.Id);
+			}
+			else if (User.IsInRole("Akademisyen"))
+			{
+				var aka = await _authService.GetCurrentAkademisyenAsync();
+				if (aka != null) q = q.Where(p => p.MentorId == aka.Id);
+			}
+			var list = await Task.FromResult(q.Select(p => p.Ad).ToList());
+			return list;
 		}
 
 		private async Task<Ogrenci> FindOgrenciByFullNameAsync(string adSoyad)

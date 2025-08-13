@@ -463,7 +463,7 @@
         </div>
         <div id="ai-chat-messages" class="ai-chat-messages"></div>
         <form id="ai-chat-form" class="ai-chat-input" data-no-transition="true">
-            <input id="ai-chat-input" type="text" class="form-control" placeholder="Herhangi bir şey yazabilirsiniz..." autocomplete="off" />
+            <input id="ai-chat-input" type="text" class="form-control" placeholder="Yapmak istediğiniz işlemi yazınız..." autocomplete="off" />
             <button class="btn btn-primary" type="submit">Gönder</button>
         </form>
     </div>
@@ -480,7 +480,7 @@
             panel.classList.add('open');
             // Karşılama mesajını yalnızca ilk açılışta göster
             if (messages && messages.children.length === 0) {
-                addMsg('bot', 'Merhaba! Ben yapay zeka asistanıyım. Bu ekranda şunları yapabilirim:\n- Proje oluşturma\n- Kategori oluşturma\n- Görüşme tarihi planlama\n- Proje detay yönlendirme\n- Görüşme detay yönlendirme');
+                addMsg('bot', 'Merhaba! Ben yapay zeka asistanıyım. Bu ekranda şunları yapabilirim:\n- Proje oluşturma\n- Kategori oluşturma\n- Görüşme tarihi planlama');
                 const sugg = document.createElement('div');
                 sugg.className = 'ai-suggestions';
                 const suggestions = [
@@ -511,6 +511,12 @@
             messages.scrollTop = messages.scrollHeight;
             return div;
         }
+        // Sayfa yenilenmesi vb. durumlarda konusma belleğini sifirla
+        window.addEventListener('pageshow', function(e){
+            // bfcache donusu haric, her yenilemede reset at
+            fetch('/assistant/reset', { method:'POST' });
+        });
+
         if(form){
             form.addEventListener('submit', async function(e){
                 e.preventDefault();
@@ -526,6 +532,30 @@
                     });
                     const data = await res.json();
                     const msgDiv = addMsg('bot', data.reply || 'Bir şeyler ters gitti.');
+                    // Basit proje listesi algilama: 'Mevcut projeleriniz:' cümlesindeki isimleri butonlara ayiralim
+                    if (data?.reply && data.reply.includes('Mevcut projeleriniz:')) {
+                        // Sadece liste bölümünü butona çevir, geri kalan metni parse etme
+                        const start = data.reply.indexOf('Mevcut projeleriniz:') + 'Mevcut projeleriniz:'.length;
+                        // Nokta gelene kadar olan kismi liste olarak aliyoruz (server tarafinda nokta ile bitti)
+                        const end = data.reply.indexOf('.', start);
+                        const listSlice = end > start ? data.reply.substring(start, end) : data.reply.substring(start);
+                        const names = listSlice.split(',').map(s => s.trim()).filter(Boolean);
+                        if (names.length) {
+                            const wrap = document.createElement('div');
+                            wrap.className = 'ai-suggestions';
+                            names.slice(0, 10).forEach(name => {
+                                // Sadece proje adlarini butona koy
+                                const b = document.createElement('button');
+                                b.type = 'button';
+                                b.className = 'btn btn-sm btn-light me-2 mb-2';
+                                b.textContent = name;
+                                b.addEventListener('click', () => { input.value = name; input.focus(); });
+                                wrap.appendChild(b);
+                            });
+                            messages.appendChild(wrap);
+                            messages.scrollTop = messages.scrollHeight;
+                        }
+                    }
                     if(data?.data?.detailsUrl && msgDiv){
                         const a = document.createElement('a');
                         a.href = data.data.detailsUrl;

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace UniversiteProjeYonetimSistemi.Services
@@ -7,6 +8,7 @@ namespace UniversiteProjeYonetimSistemi.Services
 	public interface IAiNlpService
 	{
 		Task<CreateProjectCommand?> ExtractCreateProjectAsync(string message);
+		Task<DateTime?> ExtractDateTimeAsync(string message, DateTime? referenceTime = null);
 	}
 }
 
