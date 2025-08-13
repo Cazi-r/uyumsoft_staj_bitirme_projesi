@@ -458,13 +458,13 @@
     <button id="ai-chat-btn" class="ai-chat-btn" title="Asistan"><i class="fa-solid fa-message"></i></button>
     <div id="ai-chat-panel" class="ai-chat-panel">
         <div class="ai-chat-header">
-            <span>Asistan</span>
+            <span>Yapay Zeka Asistan</span>
             <button id="ai-chat-close" class="btn btn-sm btn-light">×</button>
         </div>
         <div id="ai-chat-messages" class="ai-chat-messages"></div>
-        <form id="ai-chat-form" class="ai-chat-input" data-no-transition="true">
-            <input id="ai-chat-input" type="text" class="form-control" placeholder="Yapmak istediğiniz işlemi yazınız..." autocomplete="off" />
-            <button class="btn btn-primary" type="submit">Gönder</button>
+        <form id="ai-chat-form" class="ai-chat-input" data-no-transition="true" data-skip-validation="true" novalidate>
+            <input id="ai-chat-input" type="text" class="form-control" placeholder="Yapmak istediginiz islemi yaziniz..." autocomplete="off" />
+            <button id="ai-send-btn" class="btn ai-send-btn" type="submit" title="Gonder"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
     </div>
     }
@@ -523,6 +523,7 @@
                 const text = input.value.trim();
                 if(!text) return;
                 addMsg('user', text);
+                const sendBtn = document.getElementById('ai-send-btn');
                 input.value='';
                 try{
                     const res = await fetch('/assistant/chat',{
@@ -567,6 +568,7 @@
                 }catch(err){
                     addMsg('bot','Sunucuya ulaşılamadı.');
                 }
+                // Success effect removed
             });
         }
     })();
