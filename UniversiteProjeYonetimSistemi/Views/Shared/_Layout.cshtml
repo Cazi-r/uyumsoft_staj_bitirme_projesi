@@ -453,6 +453,94 @@
     </script>
     
     @await RenderSectionAsync("Scripts", required: false)
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+    <button id="ai-chat-btn" class="ai-chat-btn" title="Asistan"><i class="fa-solid fa-message"></i></button>
+    <div id="ai-chat-panel" class="ai-chat-panel">
+        <div class="ai-chat-header">
+            <span>Asistan</span>
+            <button id="ai-chat-close" class="btn btn-sm btn-light">×</button>
+        </div>
+        <div id="ai-chat-messages" class="ai-chat-messages"></div>
+        <form id="ai-chat-form" class="ai-chat-input" data-no-transition="true">
+            <input id="ai-chat-input" type="text" class="form-control" placeholder="Herhangi bir şey yazabilirsiniz..." autocomplete="off" />
+            <button class="btn btn-primary" type="submit">Gönder</button>
+        </form>
+    </div>
+    }
+    <script>
+    (function(){
+        const btn = document.getElementById('ai-chat-btn');
+        const panel = document.getElementById('ai-chat-panel');
+        const closeBtn = document.getElementById('ai-chat-close');
+        const form = document.getElementById('ai-chat-form');
+        const input = document.getElementById('ai-chat-input');
+        const messages = document.getElementById('ai-chat-messages');
+        const openPanel = () => {
+            panel.classList.add('open');
+            // Karşılama mesajını yalnızca ilk açılışta göster
+            if (messages && messages.children.length === 0) {
+                addMsg('bot', 'Merhaba! Ben yapay zeka asistanıyım. Bu ekranda şunları yapabilirim:\n- Proje oluşturma\n- Kategori oluşturma\n- Görüşme tarihi planlama\n- Proje detay yönlendirme\n- Görüşme detay yönlendirme');
+                const sugg = document.createElement('div');
+                sugg.className = 'ai-suggestions';
+                const suggestions = [
+                    { label: 'Proje oluşturma', value: 'Proje oluşturmak istiyorum' },
+                    { label: 'Kategori oluşturma', value: 'Kategori oluşturmak istiyorum' },
+                    { label: 'Görüşme tarihi planlama', value: 'Görüşme tarihi planlamak istiyorum' }
+                ];
+                suggestions.forEach(s => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'btn btn-sm btn-light me-2 mb-2';
+                    b.textContent = s.label;
+                    b.addEventListener('click', () => { input.value = s.value; input.focus(); });
+                    sugg.appendChild(b);
+                });
+                messages.appendChild(sugg);
+                messages.scrollTop = messages.scrollHeight;
+            }
+        };
+        const closePanel = () => panel.classList.remove('open');
+        if(btn) btn.addEventListener('click', openPanel);
+        if(closeBtn) closeBtn.addEventListener('click', closePanel);
+        function addMsg(role, text){
+            const div = document.createElement('div');
+            div.className = 'ai-msg ' + role;
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+            return div;
+        }
+        if(form){
+            form.addEventListener('submit', async function(e){
+                e.preventDefault();
+                const text = input.value.trim();
+                if(!text) return;
+                addMsg('user', text);
+                input.value='';
+                try{
+                    const res = await fetch('/assistant/chat',{
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body: JSON.stringify({message:text})
+                    });
+                    const data = await res.json();
+                    const msgDiv = addMsg('bot', data.reply || 'Bir şeyler ters gitti.');
+                    if(data?.data?.detailsUrl && msgDiv){
+                        const a = document.createElement('a');
+                        a.href = data.data.detailsUrl;
+                        a.textContent = ' Detaylara geçin';
+                        a.className = 'ai-link';
+                        a.target = '_self';
+                        msgDiv.appendChild(a);
+                    }
+                }catch(err){
+                    addMsg('bot','Sunucuya ulaşılamadı.');
+                }
+            });
+        }
+    })();
+    </script>
 </body>
 </html>
 
