@@ -23,6 +23,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 		private readonly IAkademisyenService _akademisyenService;
 
 		private static readonly ConcurrentDictionary<string, CreateProjectState> _sessions = new();
+		private static readonly ConcurrentDictionary<string, CreateCategoryState> _categorySessions = new();
 
 		public AssistantController(
 			IProjeService projeService,
@@ -44,6 +45,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 		public class ChatResponse { public string reply { get; set; } public bool executed { get; set; } public object data { get; set; } }
 
 		private enum CreateProjectStep { AskAd, AskAciklama, AskKategori, AskMentor, AskOgrenci, AskTeslimTarihi }
+		private enum CreateCategoryStep { AskAd, AskAciklama, AskRenk }
 
 		private class CreateProjectState
 		{
@@ -60,6 +62,14 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			public int[] OgrenciCandidateIds { get; set; }
 		}
 
+		private class CreateCategoryState
+		{
+			public string Ad { get; set; }
+			public string Aciklama { get; set; }
+			public string Renk { get; set; }
+			public CreateCategoryStep? Pending { get; set; }
+		}
+
 		[HttpPost("chat")]
 		public async Task<IActionResult> Chat([FromBody] ChatRequest req)
 		{
@@ -70,11 +80,108 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			if (Regex.IsMatch(text, "\\b(iptal|vazgeç|vazgec|cancel)\\b", RegexOptions.IgnoreCase))
 			{
 				_sessions.TryRemove(userKey, out _);
+				_categorySessions.TryRemove(userKey, out _);
 				return Ok(new ChatResponse { reply = "Tamamdır, bu adımı iptal ettim. Hazır olduğunuzda yeniden başlayabiliriz.", executed = false });
 			}
 
+			// 1) Kategori olusturma akisi aktif mi?
+			_categorySessions.TryGetValue(userKey, out var catState);
+			if (catState != null)
+			{
+				// Yetki kontrolu
+				if (!(User.IsInRole("Admin") || User.IsInRole("Akademisyen")))
+				{
+					_categorySessions.TryRemove(userKey, out _);
+					return Ok(new ChatResponse { reply = "Bu işlem için yetkiniz yok gibi görünüyor. Proje oluşturma gibi işlemlerde yardımcı olabilirim.", executed = false });
+				}
+
+				if (catState.Pending.HasValue)
+				{
+					switch (catState.Pending.Value)
+					{
+						case CreateCategoryStep.AskAd:
+							catState.Ad = text.Trim(' ', '"', '\'', '“', '”');
+							break;
+					case CreateCategoryStep.AskAciklama:
+						if (!Regex.IsMatch(text, "^yok$", RegexOptions.IgnoreCase))
+							catState.Aciklama = text.Trim();
+						else
+							catState.Aciklama = string.Empty; // yok denirse boş kabul et
+						break;
+					case CreateCategoryStep.AskRenk:
+						if (Regex.IsMatch(text, "^yok$", RegexOptions.IgnoreCase))
+						{
+							// Varsayılan rengi seç
+							catState.Renk = "#3B82F6";
+						}
+						else
+						{
+							var resolved = ResolveColor(text);
+							if (string.IsNullOrEmpty(resolved))
+								return Ok(new ChatResponse { reply = "Rengi '#RRGGBB' biçiminde ya da isim olarak yazabilirsiniz (ör. siyah, mavi). İsterseniz 'yok' diyebilirsiniz.", executed = false });
+							catState.Renk = resolved;
+						}
+						break;
+					}
+					catState.Pending = null;
+				}
+
+				// Eksik alanlari sor
+				if (string.IsNullOrWhiteSpace(catState.Ad))
+				{
+					catState.Pending = CreateCategoryStep.AskAd;
+					return Ok(new ChatResponse { reply = "Yeni kategorimizin adı ne olsun?", executed = false });
+				}
+				if (catState.Aciklama == null)
+				{
+					catState.Pending = CreateCategoryStep.AskAciklama;
+					return Ok(new ChatResponse { reply = "Kısa bir açıklama eklemek ister misiniz? (İsterseniz 'yok' yazabilirsiniz)", executed = false });
+				}
+				if (catState.Renk == null)
+				{
+					catState.Pending = CreateCategoryStep.AskRenk;
+					return Ok(new ChatResponse { reply = "İsterseniz bir renk de belirleyelim (#RRGGBB veya isim: siyah, mavi...). (Örn: #3B82F6) Yoksa 'yok' yazabilirsiniz.", executed = false });
+				}
+
+				// Tum bilgiler var -> olustur
+				var kategorilerAll = await _kategoriRepository.GetAllAsync();
+				var duplicate = kategorilerAll.FirstOrDefault(k => k.Ad.Equals(catState.Ad, StringComparison.OrdinalIgnoreCase));
+				if (duplicate != null)
+				{
+					_categorySessions.TryRemove(userKey, out _);
+					var existsUrl = Url.Action("Details", "Kategori", new { id = duplicate.Id });
+					return Ok(new ChatResponse { reply = $"Bu isimde bir kategori zaten var: '{duplicate.Ad}'. İsterseniz mevcut kategoriye gidebilirsiniz.", executed = true, data = new { categoryId = duplicate.Id, detailsUrl = existsUrl } });
+				}
+
+				var yeni = new ProjeKategori
+				{
+					Ad = catState.Ad.Trim(),
+					Aciklama = catState.Aciklama?.Trim(),
+					Renk = string.IsNullOrWhiteSpace(catState.Renk) ? "#3B82F6" : catState.Renk,
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now
+				};
+				await _kategoriRepository.AddAsync(yeni);
+				_categorySessions.TryRemove(userKey, out _);
+				var urlCat = Url.Action("Details", "Kategori", new { id = yeni.Id });
+				return Ok(new ChatResponse { reply = $"Harika! '{yeni.Ad}' kategorisini oluşturdum.", executed = true, data = new { categoryId = yeni.Id, detailsUrl = urlCat } });
+			}
+
+			// 2) Proje olusturma akisi
+
 			// Mevcut oturum var mı?
 			_sessions.TryGetValue(userKey, out var state);
+
+			// Kategori oluşturma niyeti algıla
+			if (catState == null && IsCreateCategoryIntent(text))
+			{
+				if (!(User.IsInRole("Admin") || User.IsInRole("Akademisyen")))
+					return Ok(new ChatResponse { reply = "Kategori oluşturma için yetkiniz bulunmuyor. Proje oluşturma veya görüşme planlama konusunda yardımcı olabilirim.", executed = false });
+				catState = new CreateCategoryState();
+				_categorySessions[userKey] = catState;
+				catState.Pending = CreateCategoryStep.AskAd;
+				return Ok(new ChatResponse { reply = "Yeni kategorimizin adı ne olsun?", executed = false });
+			}
 
 			if (state == null)
 			{
@@ -111,9 +218,19 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 						case CreateProjectStep.AskAd:
 							state.Ad = text.Trim(' ', '"', '\'', '“', '”');
 							break;
-						case CreateProjectStep.AskAciklama:
-							state.Aciklama = text.Trim();
-							break;
+                    case CreateProjectStep.AskAciklama:
+                        {
+                            var trimmed = text.Trim();
+                            if (string.IsNullOrWhiteSpace(trimmed) || Regex.IsMatch(trimmed, "^yok$", RegexOptions.IgnoreCase))
+                            {
+                                state.Aciklama = null; // zorunlu, boş kabul edilmez
+                            }
+                            else
+                            {
+                                state.Aciklama = trimmed;
+                            }
+                            break;
+                        }
 						case CreateProjectStep.AskKategori:
 							if (!Regex.IsMatch(text, "^yok$", RegexOptions.IgnoreCase))
 								state.Kategori = text.Trim(' ', '"', '\'', '“', '”');
@@ -155,10 +272,10 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 				state.Pending = CreateProjectStep.AskAd;
 				return Ok(new ChatResponse { reply = "Projenin adını paylaşır mısınız?", executed = false });
 			}
-			if (string.IsNullOrWhiteSpace(state.Aciklama))
+            if (string.IsNullOrWhiteSpace(state.Aciklama))
 			{
 				state.Pending = CreateProjectStep.AskAciklama;
-				return Ok(new ChatResponse { reply = "Kısaca projenizi nasıl tanımlarsınız?", executed = false });
+                return Ok(new ChatResponse { reply = "Açıklama zorunludur. Kısaca projenizi nasıl tanımlarsınız?", executed = false });
 			}
 
 			// Kategori zorunlu
@@ -328,6 +445,12 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			return l.Contains("proje") && (l.Contains("aç") || l.Contains("ac") || l.Contains("oluştur") || l.Contains("olustur") || l.Contains("ekle") || l.Contains("kur") || l.Contains("olusturmak") || l.Contains("oluşturmak"));
 		}
 
+		private bool IsCreateCategoryIntent(string text)
+		{
+			var l = text.ToLower(new System.Globalization.CultureInfo("tr-TR"));
+			return (l.Contains("kategori") || l.Contains("kategorİ")) && (l.Contains("oluştur") || l.Contains("olustur") || l.Contains("ekle") || l.Contains("kur") || l.Contains("yeni"));
+		}
+
 		private async Task<ProjeKategori> EnsureKategoriAsync(string ad)
 		{
 			if (string.IsNullOrWhiteSpace(ad)) return null;
@@ -429,6 +552,36 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 				}
 			}
 			return dp[n, m];
+		}
+
+		private string ResolveColor(string input)
+		{
+			if (string.IsNullOrWhiteSpace(input)) return null;
+			var v = input.Trim().ToLower(new System.Globalization.CultureInfo("tr-TR"));
+			// Hex ise direkt kabul
+			if (Regex.IsMatch(v, "^#[0-9a-f]{6}$")) return v;
+			// Renk isimleri haritası (temel)
+			switch (v)
+			{
+				case "siyah": return "#000000";
+				case "beyaz": return "#FFFFFF";
+				case "kirmizi":
+				case "kırmızı": return "#FF0000";
+				case "yesil":
+				case "yeşil": return "#00FF00";
+				case "mavi": return "#0000FF";
+				case "turuncu": return "#FFA500";
+				case "mor": return "#800080";
+				case "pembe": return "#FFC0CB";
+				case "gri": return "#808080";
+				case "lacivert": return "#000080";
+				case "kahverengi": return "#8B4513";
+				case "sarI":
+				case "sarı": return "#FFFF00";
+				default:
+					// Bilinmeyen ise null dön
+					return null;
+			}
 		}
 
 		private async Task<Ogrenci> FindOgrenciByFullNameAsync(string adSoyad)
