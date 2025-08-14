@@ -46,7 +46,9 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item category-option active" data-value="" href="#">Tum Kategoriler</a></li>
-                        @foreach (var kategori in Model.Select(p => p.Kategori).Distinct())
+                        @foreach (var kategori in Model.Where(p => p.Kategori != null)
+                                                      .GroupBy(p => p.Kategori.Ad)
+                                                      .Select(g => g.First().Kategori))
                         {
                             <li><a class="dropdown-item category-option" data-value="@kategori.Ad" href="#">@kategori.Ad</a></li>
                         }
@@ -97,7 +99,7 @@
                         <tr class="project-row table-hover-item" 
                             data-name="@item.Ad.ToLower()" 
                             data-status="@item.Status"
-                            data-category="@item.Kategori.Ad"
+                            data-category="@(item.Kategori?.Ad ?? "")"
                             data-student="@studentName.ToLower()">
                             <td>
                                 <div class="d-flex align-items-center">
@@ -108,7 +110,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0">@item.Ad</h6>
-                                        <span class="text-muted small">@(item.Aciklama?.Length > 50 ? item.Aciklama.Substring(0, 50) + "..." : item.Aciklama)</span>
+                                        <span class="text-muted small project-description" data-full-text="@item.Aciklama">@(item.Aciklama?.Length > 50 ? item.Aciklama.Substring(0, 50) + "..." : item.Aciklama)</span>
                                     </div>
                                 </div>
                             </td>
@@ -175,7 +177,7 @@
                                 <span class="@statusClass">@statusText</span>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark">@item.Kategori.Ad</span>
+                                <span class="badge bg-light text-dark">@(item.Kategori?.Ad ?? "-")</span>
                             </td>
                             <td class="text-end actions-cell">
                                 <div class="d-inline-flex align-items-center gap-1">

@@ -170,8 +170,8 @@ namespace UniversiteProjeYonetimSistemi.Services
                     // Kullanıcı oluştur
                     var kullanici = new Kullanici
                     {
-                        Ad = model.Ad,
-                        Soyad = model.Soyad,
+                        Ad = model.Ad?.Trim(),
+                        Soyad = model.Soyad?.Trim(),
                         Email = model.Email,
                         Sifre = HashPassword(model.Password),
                         Rol = model.Rol,
@@ -189,8 +189,8 @@ namespace UniversiteProjeYonetimSistemi.Services
                         var ogrenci = new Ogrenci
                         {
                             KullaniciId = kullanici.Id,
-                            Ad = model.Ad,
-                            Soyad = model.Soyad,
+                            Ad = model.Ad?.Trim(),
+                            Soyad = model.Soyad?.Trim(),
                             Email = model.Email,
                             OgrenciNo = model.OgrenciNo,
                             Telefon = !string.IsNullOrEmpty(model.Telefon) ? model.Telefon : string.Empty,
@@ -207,8 +207,8 @@ namespace UniversiteProjeYonetimSistemi.Services
                         var akademisyen = new Akademisyen
                         {
                             KullaniciId = kullanici.Id,
-                            Ad = model.Ad,
-                            Soyad = model.Soyad,
+                            Ad = model.Ad?.Trim(),
+                            Soyad = model.Soyad?.Trim(),
                             Email = model.Email,
                             Unvan = !string.IsNullOrEmpty(model.Unvan) ? model.Unvan : "Belirtilmemiş",
                             UzmanlikAlani = model.UzmanlikAlani ?? string.Empty,

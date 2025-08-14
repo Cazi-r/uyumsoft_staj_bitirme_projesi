@@ -38,6 +38,8 @@ builder.Services.AddScoped<IOgrenciService, OgrenciService>();
 builder.Services.AddScoped<IAkademisyenService, AkademisyenService>();
 builder.Services.AddScoped<IBildirimService, BildirimService>();
 builder.Services.AddScoped<ZamanDurumuService>();
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IAiNlpService, GeminiNlpService>();
 
 // Dosya yükleme boyut sınırını ayarla (50MB)
 builder.Services.Configure<IISServerOptions>(options =>
