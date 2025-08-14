@@ -55,6 +55,12 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             // Şu anki kullanıcının projenin danışmanı olup olmadığını kontrol et
             ViewBag.IsCurrentUserMentor = await IsCurrentUserProjectMentor(id);
             
+            // Şu anki kullanıcının projenin sahibi öğrenci olup olmadığını kontrol et
+            ViewBag.IsCurrentUserProjectOwner = await IsCurrentUserProjectOwner(id);
+            
+            // Şu anki kullanıcının projenin seçilmiş akademisyeni olup olmadığını kontrol et (beklemede durumunda)
+            ViewBag.IsCurrentUserSelectedMentor = await IsCurrentUserSelectedMentor(id);
+            
             // Yorum bölümünü highlight etmek için
             ViewBag.HighlightYorum = highlightYorum ?? false;
 
@@ -253,6 +259,68 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
+        // Helper method to check if current user is the owner student of the project
+        private async Task<bool> IsCurrentUserProjectOwner(int projeId)
+        {
+            // Admin her zaman tüm yetkilere sahiptir
+            if (User.IsInRole("Admin"))
+            {
+                return true;
+            }
+            
+            // Kullanıcı öğrenci değilse yetkisi yok
+            if (!User.IsInRole("Ogrenci"))
+            {
+                return false;
+            }
+            
+            var proje = await _projeService.GetByIdAsync(projeId);
+            if (proje == null || !proje.OgrenciId.HasValue)
+            {
+                return false;
+            }
+            
+            var ogrenci = await _authService.GetCurrentOgrenciAsync();
+            if (ogrenci == null)
+            {
+                return false;
+            }
+            
+            // Projenin sahibi öğrenci mi kontrol et
+            return proje.OgrenciId.Value == ogrenci.Id;
+        }
+
+        // Helper method to check if current user is the selected mentor of the project (for pending projects)
+        private async Task<bool> IsCurrentUserSelectedMentor(int projeId)
+        {
+            // Admin her zaman tüm yetkilere sahiptir
+            if (User.IsInRole("Admin"))
+            {
+                return true;
+            }
+            
+            // Kullanıcı akademisyen değilse yetkisi yok
+            if (!User.IsInRole("Akademisyen"))
+            {
+                return false;
+            }
+            
+            var proje = await _projeService.GetByIdAsync(projeId);
+            if (proje == null || !proje.MentorId.HasValue)
+            {
+                return false;
+            }
+            
+            var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+            if (akademisyen == null)
+            {
+                return false;
+            }
+            
+            // Projenin seçilmiş akademisyeni mi kontrol et
+            return proje.MentorId.Value == akademisyen.Id;
+        }
+
         // Durumu 'Atanmis' -> 'Devam' yapar; yalnizca admin veya projenin danismani ve CSRF korumali.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -366,6 +434,101 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             
             return RedirectToAction(nameof(Details), new { id });
         }
+        
+        // Akademisyen projeyi kabul eder ve kendisine atar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Akademisyen")]
+        public async Task<IActionResult> ProjeKabulEt(int id)
+        {
+            var proje = await _projeService.GetByIdAsync(id);
+            if (proje == null)
+            {
+                return NotFound();
+            }
+            
+            // Sadece beklemede olan projeler kabul edilebilir
+            if (proje.Status != "Beklemede")
+            {
+                TempData["ErrorMessage"] = "Sadece beklemede olan projeler kabul edilebilir.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+            if (akademisyen == null)
+            {
+                TempData["ErrorMessage"] = "Geçerli akademisyen bulunamadı.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            // Proje durumunu güncelle ve danışmanı ata
+            proje.MentorId = akademisyen.Id;
+            proje.Status = "Atanmis";
+            await _projeService.UpdateAsync(proje);
+            
+            // Öğrenciye bildirim gönder
+            if (proje.OgrenciId.HasValue)
+            {
+                await _bildirimService.BildirimOlustur(
+                    $"Proje kabul edildi: {proje.Ad}",
+                    $"{akademisyen.Unvan} {akademisyen.Ad} {akademisyen.Soyad} '{proje.Ad}' projenizi kabul etti ve danışmanlığınızı üstlendi.",
+                    "Bilgi",
+                    ogrenciId: proje.OgrenciId.Value);
+            }
+            
+            TempData["SuccessMessage"] = "Proje başarıyla kabul edildi ve size atandı.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+        
+        // Akademisyen projeyi reddeder
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Akademisyen")]
+        public async Task<IActionResult> ProjeReddet(int id, string redSebebi = "")
+        {
+            var proje = await _projeService.GetByIdAsync(id);
+            if (proje == null)
+            {
+                return NotFound();
+            }
+            
+            // Sadece beklemede olan projeler reddedilebilir
+            if (proje.Status != "Beklemede")
+            {
+                TempData["ErrorMessage"] = "Sadece beklemede olan projeler reddedilebilir.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            var akademisyen = await _authService.GetCurrentAkademisyenAsync();
+            if (akademisyen == null)
+            {
+                TempData["ErrorMessage"] = "Geçerli akademisyen bulunamadı.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            // Proje durumunu iptal olarak güncelle
+            proje.Status = "Iptal";
+            await _projeService.UpdateAsync(proje);
+            
+            // Öğrenciye bildirim gönder
+            if (proje.OgrenciId.HasValue)
+            {
+                string mesaj = $"{akademisyen.Unvan} {akademisyen.Ad} {akademisyen.Soyad} '{proje.Ad}' projenizi reddetti.";
+                if (!string.IsNullOrWhiteSpace(redSebebi))
+                {
+                    mesaj += $" Red sebebi: {redSebebi}";
+                }
+                
+                await _bildirimService.BildirimOlustur(
+                    $"Proje reddedildi: {proje.Ad}",
+                    mesaj,
+                    "Uyari",
+                    ogrenciId: proje.OgrenciId.Value);
+            }
+            
+            TempData["SuccessMessage"] = "Proje başarıyla reddedildi.";
+            return RedirectToAction(nameof(Index));
+        }
 
         private async Task<bool> ProjeExists(int id)
         {
@@ -376,7 +539,15 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         {
             ViewBag.Kategoriler = new SelectList(await _kategoriRepository.GetAllAsync(), "Id", "Ad");
             ViewBag.Ogrenciler = new SelectList(await _ogrenciService.GetAllAsync(), "Id", "Ad");
-            ViewBag.Akademisyenler = new SelectList(await _akademisyenService.GetAllAsync(), "Id", "Ad");
+            
+            // Akademisyenler icin ad ve soyadi birlestir
+            var akademisyenler = await _akademisyenService.GetAllAsync();
+            var akademisyenListesi = akademisyenler.Select(a => new { 
+                Id = a.Id, 
+                AdSoyad = $"{a.Ad} {a.Soyad}" 
+            }).ToList();
+            ViewBag.Akademisyenler = new SelectList(akademisyenListesi, "Id", "AdSoyad");
+            
             ViewBag.Durumlar = new SelectList(new[] { "Beklemede", "Atanmis", "Devam", "Tamamlandi", "Iptal" });
         }
     }

@@ -61,6 +61,37 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
+        // Helper method to check if current user is the owner student of the project
+        private async Task<bool> IsCurrentUserProjectOwner(int projeId)
+        {
+            // Admin her zaman tüm yetkilere sahiptir
+            if (User.IsInRole("Admin"))
+            {
+                return true;
+            }
+            
+            // Kullanıcı öğrenci değilse yetkisi yok
+            if (!User.IsInRole("Ogrenci"))
+            {
+                return false;
+            }
+            
+            var proje = await _projeService.GetByIdAsync(projeId);
+            if (proje == null || !proje.OgrenciId.HasValue)
+            {
+                return false;
+            }
+            
+            var ogrenci = await _authService.GetCurrentOgrenciAsync();
+            if (ogrenci == null)
+            {
+                return false;
+            }
+            
+            // Projenin sahibi öğrenci mi kontrol et
+            return proje.OgrenciId.Value == ogrenci.Id;
+        }
+
         // Asama ekleme formu: Yalnizca admin veya projenin danismani erisebilir.
         [HttpGet]
         [Authorize(Roles = "Admin,Akademisyen")]
@@ -121,6 +152,16 @@ namespace UniversiteProjeYonetimSistemi.Controllers
         [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
         public async Task<IActionResult> UpdateStatus(int id, int projeId, bool tamamlandi)
         {
+            // Sadece projenin danışmanı veya sahibi öğrenci aşama durumunu değiştirebilir
+            var isMentor = await IsCurrentUserProjectMentor(projeId);
+            var isOwner = await IsCurrentUserProjectOwner(projeId);
+            
+            if (!isMentor && !isOwner)
+            {
+                TempData["ErrorMessage"] = "Bu projenin aşama durumunu sadece danışmanı, sahibi öğrenci veya admin değiştirebilir.";
+                return RedirectToAction("Details", "Proje", new { id = projeId });
+            }
+            
             await _projeService.UpdateStageStatusAsync(id, tamamlandi);
             
             // Eğer aşama tamamlandı olarak işaretlendiyse ve öğrenci veya admin tarafından yapıldıysa bildirim gönder

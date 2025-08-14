@@ -110,7 +110,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0">@item.Ad</h6>
-                                        <span class="text-muted small">@(item.Aciklama?.Length > 50 ? item.Aciklama.Substring(0, 50) + "..." : item.Aciklama)</span>
+                                        <span class="text-muted small project-description" data-full-text="@item.Aciklama">@(item.Aciklama?.Length > 50 ? item.Aciklama.Substring(0, 50) + "..." : item.Aciklama)</span>
                                     </div>
                                 </div>
                             </td>

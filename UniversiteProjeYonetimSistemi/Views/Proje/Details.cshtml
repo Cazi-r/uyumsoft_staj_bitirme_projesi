@@ -37,16 +37,26 @@
             }
             else if (User.IsInRole("Akademisyen"))
             {
-                @if (ViewBag.IsCurrentUserMentor)
+                @if (Model.Status == "Beklemede" && ViewBag.IsCurrentUserSelectedMentor)
+                {
+                    <div class="btn-group" role="group">
+                        <form asp-action="ProjeKabulEt" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-success animate-button" onclick="return confirm('Bu projeyi kabul etmek istediğinizden emin misiniz?')">
+                                <i class="fas fa-check-circle"></i> Kabul Et
+                            </button>
+                        </form>
+                        <button type="button" class="btn btn-danger animate-button ms-2" data-bs-toggle="modal" data-bs-target="#reddetModal">
+                            <i class="fas fa-times-circle"></i> Reddet
+                        </button>
+                        <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-warning animate-button ms-2">
+                            <i class="fas fa-user-edit"></i> Danışman Değiştir
+                        </a>
+                    </div>
+                }
+                else if (ViewBag.IsCurrentUserMentor)
                 {
                     <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
                         <i class="fas fa-user-edit"></i> Danışman Değiştir
-                    </a>
-                }
-                else if (Model.Status == "Beklemede")
-                {
-                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-success animate-button">
-                        <i class="fas fa-check-circle"></i> Projeyi Kabul Et
                     </a>
                 }
             }
@@ -199,27 +209,30 @@
                                             </td>
                                             <td class="text-end">
                                                 <div class="d-flex flex-column gap-1" style="min-width: 50px;">
-                                                    @if (!asama.Tamamlandi)
+                                                    @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
                                                     {
-                                                        <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
-                                                            <input type="hidden" name="id" value="@asama.Id" />
-                                                            <input type="hidden" name="projeId" value="@Model.Id" />
-                                                            <input type="hidden" name="tamamlandi" value="true" />
-                                                            <button type="submit" class="btn btn-xs btn-outline-success animate-button w-100">
-                                                                <i class="fas fa-check"></i> Tamamlandı
-                                                            </button>
-                                                        </form>
-                                                    }
-                                                    else
-                                                    {
-                                                        <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
-                                                            <input type="hidden" name="id" value="@asama.Id" />
-                                                            <input type="hidden" name="projeId" value="@Model.Id" />
-                                                            <input type="hidden" name="tamamlandi" value="false" />
-                                                            <button type="submit" class="btn btn-xs btn-outline-warning animate-button w-100">
-                                                                <i class="fas fa-undo"></i> Geri Al
-                                                            </button>
-                                                        </form>
+                                                        @if (!asama.Tamamlandi)
+                                                        {
+                                                            <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
+                                                                <input type="hidden" name="id" value="@asama.Id" />
+                                                                <input type="hidden" name="projeId" value="@Model.Id" />
+                                                                <input type="hidden" name="tamamlandi" value="true" />
+                                                                <button type="submit" class="btn btn-xs btn-outline-success animate-button w-100">
+                                                                    <i class="fas fa-check"></i> Tamamlandı
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                        else
+                                                        {
+                                                            <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
+                                                                <input type="hidden" name="id" value="@asama.Id" />
+                                                                <input type="hidden" name="projeId" value="@Model.Id" />
+                                                                <input type="hidden" name="tamamlandi" value="false" />
+                                                                <button type="submit" class="btn btn-xs btn-outline-warning animate-button w-100">
+                                                                    <i class="fas fa-undo"></i> Geri Al
+                                                                </button>
+                                                            </form>
+                                                        }
                                                     }
                                                     
                                                     @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
@@ -251,9 +264,12 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Proje Dosyaları</h5>
                     <div class="d-flex flex-column gap-1" style="min-width: 120px;">
-                        <a asp-controller="ProjeDosya" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
-                            <i class="fas fa-plus me-2"></i>Dosya Ekle
-                        </a>
+                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                        {
+                            <a asp-controller="ProjeDosya" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
+                                <i class="fas fa-plus me-2"></i>Dosya Ekle
+                            </a>
+                        }
                         <a asp-controller="ProjeDosya" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
                             <i class="fas fa-list me-2"></i>Tüm Dosyalar
                         </a>
@@ -321,9 +337,12 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Proje Kaynakları</h5>
                     <div class="d-flex flex-column gap-1" style="min-width: 120px;">
-                        <a asp-controller="ProjeKaynagi" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
-                            <i class="fas fa-plus me-2"></i>Kaynak Ekle
-                        </a>
+                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                        {
+                            <a asp-controller="ProjeKaynagi" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
+                                <i class="fas fa-plus me-2"></i>Kaynak Ekle
+                            </a>
+                        }
                         <a asp-controller="ProjeKaynagi" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
                             <i class="fas fa-list me-2"></i>Tüm Kaynaklar
                         </a>
@@ -381,9 +400,12 @@
                                                             data-bs-content="@(string.IsNullOrEmpty(kaynak.Aciklama) ? "Açıklama bulunmamaktadır." : kaynak.Aciklama)">
                                                         <i class="fas fa-info-circle"></i> Detay
                                                     </button>
-                                                    <a asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@kaynak.Id" class="btn btn-xs btn-outline-danger animate-button w-100">
-                                                        <i class="fas fa-trash me-1"></i>Sil
-                                                    </a>
+                                                    @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                                                    {
+                                                        <a asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@kaynak.Id" class="btn btn-xs btn-outline-danger animate-button w-100">
+                                                            <i class="fas fa-trash me-1"></i>Sil
+                                                        </a>
+                                                    }
                                                 </div>
                                             </td>
                                         </tr>
@@ -537,6 +559,35 @@
                     }
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reddet Modal -->
+<div class="modal fade" id="reddetModal" tabindex="-1" aria-labelledby="reddetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reddetModalLabel">Projeyi Reddet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="ProjeReddet" asp-route-id="@Model.Id" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="redSebebi" class="form-label">Red Sebebi (Opsiyonel)</label>
+                        <textarea class="form-control" id="redSebebi" name="redSebebi" rows="3" placeholder="Projeyi neden reddettiğinizi açıklayabilirsiniz..."></textarea>
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i> Bu proje reddedilecek ve durumu "İptal" olarak değiştirilecektir. Bu işlem geri alınamaz.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Bu projeyi reddetmek istediğinizden emin misiniz?')">
+                        <i class="fas fa-times-circle"></i> Reddet
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

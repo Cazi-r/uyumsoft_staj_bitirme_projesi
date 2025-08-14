@@ -13,5 +13,6 @@ namespace UniversiteProjeYonetimSistemi.Services
         Task<int> OkunmamisBildirimSayisiniGetir(string kullaniciId, string rol);
         Task ProjeAsamasiTamamlandiBildirimiGonder(ProjeAsamasi projeAsamasi);
         Task GorusmeDurumuDegistiBildirimiGonder(DanismanlikGorusmesi gorusme);
+        Task BildirimOlustur(string baslik, string icerik, string bildirimTipi, int? ogrenciId = null, int? akademisyenId = null);
     }
 } 

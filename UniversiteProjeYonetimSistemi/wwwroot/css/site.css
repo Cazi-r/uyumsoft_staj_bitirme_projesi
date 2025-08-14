@@ -3529,3 +3529,114 @@ body.dark-theme .ai-send-btn { background: #2563eb; color: #fff; }
 body.dark-theme .ai-chat-btn { background: #2563eb; }
 body.dark-theme .ai-chat-panel .ai-chat-messages { scrollbar-color: #4b5563 transparent; }
 body.dark-theme .ai-chat-panel .ai-chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
+
+/* =====================================================
+   TOOLTIP STYLES - PROJECT DESCRIPTION TRUNCATION
+   ===================================================== */
+
+/* Tooltip container */
+.project-description {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* Tooltip styling */
+.project-description::after {
+  content: attr(data-full-text);
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 350px;
+  width: max-content;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+/* Tooltip arrow */
+.project-description::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  margin-top: -6px;
+  border: 6px solid transparent;
+  border-top-color: #333;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+}
+
+/* Show tooltip on hover */
+.project-description:hover::after,
+.project-description:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-100%);
+}
+
+/* Dark theme tooltip */
+.dark-theme .project-description::after {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  border: 1px solid #374151;
+}
+
+.dark-theme .project-description::before {
+  border-top-color: #1f2937;
+}
+
+/* High contrast mode tooltip */
+.high-contrast .project-description::after {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+.high-contrast .project-description::before {
+  border-top-color: #000000;
+}
+
+/* Mobile responsive tooltip adjustments */
+@media (max-width: 767.98px) {
+  .project-description::after {
+    max-width: 280px;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+  
+  .project-description::before {
+    border-width: 5px;
+    margin-top: -5px;
+  }
+}
+
+/* Tooltip positioning for better mobile UX */
+@media (max-width: 575.98px) {
+  .project-description::after {
+    left: 0;
+    transform: translateY(-100%);
+    max-width: 250px;
+  }
+  
+  .project-description::before {
+    left: 20px;
+    transform: translateY(-100%);
+  }
+}

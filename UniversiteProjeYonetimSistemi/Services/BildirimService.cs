@@ -271,7 +271,7 @@ namespace UniversiteProjeYonetimSistemi.Services
 
         // Yardımcı metotlar
         /// Yardimci: Bildirim tablosuna yeni kayit olusturur.
-        private async Task BildirimOlustur(string baslik, string icerik, string bildirimTipi, int? ogrenciId = null, int? akademisyenId = null)
+        public async Task BildirimOlustur(string baslik, string icerik, string bildirimTipi, int? ogrenciId = null, int? akademisyenId = null)
         {
             var bildirim = new Bildirim
             {

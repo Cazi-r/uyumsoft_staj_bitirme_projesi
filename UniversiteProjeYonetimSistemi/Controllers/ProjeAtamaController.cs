@@ -92,8 +92,15 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 }
             }
 
+            // Mevcut danışmanı akademisyenler listesinden çıkar
+            var filtreliAkademisyenler = akademisyenler;
+            if (proje.MentorId.HasValue)
+            {
+                filtreliAkademisyenler = akademisyenler.Where(a => a.Id != proje.MentorId.Value);
+            }
+
             ViewBag.Ogrenciler = new SelectList(ogrenciler.Select(o => new { Id = o.Id, AdSoyad = $"{o.Ad} {o.Soyad}" }), "Id", "AdSoyad");
-            ViewBag.Akademisyenler = new SelectList(akademisyenler.Select(a => new { Id = a.Id, AdSoyad = $"{a.Unvan} {a.Ad} {a.Soyad}" }), "Id", "AdSoyad");
+            ViewBag.Akademisyenler = new SelectList(filtreliAkademisyenler.Select(a => new { Id = a.Id, AdSoyad = $"{a.Unvan} {a.Ad} {a.Soyad}" }), "Id", "AdSoyad");
             
             return View(proje);
         }
