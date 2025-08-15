@@ -698,6 +698,12 @@ td.text-end .btn-group .btn { white-space: nowrap; }
   box-shadow: var(--box-shadow) !important;
 }
 
+/* Takvim sayfasında kart hover kaldırma */
+.takvim-page .card:hover {
+  transform: none !important;
+  box-shadow: var(--box-shadow) !important;
+}
+
 .card-header {
   background-color: var(--card-header-bg);
   border-bottom: var(--border-width) solid var(--card-header-border);
