@@ -321,43 +321,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
-        // Durumu 'Atanmis' -> 'Devam' yapar; yalnizca admin veya projenin danismani ve CSRF korumali.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
-        public async Task<IActionResult> UpdateStatusToInProgress(int id)
-        {
-            var proje = await _projeService.GetByIdAsync(id);
-            if (proje == null)
-            {
-                return NotFound();
-            }
-            
-            // Sadece projenin danışmanı durumu değiştirebilir
-            if (!await IsCurrentUserProjectMentor(id))
-            {
-                TempData["ErrorMessage"] = "Bu projeyi sadece danışmanı veya admin güncelleyebilir.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-            
-            // Sadece "Atanmis" durumundaki projeleri "Devam" durumuna geçirebilir
-            if (proje.Status == "Atanmis")
-            {
-                await _projeService.UpdateStatusAsync(id, "Devam");
-                
-                // Proje durumu değiştiği için bildirim gönder
-                proje.Status = "Devam"; // Bildirim servisi için durumu güncelle
-                await _bildirimService.ProjeIlerlemesiDegistiBildirimiGonder(proje);
-                
-                TempData["SuccessMessage"] = "Proje durumu 'Devam Ediyor' olarak güncellendi.";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Proje durumu güncellenemedi. Proje durumu 'Atanmış' olmalıdır.";
-            }
-            
-            return RedirectToAction(nameof(Details), new { id });
-        }
+        // 'Atanmis' adımı kaldırıldı; proje kabulde direkt 'Devam' olur.
         
         // Durumu 'Devam' -> 'Tamamlandi' yapar; yalnizca admin veya projenin danismani ve CSRF korumali.
         [HttpPost]
@@ -461,9 +425,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 return RedirectToAction(nameof(Details), new { id });
             }
             
-            // Proje durumunu güncelle ve danışmanı ata
+            // Proje durumunu güncelle ve danışmanı ata (kabulde proje otomatik başlasın)
             proje.MentorId = akademisyen.Id;
-            proje.Status = "Atanmis";
+            proje.Status = "Devam";
             await _projeService.UpdateAsync(proje);
             
             // Öğrenciye bildirim gönder
@@ -476,7 +440,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                     ogrenciId: proje.OgrenciId.Value);
             }
             
-            TempData["SuccessMessage"] = "Proje başarıyla kabul edildi ve size atandı.";
+            TempData["SuccessMessage"] = "Proje başarıyla kabul edildi ve 'Devam' durumuna alındı.";
             return RedirectToAction(nameof(Details), new { id });
         }
         

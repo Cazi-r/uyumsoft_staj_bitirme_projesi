@@ -63,7 +63,7 @@ public class HomeController : Controller
                 
                 // Proje durum istatistikleri
                 ViewBag.BeklemedeProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Beklemede");
-                ViewBag.AtanmisProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Atanmis");
+                ViewBag.AtanmisProjeSayisi = 0; // 'Atanmis' durumu kaldirildi
                 ViewBag.DevamEdenProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Devam");
                 ViewBag.TamamlananProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Tamamlandi");
                 ViewBag.IptalProjeSayisi = await _context.Projeler.CountAsync(p => p.Status == "Iptal");

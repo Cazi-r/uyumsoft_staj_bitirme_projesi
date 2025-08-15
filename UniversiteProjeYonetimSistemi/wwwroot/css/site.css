@@ -1079,6 +1079,22 @@ td.text-end .btn-group .btn { white-space: nowrap; }
   -ms-overflow-style: none; /* IE/Edge */
 }
 
+/* Allow dropdowns to overflow within cards/tables when needed */
+.card .dropdown-menu {
+  z-index: 1055; /* above card and most elements */
+}
+
+/* Specific fix for Resources (Proje Kaynakları) dropup being clipped */
+.resources-card {
+  overflow: visible; /* allow children like dropdown to overflow */
+}
+.resources-card .table-responsive {
+  overflow: visible; /* prevent clipping inside responsive wrapper */
+}
+.resources-card .dropdown-menu {
+  z-index: 1060;
+}
+
 .table-responsive::-webkit-scrollbar {
   display: none; /* Chrome/Safari/Opera */
 }

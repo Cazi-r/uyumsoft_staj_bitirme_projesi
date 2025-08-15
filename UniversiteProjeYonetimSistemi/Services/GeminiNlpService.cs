@@ -11,7 +11,7 @@ namespace UniversiteProjeYonetimSistemi.Services
 	public class GeminiNlpService : IAiNlpService
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly string _apiKey;
+		private readonly string? _apiKey;
 		private readonly string _model;
 
 		public GeminiNlpService(IHttpClientFactory httpClientFactory, IConfiguration config)

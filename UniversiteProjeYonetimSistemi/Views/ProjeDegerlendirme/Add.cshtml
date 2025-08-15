@@ -42,9 +42,6 @@
                         <h5 class="section-title">
                             <i class="fas fa-star me-2"></i>Proje Değerlendirme
                         </h5>
-                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-outline-light btn-sm animate-button">
-                            <i class="fas fa-arrow-left me-2"></i>Projeye Dön
-                        </a>
                     </div>
                 </div>
                 <div class="card-body p-4">
@@ -71,7 +68,7 @@
                                             switch (proje.Status)
                                             {
                                                 case "Beklemede": badgeClass = "bg-warning"; break;
-                                                case "Atanmis": badgeClass = "bg-info"; break;
+                                                
                                                 case "Devam": badgeClass = "bg-primary"; break;
                                                 case "Tamamlandi": badgeClass = "bg-success"; break;
                                                 case "Iptal": badgeClass = "bg-danger"; break;

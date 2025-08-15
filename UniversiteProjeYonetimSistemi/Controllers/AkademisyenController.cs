@@ -78,7 +78,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             ViewBag.SecilenDurum = durum;
 
             // Bekleyen değerlendirme sayısı
-            ViewBag.BekleyenDegerlendirmeSayisi = projeler.Count(p => p.Status == "Devam" || p.Status == "Atanmis");
+            ViewBag.BekleyenDegerlendirmeSayisi = projeler.Count(p => p.Status == "Devam");
 
             // Son eklenen değerlendirmeleri getir
             var sonDegerlendirmeler = await _akademisyenService.GetDegerlendirmelerAsync(akademisyen.Id);

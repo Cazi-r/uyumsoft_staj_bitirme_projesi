@@ -51,13 +51,9 @@
                             <option value="Beklemede">Beklemede</option>
                         }
 
-                        @if (ViewBag.SeciliDurum == "Atanmis")
-                        {
-                            <option value="Atanmis" selected>Atanmış</option>
-                        }
                         else
                         {
-                            <option value="Atanmis">Atanmış</option>
+                            
                         }
 
                         @if (ViewBag.SeciliDurum == "Devam")
@@ -151,7 +147,7 @@
                                                     var statusClass = proje.Status switch
                                                     {
                                                         "Beklemede" => "bg-secondary",
-                                                        "Atanmis" => "bg-info",
+                                                        
                                                         "Devam" => "bg-primary",
                                                         "Tamamlandi" => "bg-success",
                                                         "Iptal" => "bg-danger",
@@ -161,7 +157,7 @@
                                                     var statusText = proje.Status switch
                                                     {
                                                         "Beklemede" => "Beklemede",
-                                                        "Atanmis" => "Atanmış",
+                                                        
                                                         "Devam" => "Devam Ediyor",
                                                         "Tamamlandi" => "Tamamlandı",
                                                         "Iptal" => "İptal Edildi",

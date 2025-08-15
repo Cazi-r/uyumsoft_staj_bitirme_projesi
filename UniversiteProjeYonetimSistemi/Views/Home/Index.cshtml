@@ -61,7 +61,7 @@ else
                                     int aktifProjeSayisi = 0;
                                     @foreach (var proje in ViewBag.Projeler)
                                     {
-                                        @if ((proje.Status == "Atanmis" || proje.Status == "Devam") && aktifProjeSayisi < 5)
+                                        @if ((proje.Status == "Devam") && aktifProjeSayisi < 5)
                                         {
                                             aktifProjeSayisi++;
                                             <tr class="project-row">
@@ -96,7 +96,7 @@ else
                                                                 statusBadgeClass = "bg-warning"; 
                                                                 statusBadgeIcon = "fa-hourglass-half";
                                                                 break;
-                                                            case "Atanmis": 
+                                                            
                                                                 statusBadgeClass = "bg-info"; 
                                                                 statusBadgeIcon = "fa-user-check";
                                                                 break;
@@ -308,7 +308,7 @@ else
                                                             statusBadgeClass = "bg-warning"; 
                                                             statusBadgeIcon = "fa-hourglass-half";
                                                             break;
-                                                        case "Atanmis": 
+                                                        
                                                             statusBadgeClass = "bg-info"; 
                                                             statusBadgeIcon = "fa-user-check";
                                                             break;

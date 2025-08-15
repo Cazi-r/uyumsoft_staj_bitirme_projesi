@@ -150,11 +150,11 @@ namespace UniversiteProjeYonetimSistemi.Controllers
                 
                 await _projeService.AssignToMentorAsync(id, mentorId);
                 
-                // Proje durumunu "Atanmis" olarak güncelle - eğer önceki durum "Beklemede" ise
+                // Proje kabul/atama sonrasi dogrudan 'Devam' durumuna gecsin
                 if (oncekiDurum == "Beklemede")
                 {
-                    await _projeService.UpdateStatusAsync(id, "Atanmis");
-                    TempData["SuccessMessage"] = "Proje danışmanı başarıyla atandı ve proje durumu 'Atanmış' olarak güncellendi.";
+                    await _projeService.UpdateStatusAsync(id, "Devam");
+                    TempData["SuccessMessage"] = "Proje danışmanı başarıyla atandı ve proje 'Devam' durumuna alındı.";
                 }
                 else
                 {

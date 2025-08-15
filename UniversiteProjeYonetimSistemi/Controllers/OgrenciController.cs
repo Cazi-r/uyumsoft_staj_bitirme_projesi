@@ -60,7 +60,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             ViewBag.ToplamProjeSayisi = projeler.Count();
             ViewBag.DevamEdenProjeSayisi = projeler.Count(p => p.Status == "Devam");
             ViewBag.TamamlananProjeSayisi = projeler.Count(p => p.Status == "Tamamlandi");
-            ViewBag.BeklemedeProjeSayisi = projeler.Count(p => p.Status == "Beklemede" || p.Status == "Atanmis");
+            ViewBag.BeklemedeProjeSayisi = projeler.Count(p => p.Status == "Beklemede");
             
             // Ek istatistikler
             ViewBag.ToplamTeslimSayisi = projeler.SelectMany(p => p.Dosyalar ?? new List<ProjeDosya>()).Count();

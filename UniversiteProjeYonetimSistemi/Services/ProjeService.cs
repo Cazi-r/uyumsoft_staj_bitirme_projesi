@@ -86,7 +86,7 @@ namespace UniversiteProjeYonetimSistemi.Services
                 .ToListAsync();
         }
 
-        /// Duruma gore projeleri dondurur (Beklemede/Atanmis/Devam/Tamamlandi/Iptal).
+        /// Duruma gore projeleri dondurur (Beklemede/Devam/Tamamlandi/Iptal).
         public async Task<IEnumerable<Proje>> GetByStatusAsync(string status)
         {
             return await _context.Projeler
@@ -117,12 +117,11 @@ namespace UniversiteProjeYonetimSistemi.Services
             await _projeRepository.DeleteAsync(id);
         }
 
-        /// Projeyi belirtilen ogrenciye atar ve durumu "Atanmis" yapar.
+        /// Projeyi belirtilen ogrenciye atar.
         public async Task AssignToOgrenciAsync(int projeId, int ogrenciId)
         {
             var proje = await _projeRepository.GetByIdAsync(projeId);
             proje.OgrenciId = ogrenciId;
-            proje.Status = "Atanmis";
             await _projeRepository.UpdateAsync(proje);
         }
 

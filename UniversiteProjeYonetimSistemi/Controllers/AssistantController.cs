@@ -453,6 +453,9 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 			}
 
 			await _projeService.AddAsync(projeToCreate);
+			// Proje olusturulduktan sonra karsit tarafa bildirim gonder
+			var olusturanRol = User.IsInRole("Ogrenci") ? "Ogrenci" : "Akademisyen";
+			await _bildirimService.ProjeOlusturulduBildirimiGonder(projeToCreate, olusturanRol);
 			_sessions.TryRemove(userKey, out _);
 			var detailsUrl = Url.Action("Details", "Proje", new { id = projeToCreate.Id });
 			var mentorDesc = projeToCreate.MentorId.HasValue ? "atanmış" : "atanmadı";

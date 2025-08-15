@@ -40,7 +40,8 @@
                 @if (Model.Status == "Beklemede" && ViewBag.IsCurrentUserSelectedMentor)
                 {
                     <div class="btn-group" role="group">
-                        <form asp-action="ProjeKabulEt" asp-route-id="@Model.Id" method="post" class="d-inline">
+                        <form asp-controller="Proje" asp-action="ProjeKabulEt" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-success animate-button" onclick="return confirm('Bu projeyi kabul etmek istediğinizden emin misiniz?')">
                                 <i class="fas fa-check-circle"></i> Kabul Et
                             </button>
@@ -86,7 +87,7 @@
                                 var statusClass = Model.Status switch
                                 {
                                     "Beklemede" => "badge bg-secondary",
-                                    "Atanmis" => "badge bg-info",
+                                    // "Atanmis" durumu kaldirildi
                                     "Devam" => "badge bg-primary",
                                     "Tamamlandi" => "badge bg-success",
                                     "Iptal" => "badge bg-danger",
@@ -98,15 +99,7 @@
                             @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
                             {
                                 <div class="d-flex justify-content-end gap-2 mt-2">
-                                    @if (Model.Status == "Atanmis")
-                                    {
-                                        <form asp-action="UpdateStatusToInProgress" asp-route-id="@Model.Id" method="post" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-primary animate-button w-100" style="min-width:120px" onclick="return confirm('Bu projeyi devam ediyor olarak işaretlemek istiyor musunuz?')">
-                                                <i class="fas fa-play"></i> Projeyi Başlat
-                                            </button>
-                                        </form>
-                                    }
-                                    else if (Model.Status == "Devam")
+                                    @if (Model.Status == "Devam")
                                     {
                                         <form asp-action="CompleteProject" asp-route-id="@Model.Id" method="post" class="d-inline">
                                             <button type="submit" class="btn btn-sm btn-success animate-button w-100" style="min-width:120px" onclick="return confirm('Bu projeyi tamamlanmış olarak işaretlemek istiyor musunuz?')">
@@ -164,10 +157,10 @@
                             <a asp-controller="ProjeAsama" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
                                 <i class="fas fa-plus"></i> Aşama Ekle
                             </a>
-                            <a asp-controller="ProjeAsama" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
-                                <i class="fas fa-list"></i> Tüm Aşamalar
-                            </a>
                         }
+                        <a asp-controller="ProjeAsama" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
+                            <i class="fas fa-list"></i> Tüm Aşamalar
+                        </a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -208,42 +201,56 @@
                                                 }
                                             </td>
                                             <td class="text-end">
-                                                <div class="d-flex flex-column gap-1" style="min-width: 50px;">
-                                                    @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
-                                                    {
-                                                        @if (!asama.Tamamlandi)
+                                                <div class="dropdown d-inline-block">
+                                                    <button type="button" class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Diğer işlemler">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
                                                         {
-                                                            <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
-                                                                <input type="hidden" name="id" value="@asama.Id" />
-                                                                <input type="hidden" name="projeId" value="@Model.Id" />
-                                                                <input type="hidden" name="tamamlandi" value="true" />
-                                                                <button type="submit" class="btn btn-xs btn-outline-success animate-button w-100">
-                                                                    <i class="fas fa-check"></i> Tamamlandı
-                                                                </button>
-                                                            </form>
+                                                            @if (!asama.Tamamlandi)
+                                                            {
+                                                                <li>
+                                                                    <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
+                                                                        <input type="hidden" name="id" value="@asama.Id" />
+                                                                        <input type="hidden" name="projeId" value="@Model.Id" />
+                                                                        <input type="hidden" name="tamamlandi" value="true" />
+                                                                        <button type="submit" class="dropdown-item">
+                                                                            <i class="fas fa-check me-2"></i> Tamamlandı
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li>
+                                                                    <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
+                                                                        <input type="hidden" name="id" value="@asama.Id" />
+                                                                        <input type="hidden" name="projeId" value="@Model.Id" />
+                                                                        <input type="hidden" name="tamamlandi" value="false" />
+                                                                        <button type="submit" class="dropdown-item">
+                                                                            <i class="fas fa-undo me-2"></i> Geri Al
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                            }
                                                         }
-                                                        else
+
+                                                        @if ((User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor)))
                                                         {
-                                                            <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
-                                                                <input type="hidden" name="id" value="@asama.Id" />
-                                                                <input type="hidden" name="projeId" value="@Model.Id" />
-                                                                <input type="hidden" name="tamamlandi" value="false" />
-                                                                <button type="submit" class="btn btn-xs btn-outline-warning animate-button w-100">
-                                                                    <i class="fas fa-undo"></i> Geri Al
-                                                                </button>
-                                                            </form>
+                                                            <li><hr class="dropdown-divider" /></li>
+                                                            <li>
+                                                                <a class="dropdown-item" asp-controller="ProjeAsama" asp-action="Edit" asp-route-id="@asama.Id">
+                                                                    <i class="fas fa-pen me-2"></i> Düzenle
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" asp-controller="ProjeAsama" asp-action="Delete" asp-route-id="@asama.Id">
+                                                                    <i class="fas fa-trash me-2"></i> Sil
+                                                                </a>
+                                                            </li>
                                                         }
-                                                    }
-                                                    
-                                                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
-                                                    {
-                                                        <a asp-controller="ProjeAsama" asp-action="Edit" asp-route-id="@asama.Id" class="btn btn-xs btn-outline-primary animate-button w-100">
-                                                            <i class="fas fa-edit"></i> Düzenle
-                                                        </a>
-                                                        <a asp-controller="ProjeAsama" asp-action="Delete" asp-route-id="@asama.Id" class="btn btn-xs btn-outline-danger animate-button w-100">
-                                                            <i class="fas fa-trash"></i> Sil
-                                                        </a>
-                                                    }
+                                                    </ul>
                                                 </div>
                                             </td>
                                         </tr>
@@ -306,17 +313,27 @@
                                             <td>@(dosya.DosyaBoyutu / 1024) KB</td>
                                             <td>@dosya.DosyaTipi</td>
                                             <td>@dosya.YuklemeTarihi.ToShortDateString()</td>
-                                            <td>
-                                                <div class="d-flex flex-column gap-1" style="min-width: 140px;">
-                                                    <a href="@Url.Action("Download", "ProjeDosya", new { id = dosya.Id })" class="btn btn-xs btn-outline-success animate-button w-100">
-                                                        <i class="fas fa-download"></i> İndir
-                                                    </a>
-                                                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
-                                                    {
-                                                        <a asp-controller="ProjeDosya" asp-action="Delete" asp-route-id="@dosya.Id" class="btn btn-xs btn-outline-danger animate-button w-100">
-                                                            <i class="fas fa-trash me-1"></i>Sil
-                                                        </a>
-                                                    }
+                                            <td class="text-end">
+                                                <div class="dropdown d-inline-block">
+                                                    <button type="button" class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Diğer işlemler">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <a class="dropdown-item" href="@Url.Action("Download", "ProjeDosya", new { id = dosya.Id })">
+                                                                <i class="fas fa-download me-2"></i> İndir
+                                                            </a>
+                                                        </li>
+                                                        @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor) || ViewBag.IsCurrentUserProjectOwner)
+                                                        {
+                                                            <li><hr class="dropdown-divider" /></li>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" asp-controller="ProjeDosya" asp-action="Delete" asp-route-id="@dosya.Id">
+                                                                    <i class="fas fa-trash me-2"></i> Sil
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    </ul>
                                                 </div>
                                             </td>
                                         </tr>
@@ -333,7 +350,7 @@
             </div>
 
             <!-- Proje Kaynakları -->
-            <div class="card mb-4 animate-card">
+            <div class="card mb-4 animate-card resources-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Proje Kaynakları</h5>
                     <div class="d-flex flex-column gap-1" style="min-width: 120px;">
@@ -386,26 +403,35 @@
                                             </td>
                                             <td>@(string.IsNullOrEmpty(kaynak.Yazar) ? "-" : kaynak.Yazar)</td>
                                             <td>@(kaynak.YayinTarihi.HasValue ? kaynak.YayinTarihi.Value.ToShortDateString() : "-")</td>
-                                            <td>
-                                                <div class="d-flex flex-column gap-1" style="min-width: 100px;">
-                                                    @if (!string.IsNullOrEmpty(kaynak.Url))
-                                                    {
-                                                        <a href="@kaynak.Url" target="_blank" class="btn btn-xs btn-outline-primary animate-button w-100">
-                                                            <i class="fas fa-external-link-alt"></i> Linke Git
-                                                        </a>
-                                                    }
-                                                    <button type="button" class="btn btn-xs btn-outline-info animate-button w-100" 
-                                                            data-bs-toggle="popover" 
-                                                            title="Açıklama" 
-                                                            data-bs-content="@(string.IsNullOrEmpty(kaynak.Aciklama) ? "Açıklama bulunmamaktadır." : kaynak.Aciklama)">
-                                                        <i class="fas fa-info-circle"></i> Detay
+                                            <td class="text-end">
+                                                <div class="dropdown dropup position-static d-inline-block" data-bs-auto-close="outside">
+                                                    <button type="button" class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" aria-label="Diğer işlemler">
+                                                        <i class="fas fa-ellipsis-h"></i>
                                                     </button>
-                                                    @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
-                                                    {
-                                                        <a asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@kaynak.Id" class="btn btn-xs btn-outline-danger animate-button w-100">
-                                                            <i class="fas fa-trash me-1"></i>Sil
-                                                        </a>
-                                                    }
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        @if (!string.IsNullOrEmpty(kaynak.Url))
+                                                        {
+                                                            <li>
+                                                                <a class="dropdown-item" href="@kaynak.Url" target="_blank">
+                                                                    <i class="fas fa-external-link-alt me-2"></i> Linke Git
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        <li>
+                                                            <button type="button" class="dropdown-item" data-bs-toggle="popover" title="Açıklama" data-bs-content="@(string.IsNullOrEmpty(kaynak.Aciklama) ? "Açıklama bulunmamaktadır." : kaynak.Aciklama)">
+                                                                <i class="fas fa-info-circle me-2"></i> Detay
+                                                            </button>
+                                                        </li>
+                                                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                                                        {
+                                                            <li><hr class="dropdown-divider" /></li>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@kaynak.Id">
+                                                                    <i class="fas fa-trash me-2"></i> Sil
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    </ul>
                                                 </div>
                                             </td>
                                         </tr>
@@ -571,7 +597,8 @@
                 <h5 class="modal-title" id="reddetModalLabel">Projeyi Reddet</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-action="ProjeReddet" asp-route-id="@Model.Id" method="post">
+            <form asp-controller="Proje" asp-action="ProjeReddet" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="redSebebi" class="form-label">Red Sebebi (Opsiyonel)</label>

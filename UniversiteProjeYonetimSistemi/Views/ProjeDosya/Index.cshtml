@@ -96,7 +96,7 @@
                                                        class="btn btn-sm btn-outline-success">
                                                         <i class="fas fa-download me-1"></i>İndir
                                                     </a>
-                                                    @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                                                    @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen") || ViewBag.IsCurrentUserProjectOwner == true)
                                                     {
                                                         <a asp-controller="ProjeDosya" asp-action="Delete" asp-route-id="@dosya.Id" 
                                                            class="btn btn-sm btn-outline-danger">

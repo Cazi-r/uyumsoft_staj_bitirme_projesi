@@ -55,6 +55,34 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return proje.MentorId.Value == akademisyen.Id;
         }
 
+        // Helper method to check if current user is the owner student of the project
+        private async Task<bool> IsCurrentUserProjectOwner(int projeId)
+        {
+            if (User.IsInRole("Admin"))
+            {
+                return true;
+            }
+
+            if (!User.IsInRole("Ogrenci"))
+            {
+                return false;
+            }
+
+            var proje = await _projeService.GetByIdAsync(projeId);
+            if (proje == null || !proje.OgrenciId.HasValue)
+            {
+                return false;
+            }
+
+            var ogrenci = await _authService.GetCurrentOgrenciAsync();
+            if (ogrenci == null)
+            {
+                return false;
+            }
+
+            return proje.OgrenciId.Value == ogrenci.Id;
+        }
+
         // Dosya ekleme formu: Proje ve kullanici yetkisi kontrol edilir (Admin, projenin ogrencisi veya danismani).
         // Proje adi ViewBag'e set edilir.
         public async Task<IActionResult> Add(int projeId)
@@ -338,6 +366,10 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             }
 
             var dosyalar = await _projeService.GetFilesByProjeIdAsync(projeId);
+
+            // View tarafında buton koşulları için yetki bayrakları
+            ViewBag.IsCurrentUserMentor = await IsCurrentUserProjectMentor(projeId);
+            ViewBag.IsCurrentUserProjectOwner = await IsCurrentUserProjectOwner(projeId);
             
             // Yükleyen kişilerin adlarını al
             var dosyalarWithYukleyen = new List<object>();
@@ -442,7 +474,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             return View(dosya);
         }
 
-        // Dosya silme onayi: Sadece projenin danismani veya admin gorebilir; yukleyen bilgisini ViewBag'e ekler.
+        // Dosya silme onayi: Admin, projenin danismani veya projenin sahibi ogrenci gorebilir; yukleyen bilgisini ViewBag'e ekler.
         public async Task<IActionResult> Delete(int id)
         {
             var dosya = await _projeService.GetFileByIdAsync(id);
@@ -476,26 +508,53 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
             ViewBag.YukleyenAdi = yukleyenAdi;
 
-            // Sadece projenin danışmanı dosya silebilir
-            if (!await IsCurrentUserProjectMentor(dosya.ProjeId))
+            // Sadece admin, projenin danışmanı veya projenin sahibi öğrenci dosya silebilir
+            bool canDelete = false;
+            if (User.IsInRole("Admin"))
             {
-                TempData["ErrorMessage"] = "Bu dosyayı sadece projenin danışmanı veya admin silebilir.";
+                canDelete = true;
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                canDelete = await IsCurrentUserProjectMentor(dosya.ProjeId);
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                canDelete = await IsCurrentUserProjectOwner(dosya.ProjeId);
+            }
+
+            if (!canDelete)
+            {
+                TempData["ErrorMessage"] = "Bu dosyayı sadece admin, projenin danışmanı veya projenin sahibi öğrenci silebilir.";
                 return RedirectToAction("Index", "ProjeDosya", new { projeId = dosya.ProjeId });
             }
 
             return View(dosya);
         }
 
-        // Dosya silme POST: yalnizca projenin danismani veya admin silebilir.
+        // Dosya silme POST: admin, projenin danismani veya projenin sahibi ogrenci silebilir.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Akademisyen")]
+        [Authorize(Roles = "Admin,Akademisyen,Ogrenci")]
         public async Task<IActionResult> Delete(int id, int projeId)
         {
-            // Sadece projenin danışmanı dosya silebilir
-            if (!await IsCurrentUserProjectMentor(projeId))
+            bool canDelete = false;
+            if (User.IsInRole("Admin"))
             {
-                TempData["ErrorMessage"] = "Bu projeye ait dosyaları sadece danışmanı veya admin silebilir.";
+                canDelete = true;
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                canDelete = await IsCurrentUserProjectMentor(projeId);
+            }
+            else if (User.IsInRole("Ogrenci"))
+            {
+                canDelete = await IsCurrentUserProjectOwner(projeId);
+            }
+
+            if (!canDelete)
+            {
+                TempData["ErrorMessage"] = "Bu projeye ait dosyaları sadece admin, danışman veya projenin sahibi öğrenci silebilir.";
                 return RedirectToAction("Index", "ProjeDosya", new { projeId = projeId });
             }
 
