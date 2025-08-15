@@ -1,0 +1,311 @@
+@{
+    ViewData["Title"] = "Yönetici Paneli";
+}
+
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header animate-header">
+        <h1 class="page-title"><i class="fas fa-cogs me-2 text-primary"></i> Yönetici Paneli</h1>
+        <div>
+            <span class="badge bg-light text-dark border date-badge">
+                <i class="far fa-calendar me-1"></i> @DateTime.Now.ToString("dd MMMM yyyy")
+            </span>
+        </div>
+    </div>
+    
+    <!-- Özet İstatistikler -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-2" style="color: #0d6efd;">Toplam Kullanıcılar</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.KullaniciSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Sistem genelindeki kullanıcı sayısı</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-users fa-lg" style="color: #0d6efd;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm details-btn w-100" style="background-color: #0d6efd; color: #fff;">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm h-100 dashboard-card stat-card">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-success fw-bold mb-2">Toplam Projeler</h6>
+                            <h3 class="mb-1 stat-number" data-count="@ViewBag.ProjeSayisi">0</h3>
+                            <p class="text-muted mt-1 mb-0 small">Sistemdeki proje sayısı</p>
+                        </div>
+                        <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                            <i class="fas fa-project-diagram fa-lg text-success"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top py-2">
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-success details-btn w-100">
+                        <i class="fas fa-arrow-right me-1"></i> Detaylar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ana İçerik -->
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 main-table animate-card">
+                <div class="card-header d-flex justify-content-between align-items-center py-2">
+                    <h5 class="mb-0 fs-6">Son Etkinlikler</h5>
+                    <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" class="btn btn-sm btn-outline-primary animate-button">Tümünü Gör</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        @if (ViewBag.SonEtkinlikler != null && ViewBag.SonEtkinlikler.Count > 0)
+                        {
+                            @foreach (var etkinlik in ViewBag.SonEtkinlikler)
+                            {
+                                <a asp-controller="Admin" asp-action="KullaniciEtkinlikleri" asp-route-kullaniciId="@etkinlik.KullaniciId" class="list-group-item list-group-item-action py-2 table-hover-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1 small">@(etkinlik.Tip == "Giriş" ? "Sistem Girişi" : "Proje Oluşturuldu")</h6>
+                                        <small>@((DateTime.Now - etkinlik.Tarih).TotalDays < 1 ? 
+                                            $"{(int)(DateTime.Now - etkinlik.Tarih).TotalHours} saat önce" : 
+                                            $"{(int)(DateTime.Now - etkinlik.Tarih).TotalDays} gün önce")</small>
+                                    </div>
+                                    <small class="text-muted">@etkinlik.KullaniciAdi (@etkinlik.KullaniciRol) @etkinlik.Islem</small>
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <div class="list-group-item">
+                                <p class="text-center mb-0">Henüz etkinlik bulunmamaktadır.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 main-table animate-card">
+                <div class="card-header d-flex justify-content-between align-items-center py-2">
+                    <h5 class="mb-0 fs-6">Proje Durumları</h5>
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-outline-primary animate-button">Tümünü Gör</a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p class="mb-1 d-flex justify-content-between small">
+                            <span>Beklemede</span>
+                            <span class="text-muted">@ViewBag.BeklemedeProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.BeklemedeProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-1 d-flex justify-content-between small">
+                            <span>Atanmış</span>
+                            
+                        </p>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-1 d-flex justify-content-between small">
+                            <span>Devam Eden</span>
+                            <span class="text-muted">@ViewBag.DevamEdenProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.DevamEdenProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-1 d-flex justify-content-between small">
+                            <span>Tamamlanmış</span>
+                            <span class="text-muted">@ViewBag.TamamlananProjeSayisi proje</span>
+                        </p>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: @(ViewBag.ProjeSayisi > 0 ? (ViewBag.TamamlananProjeSayisi * 100 / ViewBag.ProjeSayisi) : 0)%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sayı animasyonları
+        animateStatNumbers();
+        
+        // Chart.js tooltip pozisyonunu düzeltme - kart dışına taşmaması için
+        Chart.Tooltip.positioners.custom = function(elements, position) {
+            if (!elements.length) {
+                return false;
+            }
+            
+            // Grafik elemanının pozisyonunu al
+            var el = elements[0].element;
+            var rect = el.getCTM();
+            var point = el.ownerSVGElement.createSVGPoint();
+            point.x = rect.e;
+            point.y = rect.f;
+            
+            // Tooltip'i grafiğin içinde tutmaya çalış
+            const chartRect = el.ownerSVGElement.getBoundingClientRect();
+            const tooltipWidth = 150; // Tahmini tooltip genişliği
+            
+            let x = point.x;
+            // Sağ kenara yakınsa tooltip'i sola kaydır
+            if (x + tooltipWidth > chartRect.right) {
+                x = Math.max(chartRect.left, x - tooltipWidth);
+            }
+            
+            return {
+                x: x,
+                y: Math.max(chartRect.top, point.y - 30) // Yukarıya doğru kaydır
+            };
+        };
+        
+        // Kullanıcı Dağılımı Chart
+        const userChartCtx = document.getElementById('userChart').getContext('2d');
+        const userChart = new Chart(userChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Öğrenci', 'Akademisyen', 'Admin'],
+                datasets: [{
+                    data: [
+                        @ViewBag.OgrenciSayisi, 
+                        @ViewBag.AkademisyenSayisi, 
+                        @(ViewBag.KullaniciSayisi - ViewBag.OgrenciSayisi - ViewBag.AkademisyenSayisi)
+                    ],
+                    backgroundColor: [
+                        '#36A2EB', // mavi - öğrenci
+                        '#FFCD56', // sarı - akademisyen
+                        '#FF6384'  // kırmızı - admin
+                    ],
+                    borderWidth: 0,
+                    cutout: '70%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        position: 'custom',
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        },
+                        displayColors: false,
+                        padding: 8,
+                        backgroundColor: 'rgba(0,0,0,0.7)'
+                    }
+                }
+            }
+        });
+        
+        // Proje Durumları Chart
+        const projectChartCtx = document.getElementById('projectChart').getContext('2d');
+        const projectChart = new Chart(projectChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Devam Eden', 'Beklemede', 'Tamamlanmış', 'İptal'],
+                datasets: [{
+                    data: [
+                        @ViewBag.DevamEdenProjeSayisi, 
+                        @ViewBag.BeklemedeProjeSayisi, 
+                        @ViewBag.TamamlananProjeSayisi,
+                        @ViewBag.IptalProjeSayisi
+                    ],
+                    backgroundColor: [
+                        '#4BC0C0', // turkuaz - devam eden
+                        '#FFCD56', // sarı - beklemede
+                        '#36A2EB', // mavi - tamamlanmış
+                        '#FF6384'  // kırmızı - iptal
+                    ],
+                    borderWidth: 0,
+                    cutout: '70%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        position: 'custom',
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        },
+                        displayColors: false,
+                        padding: 8,
+                        backgroundColor: 'rgba(0,0,0,0.7)'
+                    }
+                }
+            }
+        });
+        
+        // Sayı animasyonları
+        animateStatNumbers();
+    });
+    
+    // Sayıların animasyonla artması
+    function animateStatNumbers() {
+        document.querySelectorAll('.stat-number').forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-count'));
+            if (isNaN(target)) return;
+            
+            const duration = 1500; // ms
+            const frameDuration = 1000 / 60; // 60fps
+            const totalFrames = Math.round(duration / frameDuration);
+            let frame = 0;
+            
+            counter.innerText = '0';
+            
+            const animate = () => {
+                frame++;
+                const progress = frame / totalFrames;
+                const currentCount = Math.round(target * progress);
+                
+                if (currentCount === target) {
+                    counter.innerText = target;
+                } else {
+                    counter.innerText = currentCount;
+                    requestAnimationFrame(animate);
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        });
+    }
+</script>
+}

@@ -1,0 +1,14 @@
+çözülenler => //
+
+admin yorum yapamıyo // 19 id li akademisyen üstünden yapıyo
+admin proje atama yapmadan geri çıkamıyor //
+admin proje kategorisi silmehye çalışırken hata //
+proje aşamaları proje görevlerine benzetilecek //
+
+bildirimler eksik
+admin yeni kullanıcı kaydı yaparken giriş sayfasına dön tuşu gözüküyo 
+proje kaynakları tablosu eksik miş
+akademisyene ait proje bekleyendeyken proje ata yazısı değişmiyor
+geri ye basınca animasyon takılı kalıyo
+akademisyendashboard da aktif danışmanlıklar gözüksün
+proje dosyaları ve kaynakları modalları açılmıyor sayfaya çevirilecek

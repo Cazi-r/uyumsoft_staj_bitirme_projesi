@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <title>@ViewData["Title"] - Proje Yönetim Sistemi</title>
+    <script>
+        // Sayfa DOM yüklenmeden önce tema ayarlarını uygula
+        (function() {
+            // Theme mode (dark/light)
+            const rootElement = document.documentElement;
+            // Legacy destek
+            const legacyDark = localStorage.getItem('darkMode') === 'true';
+            if (!localStorage.getItem('themeMode') && legacyDark) {
+                try { localStorage.setItem('themeMode', 'dark'); } catch (_) {}
+            }
+            
+            // Apply theme mode
+            const themeMode = localStorage.getItem('themeMode');
+            if (themeMode === 'dark') {
+                rootElement.classList.add('dark-mode');
+                rootElement.classList.add('dark-theme');
+            } else if (themeMode === 'auto') {
+                const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDarkMode) {
+                    rootElement.classList.add('dark-mode');
+                    rootElement.classList.add('dark-theme');
+                }
+            }
+            
+            // Apply color palette
+            const colorPalette = localStorage.getItem('colorPalette');
+            if (colorPalette && colorPalette !== 'default') {
+                rootElement.setAttribute('data-color-palette', colorPalette);
+            }
+            
+            // Apply font size
+            const fontSize = localStorage.getItem('fontSize');
+            if (fontSize) {
+                rootElement.style.setProperty('--base-font-size', (fontSize / 100) + 'rem');
+            }
+            
+            // Apply font family
+            const fontFamily = localStorage.getItem('fontFamily');
+            if (fontFamily) {
+                rootElement.style.setProperty('--font-family', fontFamily);
+            }
+            
+            // Prepare classes to be applied after DOM is loaded
+            const applyClasses = [];
+            
+            // Prepare compact layout
+            const compactLayout = localStorage.getItem('compactLayout') === 'true';
+            if (compactLayout) {
+                applyClasses.push('compact-layout');
+            }
+            
+            // Prepare animations setting
+            const animations = localStorage.getItem('animations') !== 'false';
+            if (!animations) {
+                applyClasses.push('no-animations');
+            }
+            
+            // Prepare high contrast mode
+            const highContrast = localStorage.getItem('highContrast') === 'true';
+            if (highContrast) {
+                applyClasses.push('high-contrast');
+            }
+            
+            // Prepare border radius class
+            const borderRadius = localStorage.getItem('borderRadius') || '2';
+            applyClasses.push('border-radius-' + borderRadius);
+            
+            // Prepare sidebar width class
+            const sidebarWidth = localStorage.getItem('sidebarWidth') || 'default';
+            applyClasses.push('sidebar-' + sidebarWidth);
+            
+            // Prepare icon size class
+            const iconSize = localStorage.getItem('iconSize') || 'normal';
+            applyClasses.push('icon-' + iconSize);
+            
+            // Apply all classes when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                if (applyClasses.length > 0) {
+                    document.body.classList.add(...applyClasses);
+                }
+            });
+        })();
+    </script>
+    <style>
+        html.dark-mode, html.dark-theme { background-color: #0b1215; }
+        @@media (prefers-color-scheme: dark) { html { background-color: #0b1215; } }
+    </style>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Chart.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/UniversiteProjeYonetimSistemi.styles.css" asp-append-version="true" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/favicon.ico" type="image/x-icon">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Sayfa Geçiş Animasyonu -->
+    <div id="pageTransition" class="page-transition">
+        <div class="transition-content">
+            <div class="single-icon-spinner">
+                <i id="transitionIcon" class="fas fa-project-diagram"></i>
+            </div>
+            <div class="spinner-text">Yükleniyor...</div>
+        </div>
+    </div>
+    
+    <div class="app-container d-flex flex-column min-vh-100">
+        <!-- Sidebar -->
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand d-flex flex-column align-items-center text-center">
+                    <div class="logo-container mb-2">
+                        <i class="fas fa-graduation-cap text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="fw-bold text-primary">Proje Yönetim</span>
+                        <span class="d-block small text-muted">Sistemi</span>
+                    </div>
+                </div>
+                <button id="sidebarToggler" class="btn d-md-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="sidebar-nav d-flex flex-column justify-content-between" style="height: calc(100% - var(--topbar-height));">
+                <div>
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-header animate-sidebar-item">MENÜ</li>
+                        <li class="sidebar-item animate-sidebar-item">
+                            <a class="sidebar-link" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home sidebar-icon"></i>
+                                <span>Ana Sayfa</span>
+                            </a>
+                        </li>
+                        
+                        <!-- Bildirimler kısmı top bar'a taşındı -->
+                        
+                        <li class="sidebar-item animate-sidebar-item">
+                            <a class="sidebar-link" asp-controller="Proje" asp-action="Index">
+                                <i class="fas fa-tasks sidebar-icon"></i>
+                                <span>Tüm Projeler</span>
+                            </a>
+                        </li>
+                        
+                        <li class="sidebar-item animate-sidebar-item">
+                            <a class="sidebar-link" asp-controller="Kategori" asp-action="Index">
+                                <i class="fas fa-tags sidebar-icon"></i>
+                                <span>Proje Kategorileri</span>
+                            </a>
+                        </li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="sidebar-header animate-sidebar-item">YÖNETİCİ PANELİ</li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="Admin" asp-action="Dashboard">
+                                    <i class="fas fa-chart-line sidebar-icon"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="Admin" asp-action="Kullanicilar">
+                                    <i class="fas fa-users sidebar-icon"></i>
+                                    <span>Kayıtlı Kullanıcılar</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="Admin" asp-action="KullaniciEtkinlikleri">
+                                    <i class="fas fa-history sidebar-icon"></i>
+                                    <span>Etkinlik Logları</span>
+                                </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Akademisyen"))
+                        {
+                            <li class="sidebar-header animate-sidebar-item">AKADEMİSYEN</li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="Akademisyen" asp-action="Danismanliklar">
+                                    <i class="fas fa-chalkboard-teacher sidebar-icon"></i>
+                                    <span>Danışmanlıklarım</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="Calendar" asp-action="Index">
+                                    <i class="fas fa-calendar-alt sidebar-icon"></i>
+                                    <span>Takvim</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="DanismanlikGorusmesi" asp-action="Index">
+                                    <i class="fas fa-calendar-check sidebar-icon"></i>
+                                    <span>Görüşme Talepleri</span>
+                                </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Ogrenci"))
+                        {
+                            <li class="sidebar-header animate-sidebar-item">ÖĞRENCİ</li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="Ogrenci" asp-action="Projeler">
+                                    <i class="fas fa-book sidebar-icon"></i>
+                                    <span>Projelerim</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="Calendar" asp-action="Index">
+                                    <i class="fas fa-calendar-alt sidebar-icon"></i>
+                                    <span>Takvim</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item animate-sidebar-item">
+                                <a class="sidebar-link" asp-controller="DanismanlikGorusmesi" asp-action="Index">
+                                    <i class="fas fa-comments sidebar-icon"></i>
+                                    <span>Görüşmelerim</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                
+                <!-- Karanlık Tema Seçeneği -->
+                <div class="mt-auto border-top pt-2">
+                    <ul class="sidebar-menu mb-2">
+                        <li class="sidebar-item animate-sidebar-item">
+                            <div class="sidebar-link d-flex align-items-center justify-content-between" style="cursor: pointer;" id="darkThemeToggle">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-moon sidebar-icon"></i>
+                                    <span>Karanlık Tema</span>
+                                </div>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" id="darkModeSwitch" style="margin: 0;">
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        }
+
+        <!-- Main Content -->
+        <div class="main-content d-flex flex-column @(User.Identity?.IsAuthenticated == true ? string.Empty : "no-sidebar")">
+            <!-- Topbar -->
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow-sm">
+                <div class="container-fluid">
+                    <button id="mobileSidebarToggler" class="btn d-md-none me-3">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="d-md-none">
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <a class="nav-link nav-notification position-relative d-flex align-items-center" asp-controller="Bildirim" asp-action="Index">
+                                <i class="fas fa-bell me-2" style="font-size: 1.2rem; color: #0d6efd;"></i>
+                                @await Component.InvokeAsync("BildirimSayaci")
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="fw-bold text-primary">Proje Yönetim</span>
+                        }
+                    </div>
+
+                    <div class="d-none d-md-flex align-items-center">
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+                        {
+                            <a class="nav-link nav-notification position-relative d-flex align-items-center me-3" asp-controller="Bildirim" asp-action="Index">
+                                <i class="fas fa-bell me-2" style="font-size: 1.5rem; color: #0d6efd;"></i>
+                                @await Component.InvokeAsync("BildirimSayaci")
+                            </a>
+                        }
+                    </div>
+
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                        </li>
+                        
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link d-flex align-items-center profile-dropdown" href="#" id="userDropdown" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="d-none d-lg-inline profile-name me-3 user-name-display">
+                                        @{
+                                            var userRole = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
+                                            var ad = User.Claims.FirstOrDefault(c => c.Type == "Ad")?.Value;
+                                            var soyad = User.Claims.FirstOrDefault(c => c.Type == "Soyad")?.Value;
+                                            var unvan = User.Claims.FirstOrDefault(c => c.Type == "Unvan")?.Value;
+                                            
+                                            if (userRole == "Akademisyen" && !string.IsNullOrEmpty(unvan))
+                                            {
+                                                @($"{unvan} {ad} {soyad}")
+                                            }
+                                            else
+                                            {
+                                                @($"{ad} {soyad}")
+                                            }
+                                        }
+                                    </span>
+                                    <div class="avatar avatar-md bg-primary rounded-circle text-white me-2">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <i class="fas fa-chevron-down"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+                                    <div class="dropdown-item-text">
+                                        <span class="badge bg-primary rounded-pill">
+                                            @User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value
+                                        </span>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-controller="Profile" asp-action="Index">
+                                        <i class="fas fa-user fa-sm fa-fw text-gray-400 me-2"></i>Profilim
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Profile" asp-action="Edit">
+                                        <i class="fas fa-edit fa-sm fa-fw text-gray-400 me-2"></i>Profili Düzenle
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <form class="form-inline" asp-controller="Auth" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt fa-sm fa-fw text-gray-400 me-2"></i>Çıkış Yap
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item me-2">
+                                <a class="nav-link btn btn-sm btn-outline-primary px-3" asp-controller="Auth" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-sm btn-primary px-3 text-white" asp-controller="Auth" asp-action="Register">
+                                    <i class="fas fa-user-plus me-1"></i>Kayıt Ol
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </nav>
+            }
+
+            <!-- Page Content -->
+            <div class="container-fluid px-4 flex-grow-1 d-flex flex-column">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible alert-permanent fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible alert-permanent fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div class="flex-grow-1">
+                    @RenderBody()
+                </div>
+            </div>
+
+            <!-- Footer -->
+            @* <footer class="footer mt-auto">
+                <div class="container-fluid px-3">
+                    <div class="row">
+                        <div class="col-12 col-md-5 text-center text-md-start text-muted small mb-2 mb-md-0">
+							<i class="fas fa-graduation-cap me-1"></i> Proje Yönetim Sistemi &copy; @DateTime.Now.Year - Tüm hakları saklıdır.
+                        </div>
+                        <div class="col-12 col-md-7 text-center text-md-end small">
+                            <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none me-2">
+                                <i class="fas fa-shield-alt me-1"></i>Gizlilik
+                            </a>
+                            <a asp-controller="Home" asp-action="About" class="text-decoration-none me-2">
+                                <i class="fas fa-info-circle me-1"></i>Hakkımızda
+                            </a>
+                            <a asp-controller="Home" asp-action="Contact" class="text-decoration-none me-2">
+                                <i class="fas fa-envelope me-1"></i>İletişim
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                <i class="fas fa-question-circle me-1"></i>Destek
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </footer> *@
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Karanlık Tema JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeSwitch = document.getElementById('darkModeSwitch');
+            const darkThemeToggle = document.getElementById('darkThemeToggle');
+            const rootElement = document.documentElement;
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // LocalStorage'dan tema durumunu kontrol et (yeni anahtar: themeMode)
+            let themeMode = localStorage.getItem('themeMode');
+            if (!themeMode) {
+                themeMode = (localStorage.getItem('darkMode') === 'true') ? 'dark' : 'light';
+            }
+            const isDark = themeMode === 'dark' || (themeMode === 'auto' && prefersDark);
+            
+            if (darkModeSwitch) {
+                darkModeSwitch.checked = !!isDark;
+                darkModeSwitch.addEventListener('change', function() {
+                    const nextMode = this.checked ? 'dark' : 'light';
+                    try { localStorage.setItem('themeMode', nextMode); } catch (_) {}
+                    applyTheme(nextMode);
+                });
+            }
+            
+            if (darkThemeToggle && darkModeSwitch) {
+                darkThemeToggle.addEventListener('click', function(e) {
+                    if (e.target !== darkModeSwitch) {
+                        darkModeSwitch.checked = !darkModeSwitch.checked;
+                        darkModeSwitch.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+            
+            function applyTheme(mode) {
+                if (mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    rootElement.classList.add('dark-mode');
+                    rootElement.classList.add('dark-theme');
+                } else {
+                    rootElement.classList.remove('dark-mode');
+                    rootElement.classList.remove('dark-theme');
+                }
+            }
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+    <button id="ai-chat-btn" class="ai-chat-btn" title="Asistan"><i class="fa-solid fa-message"></i></button>
+    <div id="ai-chat-panel" class="ai-chat-panel">
+        <div class="ai-chat-header">
+            <span>Yapay Zeka Asistan</span>
+            <button id="ai-chat-close" class="btn btn-sm btn-light">×</button>
+        </div>
+        <div id="ai-chat-messages" class="ai-chat-messages"></div>
+        <form id="ai-chat-form" class="ai-chat-input" data-no-transition="true" data-skip-validation="true" novalidate>
+            <input id="ai-chat-input" type="text" class="form-control" placeholder="Yapmak istediginiz islemi yaziniz..." autocomplete="off" />
+            <button id="ai-send-btn" class="btn ai-send-btn" type="submit" title="Gonder"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+    }
+    <script>
+    (function(){
+        const btn = document.getElementById('ai-chat-btn');
+        const panel = document.getElementById('ai-chat-panel');
+        const closeBtn = document.getElementById('ai-chat-close');
+        const form = document.getElementById('ai-chat-form');
+        const input = document.getElementById('ai-chat-input');
+        const messages = document.getElementById('ai-chat-messages');
+        const openPanel = () => {
+            panel.classList.add('open');
+            // Karşılama mesajını yalnızca ilk açılışta göster
+            if (messages && messages.children.length === 0) {
+                addMsg('bot', 'Merhaba! Ben yapay zeka asistanıyım. Bu ekranda şunları yapabilirim:\n- Proje oluşturma\n- Kategori oluşturma\n- Görüşme tarihi planlama');
+                const sugg = document.createElement('div');
+                sugg.className = 'ai-suggestions';
+                const suggestions = [
+                    { label: 'Proje oluşturma', value: 'Proje oluşturmak istiyorum' },
+                    { label: 'Kategori oluşturma', value: 'Kategori oluşturmak istiyorum' },
+                    { label: 'Görüşme tarihi planlama', value: 'Görüşme tarihi planlamak istiyorum' }
+                ];
+                suggestions.forEach(s => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'btn btn-sm btn-light me-2 mb-2';
+                    b.textContent = s.label;
+                    b.addEventListener('click', () => { input.value = s.value; input.focus(); });
+                    sugg.appendChild(b);
+                });
+                messages.appendChild(sugg);
+                messages.scrollTop = messages.scrollHeight;
+            }
+        };
+        const closePanel = () => panel.classList.remove('open');
+        if(btn) btn.addEventListener('click', openPanel);
+        if(closeBtn) closeBtn.addEventListener('click', closePanel);
+        function addMsg(role, text){
+            const div = document.createElement('div');
+            div.className = 'ai-msg ' + role;
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+            return div;
+        }
+        // Sayfa yenilenmesi vb. durumlarda konusma belleğini sifirla
+        window.addEventListener('pageshow', function(e){
+            // bfcache donusu haric, her yenilemede reset at
+            fetch('/assistant/reset', { method:'POST' });
+        });
+
+        if(form){
+            form.addEventListener('submit', async function(e){
+                e.preventDefault();
+                const text = input.value.trim();
+                if(!text) return;
+                addMsg('user', text);
+                const sendBtn = document.getElementById('ai-send-btn');
+                input.value='';
+                try{
+                    const res = await fetch('/assistant/chat',{
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body: JSON.stringify({message:text})
+                    });
+                    const data = await res.json();
+                    const msgDiv = addMsg('bot', data.reply || 'Bir şeyler ters gitti.');
+                    // Basit proje listesi algilama: 'Mevcut projeleriniz:' cümlesindeki isimleri butonlara ayiralim
+                    if (data?.reply && data.reply.includes('Mevcut projeleriniz:')) {
+                        // Sadece liste bölümünü butona çevir, geri kalan metni parse etme
+                        const start = data.reply.indexOf('Mevcut projeleriniz:') + 'Mevcut projeleriniz:'.length;
+                        // Nokta gelene kadar olan kismi liste olarak aliyoruz (server tarafinda nokta ile bitti)
+                        const end = data.reply.indexOf('.', start);
+                        const listSlice = end > start ? data.reply.substring(start, end) : data.reply.substring(start);
+                        const names = listSlice.split(',').map(s => s.trim()).filter(Boolean);
+                        if (names.length) {
+                            const wrap = document.createElement('div');
+                            wrap.className = 'ai-suggestions';
+                            names.slice(0, 10).forEach(name => {
+                                // Sadece proje adlarini butona koy
+                                const b = document.createElement('button');
+                                b.type = 'button';
+                                b.className = 'btn btn-sm btn-light me-2 mb-2';
+                                b.textContent = name;
+                                b.addEventListener('click', () => { input.value = name; input.focus(); });
+                                wrap.appendChild(b);
+                            });
+                            messages.appendChild(wrap);
+                            messages.scrollTop = messages.scrollHeight;
+                        }
+                    }
+                    if(data?.data?.detailsUrl && msgDiv){
+                        const a = document.createElement('a');
+                        a.href = data.data.detailsUrl;
+                        a.textContent = ' Detaylara geçin';
+                        a.className = 'ai-link';
+                        a.target = '_self';
+                        msgDiv.appendChild(a);
+                    }
+                }catch(err){
+                    addMsg('bot','Sunucuya ulaşılamadı.');
+                }
+                // Success effect removed
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
+

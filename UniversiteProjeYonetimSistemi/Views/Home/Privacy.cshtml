@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Gizlilik Politikası";
+}
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="card-title h4 mb-4">
+            <i class="fas fa-shield-alt text-primary me-2"></i>@ViewData["Title"]
+        </h2>
+
+        <p class="lead">Proje Yönetim Sistemi olarak kişisel verilerinizin güvenliği konusuna büyük önem veriyoruz.</p>
+
+        <h5 class="mt-4">Veri Toplama ve Kullanımı</h5>
+        <p>Sitemiz, kullanıcı deneyimini geliştirmek ve hizmetlerimizi sunmak için aşağıdaki bilgileri toplar ve kullanır:</p>
+        <ul>
+            <li>Kayıt sırasında sağladığınız ad, soyad ve e-posta gibi kişisel bilgiler</li>
+            <li>Akademik ve proje bilgileri</li>
+            <li>Sistem üzerindeki etkinlikleriniz ve etkileşimleriniz</li>
+        </ul>
+
+        <h5 class="mt-4">Çerezler ve Takip Teknolojileri</h5>
+        <p>Sistemimiz, kullanıcı oturumunu yönetmek ve genel kullanım istatistiklerini toplamak için çerezler kullanmaktadır. Tarayıcı ayarlarınızdan çerezleri kontrol edebilir veya devre dışı bırakabilirsiniz.</p>
+
+        <h5 class="mt-4">Veri Güvenliği</h5>
+        <p>Kullanıcı bilgilerinizi korumak için çeşitli güvenlik önlemleri uygulanmaktadır. Tüm veriler şifrelenmekte ve güvenli sunucularda saklanmaktadır.</p>
+
+        <h5 class="mt-4">Üçüncü Taraf Paylaşımları</h5>
+        <p>Kişisel verileriniz, yasal zorunluluklar haricinde üçüncü taraflarla paylaşılmamaktadır.</p>
+
+        <h5 class="mt-4">Gizlilik Politikası Güncellemeleri</h5>
+        <p>Bu gizlilik politikası zaman zaman güncellenebilir. Değişiklikler bu sayfada yayınlanacak ve önemli değişiklikler için kullanıcılar bilgilendirilecektir.</p>
+
+        <div class="alert alert-info mt-4">
+            <i class="fas fa-info-circle me-2"></i>Bu gizlilik politikası en son @DateTime.Now.ToString("dd.MM.yyyy") tarihinde güncellenmiştir.
+        </div>
+    </div>
+</div>

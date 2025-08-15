@@ -1,0 +1,407 @@
+@model UniversiteProjeYonetimSistemi.Models.Proje
+
+@{
+    ViewData["Title"] = "Proje Detayı";
+    
+    // Sıralama değişkenleri
+    var yorumlar = ViewBag.Yorumlar as IEnumerable<UniversiteProjeYonetimSistemi.Models.ProjeYorum>;
+    var siraliYorumlar = yorumlar?.OrderByDescending(y => y.OlusturmaTarihi).ToList();
+    
+    var degerlendirmeler = ViewBag.Degerlendirmeler as IEnumerable<UniversiteProjeYonetimSistemi.Models.Degerlendirme>;
+    var siraliDegerlendirmeler = degerlendirmeler?.OrderByDescending(d => d.CreatedAt).ToList();
+    
+    var asamalar = ViewBag.Asamalar as IEnumerable<UniversiteProjeYonetimSistemi.Models.ProjeAsamasi>;
+    var siraliAsamalar = asamalar?.OrderBy(a => a.SiraNo).ToList();
+}
+
+<div class="container py-4">
+    <div class="row align-items-center mb-4 animate-header">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Danismanliklar">Danışmanlıklarım</a></li>
+                    <li class="breadcrumb-item active">Proje Detay</li>
+                </ol>
+            </nav>
+            <h1 class="mt-2">@Model.Ad</h1>
+        </div>
+        <div class="col-auto">
+            <div class="d-flex">
+                <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-primary me-2 animate-button">
+                    <i class="fas fa-star me-1"></i> Değerlendir
+                </a>
+                <a asp-action="Danismanliklar" class="btn btn-outline-secondary animate-button">
+                    <i class="fas fa-arrow-left me-1"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Ana İçerik -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4 animate-card">
+                <div class="card-header animate-header">
+                    <ul class="nav nav-tabs card-header-tabs animate-nav-tabs" id="projeTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Genel Bakış</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button" role="tab" aria-controls="files" aria-selected="false">Dosyalar</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">Yorumlar</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="evaluations-tab" data-bs-toggle="tab" data-bs-target="#evaluations" type="button" role="tab" aria-controls="evaluations" aria-selected="false">Değerlendirmeler</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="projeTabContent">
+                        <!-- Genel Bakış -->
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                            <h5 class="card-title">Proje Bilgileri</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped animate-table">
+                                    <tr>
+                                        <th style="width: 200px;">Proje Adı</th>
+                                        <td>@Model.Ad</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Öğrenci</th>
+                                        <td>
+                                            @if (Model.Ogrenci != null)
+                                            {
+                                                <span>@Model.Ogrenci.Ad @Model.Ogrenci.Soyad (@Model.Ogrenci.OgrenciNo)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Öğrenci atanmamış.</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Kategori</th>
+                                        <td>
+                                            @if (Model.Kategori != null)
+                                            {
+                                                <span class="badge" style="background-color: @Model.Kategori.Renk">@Model.Kategori.Ad</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Kategori yok</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Durum</th>
+                                        <td>
+                                            @{
+                                                string statusBadgeClass = "";
+                                                switch (Model.Status)
+                                                {
+                                                    case "Beklemede": statusBadgeClass = "bg-warning"; break;
+                                                    
+                                                    case "Devam": statusBadgeClass = "bg-primary"; break;
+                                                    case "Tamamlandi": statusBadgeClass = "bg-success"; break;
+                                                    case "Iptal": statusBadgeClass = "bg-soft-danger"; break;
+                                                    default: statusBadgeClass = "bg-secondary"; break;
+                                                }
+                                            }
+                                            <span class="badge @statusBadgeClass">@Model.Status</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Oluşturulma Tarihi</th>
+                                        <td>@Model.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Teslim Tarihi</th>
+                                        <td>
+                                            @if (Model.TeslimTarihi.HasValue)
+                                            {
+                                                var kalanGun = (Model.TeslimTarihi.Value - DateTime.Today).Days;
+                                                
+                                                <span>@Model.TeslimTarihi.Value.ToString("dd.MM.yyyy")</span>
+                                                
+                                                if (kalanGun > 0)
+                                                {
+                                                    <span class="ms-2 badge bg-info">@kalanGun gün kaldı</span>
+                                                }
+                                                else if (kalanGun == 0)
+                                                {
+                                                    <span class="ms-2 badge bg-soft-danger">Bugün</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="ms-2 badge bg-soft-danger">@Math.Abs(kalanGun) gün geçti</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Teslim tarihi belirlenmemiş</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <h5 class="mt-4">Proje Açıklaması</h5>
+                            <div class="card animate-card">
+                                <div class="card-body">
+                                    <p style="white-space: pre-line;">@Model.Aciklama</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dosyalar -->
+                        <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                            @if (ViewBag.Dosyalar != null && ViewBag.Dosyalar.Count > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover animate-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Dosya Adı</th>
+                                                <th>Açıklama</th>
+                                                <th>Boyut</th>
+                                                <th>Yükleyen</th>
+                                                <th>Tarih</th>
+                                                <th>İşlem</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var dosya in ViewBag.Dosyalar)
+                                            {
+                                                <tr class="table-hover-item">
+                                                    <td>@dosya.DosyaAdi</td>
+                                                    <td>@dosya.Aciklama</td>
+                                                    <td>@(dosya.DosyaBoyutu / 1024) KB</td>
+                                                    <td>
+                                                        @if (dosya.YukleyenTipi == "Ogrenci")
+                                                        {
+                                                            <span class="badge bg-success">Öğrenci</span>
+                                                        }
+                                                        else if (dosya.YukleyenTipi == "Akademisyen")
+                                                        {
+                                                            <span class="badge bg-primary">Akademisyen</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-secondary">Sistem</span>
+                                                        }
+                                                    </td>
+                                                    <td>@dosya.YuklemeTarihi.ToString("dd.MM.yyyy")</td>
+                                                    <td>
+                                                        <a href="/ProjeDosya/Download/@dosya.Id" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                            <i class="fas fa-download"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-5">
+                                    <i class="fas fa-file-upload fa-3x text-muted mb-3"></i>
+                                    <p>Bu projeye henüz dosya eklenmemiş.</p>
+                                </div>
+                            }
+                        </div>
+                        
+                        <!-- Yorumlar -->
+                        <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                            <div class="mb-4">
+                                <h5>Yorum Ekle</h5>
+                                <form asp-action="YorumEkle" method="post">
+                                    <input type="hidden" name="projeId" value="@Model.Id" />
+                                    <div class="mb-3">
+                                        <textarea name="icerik" class="form-control" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <select name="yorumTipi" class="form-select">
+                                            <option value="Değerlendirme">Değerlendirme</option>
+                                            <option value="Soru">Soru</option>
+                                            <option value="Öneri">Öneri</option>
+                                            <option value="Genel">Genel</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary animate-button">
+                                        <i class="fas fa-comment me-1"></i> Yorum Ekle
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <hr>
+                            
+                            <h5>Yorumlar</h5>
+                            @if (siraliYorumlar != null && siraliYorumlar.Count > 0)
+                            {
+                                foreach (var yorum in siraliYorumlar)
+                                {
+                                    <div class="card mb-3 animate-card">
+                                        <div class="card-header d-flex justify-content-between align-items-center @(yorum.AkademisyenId.HasValue ? "bg-light" : "")">
+                                            <div>
+                                                @if (yorum.OgrenciId.HasValue && yorum.Ogrenci != null)
+                                                {
+                                                    <span class="fw-bold">@yorum.Ogrenci.Ad @yorum.Ogrenci.Soyad</span>
+                                                    <span class="badge bg-success ms-2">Öğrenci</span>
+                                                }
+                                                else if (yorum.AkademisyenId.HasValue && yorum.Akademisyen != null)
+                                                {
+                                                    <span class="fw-bold">@yorum.Akademisyen.Unvan @yorum.Akademisyen.Ad @yorum.Akademisyen.Soyad</span>
+                                                    <span class="badge bg-primary ms-2">Akademisyen</span>
+                                                }
+                                                <span class="badge bg-secondary ms-2">@yorum.YorumTipi</span>
+                                            </div>
+                                            <small class="text-muted">@yorum.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm")</small>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text">@yorum.Icerik</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                    <p>Bu projeye henüz yorum yapılmamış.</p>
+                                </div>
+                            }
+                        </div>
+                        
+                        <!-- Değerlendirmeler -->
+                        <div class="tab-pane fade" id="evaluations" role="tabpanel" aria-labelledby="evaluations-tab">
+                            <div class="mb-3">
+                                <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
+                                    <i class="fas fa-plus-circle me-1"></i> Yeni Değerlendirme Ekle
+                                </a>
+                            </div>
+                            
+                            @if (siraliDegerlendirmeler != null && siraliDegerlendirmeler.Count > 0)
+                            {
+                                foreach (var degerlendirme in siraliDegerlendirmeler)
+                                {
+                                    <div class="card mb-3 animate-card">
+                                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-bold">@degerlendirme.Akademisyen.Unvan @degerlendirme.Akademisyen.Ad @degerlendirme.Akademisyen.Soyad</span>
+                                                <span class="badge bg-secondary ms-2">@degerlendirme.DegerlendirmeTipi</span>
+                                            </div>
+                                            <div>
+                                                <span class="badge bg-primary">@degerlendirme.Puan / 100</span>
+                                                <small class="text-muted ms-2">@degerlendirme.CreatedAt.ToString("dd.MM.yyyy")</small>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text">@degerlendirme.Aciklama</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
+                                    <p>Bu proje için henüz değerlendirme yapılmamış.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sağ Panel -->
+        <div class="col-md-4">
+            <!-- Öğrenci Bilgileri -->
+            @if (Model.Ogrenci != null)
+            {
+                <div class="card shadow-sm mb-4 animate-card">
+                    <div class="card-header bg-light animate-header">
+                        <h5 class="mb-0">Öğrenci Bilgileri</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5>@Model.Ogrenci.Ad @Model.Ogrenci.Soyad</h5>
+                        <p class="text-muted">@Model.Ogrenci.OgrenciNo</p>
+                        
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-envelope me-2"></i> @Model.Ogrenci.Email
+                            </li>
+                            @if (!string.IsNullOrEmpty(Model.Ogrenci.Telefon))
+                            {
+                                <li class="mb-2">
+                                    <i class="fas fa-phone me-2"></i> @Model.Ogrenci.Telefon
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            
+            <!-- Proje Aşamaları -->
+            <div class="card shadow-sm animate-card">
+                <div class="card-header bg-light animate-header">
+                    <h5 class="mb-0">Proje Aşamaları</h5>
+                </div>
+                <div class="card-body">
+                    @if (siraliAsamalar != null && siraliAsamalar.Count > 0)
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var asama in siraliAsamalar)
+                            {
+                                <div class="list-group-item @(asama.Tamamlandi ? "list-group-item-success" : "")">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@asama.AsamaAdi</h6>
+                                            <p class="mb-1">@asama.Aciklama</p>
+                                            @if (asama.BaslangicTarihi.HasValue && asama.BitisTarihi.HasValue)
+                                            {
+                                                <small class="text-muted">
+                                                    @asama.BaslangicTarihi.Value.ToString("dd.MM.yyyy") - @asama.BitisTarihi.Value.ToString("dd.MM.yyyy")
+                                                </small>
+                                            }
+                                        </div>
+                                        @if (asama.Tamamlandi)
+                                        {
+                                            <span class="badge bg-success"><i class="fas fa-check"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning"><i class="fas fa-hourglass-half"></i></span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                            <p>Bu proje için henüz aşama tanımlanmamış.</p>
+                            <a asp-controller="ProjeAsama" asp-action="Create" asp-route-projeId="@Model.Id" class="btn btn-primary animate-button">
+                                <i class="fas fa-plus-circle me-1"></i> Aşama Ekle
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+        });
+    </script>
+} 

@@ -1,0 +1,149 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeKategori
+
+@{
+    ViewData["Title"] = "Kategori Sil";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3 animate-header">
+        <div class="col">
+            <h1>Kategori Silme</h1>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-secondary animate-button">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-danger animate-card">
+        <div class="card-header bg-danger text-white">
+            <i class="fas fa-exclamation-triangle"></i> Uyarı
+        </div>
+        <div class="card-body">
+            <h4>Bu kategoriyi silmek istediğinizden emin misiniz?</h4>
+            <p class="text-danger">
+                <strong>Bu işlem geri alınamaz!</strong> Kategori silinmeden önce, bu kategoriye ait projelerin
+                nasıl işleneceğine karar vermeniz gerekmektedir.
+            </p>
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+                </div>
+            }
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Kategori ID</dt>
+                        <dd class="col-sm-8">@Model.Id</dd>
+                        
+                        <dt class="col-sm-4">Kategori Adı</dt>
+                        <dd class="col-sm-8">@Model.Ad</dd>
+                        
+                        <dt class="col-sm-4">Renk</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge" style="background-color: @Model.Renk; padding: 8px;">@Model.Renk</span>
+                        </dd>
+                        
+                        <dt class="col-sm-4">Oluşturulma Tarihi</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card animate-card">
+                        <div class="card-header">Açıklama</div>
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(Model.Aciklama))
+                            {
+                                <p>@Model.Aciklama</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Bu kategori için açıklama girilmemiş.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            @if (Model.Projeler != null && Model.Projeler.Any())
+            {
+                <div class="alert alert-warning mt-4">
+                    <i class="fas fa-exclamation-triangle"></i> Bu kategoriye bağlı <strong>@Model.Projeler.Count</strong> adet proje bulunmaktadır.
+                    Kategoriyi silmeden önce bu projelerin başka bir kategoriye aktarılması gerekmektedir.
+                </div>
+                
+                @if (ViewBag.Kategoriler != null && ViewBag.Kategoriler.Count > 0)
+                {
+                    <form asp-action="Delete" method="post" class="mt-4 animate-form">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="form-group mb-3">
+                            <label class="form-label">Projeleri aktarmak istediğiniz kategoriyi seçin:</label>
+                            @if (ViewBag.Kategoriler.Count == 1)
+                            {
+                                var onlyCategory = ViewBag.Kategoriler[0];
+                                <input type="hidden" name="transferKategoriId" value="@onlyCategory.Id" />
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-1"></i> Projeler <strong>@onlyCategory.Ad</strong> kategorisine aktarılacaktır (tek mevcut kategori).
+                                </div>
+                            }
+                            else
+                            {
+                                <select name="transferKategoriId" class="form-select" required>
+                                    <option value="">-- Kategori Seçin --</option>
+                                    @foreach (var kategori in ViewBag.Kategoriler)
+                                    {
+                                        <option value="@kategori.Id">@kategori.Ad</option>
+                                    }
+                                </select>
+                                <small class="form-text text-muted">Bu kategorideki tüm projeler seçtiğiniz kategoriye aktarılacaktır.</small>
+                            }
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger animate-button">
+                                <i class="fas fa-exchange-alt me-1"></i> Projeleri Aktar ve Kategoriyi Sil
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary animate-button">İptal</a>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-danger mt-4">
+                        <i class="fas fa-exclamation-triangle me-1"></i> <strong>Uyarı:</strong> Bu kategoriyi silemezsiniz çünkü projelerin aktarılacağı başka kategori bulunmamaktadır.
+                        <br />
+                        <a asp-controller="Kategori" asp-action="Create" class="btn btn-outline-primary mt-2 animate-button">
+                            <i class="fas fa-plus-circle me-1"></i> Önce Yeni Kategori Oluşturun
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <form asp-action="Delete" method="post" class="mt-4 animate-form">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger animate-button">
+                            <i class="fas fa-trash"></i> Kategoriyi Sil
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary animate-button">İptal</a>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+        });
+    </script>
+} 

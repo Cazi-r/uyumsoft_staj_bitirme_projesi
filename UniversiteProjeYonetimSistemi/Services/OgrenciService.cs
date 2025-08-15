@@ -1,0 +1,119 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using UniversiteProjeYonetimSistemi.Data;
+using UniversiteProjeYonetimSistemi.Models;
+
+namespace UniversiteProjeYonetimSistemi.Services
+{
+    public class OgrenciService : IOgrenciService
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Ogrenci> _ogrenciRepository;
+        private readonly IProjeService _projeService;
+
+        public OgrenciService(
+            ApplicationDbContext context, 
+            IRepository<Ogrenci> ogrenciRepository,
+            IProjeService projeService)
+        {
+            _context = context;
+            _ogrenciRepository = ogrenciRepository;
+            _projeService = projeService;
+        }
+
+        /// Tum ogrencileri iliskili Kullanici bilgisiyle birlikte listeler.
+        public async Task<IEnumerable<Ogrenci>> GetAllAsync()
+        {
+            return await _context.Ogrenciler
+                .Include(o => o.Kullanici)
+                .ToListAsync();
+        }
+
+        /// Id'ye gore ogrenciyi iliskili Kullanici bilgisiyle birlikte dondurur.
+        public async Task<Ogrenci> GetByIdAsync(int id)
+        {
+            return await _context.Ogrenciler
+                .Include(o => o.Kullanici)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        /// KullaniciId'ye gore ogrenci kaydini dondurur.
+        public async Task<Ogrenci> GetByKullaniciIdAsync(int kullaniciId)
+        {
+            return await _context.Ogrenciler
+                .Include(o => o.Kullanici)
+                .FirstOrDefaultAsync(o => o.KullaniciId == kullaniciId);
+        }
+
+        /// Ogrenci numarasina gore ogrenci kaydini dondurur.
+        public async Task<Ogrenci> GetByOgrenciNoAsync(string ogrenciNo)
+        {
+            return await _context.Ogrenciler
+                .Include(o => o.Kullanici)
+                .FirstOrDefaultAsync(o => o.OgrenciNo == ogrenciNo);
+        }
+
+        /// Kullanici e-postasina gore bagli ogrenciyi dondurur.
+        public async Task<Ogrenci> GetOgrenciByUserName(string userName)
+        {
+            // Direkt olarak _context kullanarak arama yapalım
+            var kullanici = await _context.Kullanicilar
+                .FirstOrDefaultAsync(k => k.Email == userName);
+            
+            if (kullanici == null)
+                return null;
+            
+            return await _context.Ogrenciler
+                .Include(o => o.Kullanici)
+                .FirstOrDefaultAsync(o => o.KullaniciId == kullanici.Id);
+        }
+
+        /// Yeni ogrenci kaydi olusturur.
+        public async Task<Ogrenci> AddAsync(Ogrenci ogrenci)
+        {
+            await _ogrenciRepository.AddAsync(ogrenci);
+            return ogrenci;
+        }
+
+        /// Ogrenci kaydini gunceller.
+        public async Task UpdateAsync(Ogrenci ogrenci)
+        {
+            await _ogrenciRepository.UpdateAsync(ogrenci);
+        }
+
+        /// Id'ye gore ogrenci kaydini siler.
+        public async Task DeleteAsync(int id)
+        {
+            await _ogrenciRepository.DeleteAsync(id);
+        }
+
+        /// Ogrencinin projelerini dondurur.
+        public async Task<IEnumerable<Proje>> GetProjelerAsync(int ogrenciId)
+        {
+            return await _projeService.GetByOgrenciIdAsync(ogrenciId);
+        }
+
+        /// Ogrencinin projelerini iliskili tum detaylariyla (dosyalar, asamalar, yorumlar, degerlendirmeler) birlikte dondurur.
+        public async Task<IEnumerable<Proje>> GetProjelerWithDetailsAsync(int ogrenciId)
+        {
+            return await _context.Projeler
+                .Include(p => p.Ogrenci)
+                .Include(p => p.Mentor)
+                .Include(p => p.Kategori)
+                .Include(p => p.Dosyalar.OrderByDescending(d => d.YuklemeTarihi))
+                .Include(p => p.Asamalar.OrderBy(a => a.SiraNo))
+                .Include(p => p.Yorumlar.OrderByDescending(y => y.OlusturmaTarihi))
+                    .ThenInclude(y => y.Ogrenci)
+                .Include(p => p.Yorumlar)
+                    .ThenInclude(y => y.Akademisyen)
+                .Include(p => p.Degerlendirmeler.OrderByDescending(d => d.CreatedAt))
+                    .ThenInclude(d => d.Akademisyen)
+                .Where(p => p.OgrenciId == ogrenciId)
+                .OrderByDescending(p => p.OlusturmaTarihi)
+                .ToListAsync();
+        }
+    }
+} 

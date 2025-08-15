@@ -1,0 +1,596 @@
+@{
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+
+<!-- CSRF Token -->
+@Html.AntiForgeryToken()
+
+<!-- Dashboard İçeriği -->
+<div class="row mb-4 animate-header">
+    <div class="col-12">
+        <div class="card bg-light border-0 mb-3 animate-card">
+            <div class="card-body py-3">
+                <div class="row align-items-center">
+                    <div class="col-lg">
+                        <h5 class="mb-0">Hoş geldiniz, @User.Claims.FirstOrDefault(c => c.Type == "Ad")?.Value</h5>
+                        <p class="mb-0 text-muted small">Son giriş: @DateTime.Now.AddDays(-1).ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                    <div class="col-lg-auto mt-3 mt-lg-0">
+                        <button class="btn btn-sm btn-falcon-primary me-2 animate-button" id="raporIndirBtn">
+                            <i class="fas fa-download me-1"></i> Rapor İndir
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary animate-button" id="sayfaYenileBtn">
+                            <i class="fas fa-sync-alt me-1"></i> Yenile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- İstatistik Kartları -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fw-bold mb-2" style="color: #0d6efd;">Toplam Kullanıcı</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.ToplamKullanici">@ViewBag.ToplamKullanici</h3>
+                        <p class="text-muted mt-1 mb-0 small">Aktif: @ViewBag.AktifKullanici / Pasif: @ViewBag.PasifKullanici</p>
+                    </div>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-users fa-lg" style="color: #0d6efd;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-success fw-bold mb-2">Toplam Proje</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.ToplamProje">@ViewBag.ToplamProje</h3>
+                        <p class="text-muted mt-1 mb-0 small">Devam Eden: @ViewBag.DevamEdenProjeSayisi / Tamamlanan: @ViewBag.TamamlananProjeSayisi</p>
+                    </div>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-project-diagram fa-lg text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-info fw-bold mb-2">Akademisyenler</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.AkademisyenSayisi">@ViewBag.AkademisyenSayisi</h3>
+                    </div>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-user-tie fa-lg text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow-sm h-100 dashboard-card stat-card">
+            <div class="card-body py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-warning fw-bold mb-2">Öğrenciler</h6>
+                        <h3 class="mb-1 stat-number" data-count="@ViewBag.OgrenciSayisi">@ViewBag.OgrenciSayisi</h3>
+                    </div>
+                    <div class="rounded-circle bg-light p-3 d-flex align-items-center justify-content-center stat-icon">
+                        <i class="fas fa-user-graduate fa-lg text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Kullanıcı Kayıt Grafiği -->
+    <div class="col-lg-8 mb-3">
+        <div class="card h-100 animate-card">
+            <div class="card-header border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">Aylık Kullanıcı Kayıtları</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="kullaniciGrafik"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rol Dağılımı Grafiği -->
+    <div class="col-lg-4 mb-3">
+        <div class="card h-100 animate-card">
+            <div class="card-header border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">Kullanıcı Rol Dağılımı</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-falcon-default btn-sm animate-button" type="button">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center">
+                <div class="chart-container">
+                    <canvas id="rolGrafik"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Proje Durum Grafiği -->
+    <div class="col-lg-5 mb-3">
+        <div class="card h-100 animate-card">
+            <div class="card-header border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">Proje Durumları</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-falcon-default btn-sm animate-button" type="button" data-bs-toggle="tooltip" title="Tüm projelerin durumları">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div class="chart-container w-100">
+                    <canvas id="projeDurumGrafik"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- En Aktif Akademisyenler -->
+    <div class="col-lg-7 mb-3">
+        <div class="card h-100 animate-card">
+            <div class="card-header border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">En Aktif Akademisyenler</h5>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0 animate-table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0">Ad Soyad</th>
+                                <th class="border-0">Unvan</th>
+                                <th class="border-0 text-center">Proje Sayısı</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.AkademisyenProjeSayilari != null)
+                            {
+                                @foreach (var item in ViewBag.AkademisyenProjeSayilari)
+                                {
+                                    <tr class="table-hover-item">
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm bg-primary text-white rounded-circle me-2">
+                                                    <span>@item.Akademisyen.Ad.Substring(0, 1)@item.Akademisyen.Soyad.Substring(0, 1)</span>
+                                                </div>
+                                                <div>@item.Akademisyen.Ad @item.Akademisyen.Soyad</div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">@item.Akademisyen.Unvan</td>
+                                        <td class="align-middle text-center">
+                                            <span class="badge bg-info rounded-pill">@item.ProjeSayisi</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Son Eklenen Kullanıcılar -->
+    <div class="col-12 mb-3">
+        <div class="card h-100 animate-card">
+            <div class="card-header border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">Son Eklenen Kullanıcılar</h5>
+                    <a asp-controller="Admin" asp-action="Kullanicilar" class="btn btn-sm btn-falcon-primary animate-button">
+                        <i class="fas fa-users me-1"></i> Tümünü Gör
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 animate-table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0">Kullanıcı</th>
+                                <th class="border-0">Email</th>
+                                <th class="border-0">Rol</th>
+                                <th class="border-0">Kayıt Tarihi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.SonKullanicilar != null)
+                            {
+                                @foreach (var kullanici in ViewBag.SonKullanicilar)
+                                {
+                                    <tr class="table-hover-item">
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm bg-light rounded-circle me-2">
+                                                    <span class="text-primary">@kullanici.Ad.Substring(0, 1)</span>
+                                                </div>
+                                                <div>@kullanici.Ad @kullanici.Soyad</div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">@kullanici.Email</td>
+                                        <td class="align-middle">
+                                            <span class="badge @GetRolBadge(kullanici.Rol)">@kullanici.Rol</span>
+                                        </td>
+                                        <td class="align-middle">@kullanici.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Son Eklenen Projeler -->
+    <div class="col-12 mb-3">
+        <div class="card h-100 animate-card">
+            <div class="card-header border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">Son Eklenen Projeler</h5>
+                    <a asp-controller="Proje" asp-action="Index" class="btn btn-sm btn-falcon-primary animate-button">
+                        <i class="fas fa-project-diagram me-1"></i> Tümünü Gör
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 animate-table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0">Proje Adı</th>
+                                <th class="border-0">Öğrenci</th>
+                                <th class="border-0">Danışman</th>
+                                <th class="border-0 text-center">Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.SonProjeler != null)
+                            {
+                                @foreach (var proje in ViewBag.SonProjeler)
+                                {
+                                    <tr class="table-hover-item">
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm bg-light rounded-circle me-2">
+                                                    <span class="text-primary">@proje.Ad.Substring(0, 1)</span>
+                                                </div>
+                                                <div>@proje.Ad</div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">@(proje.Ogrenci != null ? $"{proje.Ogrenci.Ad} {proje.Ogrenci.Soyad}" : "-")</td>
+                                        <td class="align-middle">@(proje.Mentor != null ? $"{proje.Mentor.Unvan} {proje.Mentor.Ad} {proje.Mentor.Soyad}" : "-")</td>
+                                        <td class="align-middle text-center">
+                                            <span class="badge @GetProjeDurumBadge(proje.Status)">@proje.Status</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Rapor İndir Butonu
+            document.getElementById('raporIndirBtn').addEventListener('click', function() {
+                var btn = this;
+                var originalText = btn.innerHTML;
+                
+                // Buton durumunu güncelle
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Rapor Hazırlanıyor...';
+                
+                // AJAX isteği gönder
+                fetch('/Admin/RaporIndir', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Rapor oluşturulamadı');
+                })
+                .then(blob => {
+                    // Dosyayı indir
+                    var url = window.URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Dashboard_Raporu_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    // Başarı mesajı göster
+                    showNotification('Rapor başarıyla indirildi!', 'success');
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    showNotification('Rapor indirilirken hata oluştu!', 'error');
+                })
+                .finally(() => {
+                    // Buton durumunu geri yükle
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+            });
+            
+            // Sayfa Yenile Butonu
+            document.getElementById('sayfaYenileBtn').addEventListener('click', function() {
+                var btn = this;
+                var originalText = btn.innerHTML;
+                
+                // Buton durumunu güncelle
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Yenileniyor...';
+                
+                // AJAX isteği gönder
+                fetch('/Admin/SayfaYenile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        // Sayfayı yenile
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    showNotification('Sayfa yenilenirken hata oluştu!', 'error');
+                })
+                .finally(() => {
+                    // Buton durumunu geri yükle
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+            });
+            
+            // Bildirim gösterme fonksiyonu
+            function showNotification(message, type) {
+                var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+                var icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+                
+                var alert = document.createElement('div');
+                alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+                alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                alert.innerHTML = `
+                    <i class="${icon} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(alert);
+                
+                // 5 saniye sonra otomatik kaldır
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 5000);
+            }
+            
+            // Kullanıcı Kayıt Grafiği
+            var kullaniciCtx = document.getElementById('kullaniciGrafik').getContext('2d');
+            var kullaniciGrafik = new Chart(kullaniciCtx, {
+                type: 'line',
+                data: {
+                    labels: [
+                        @{
+                            var labelsList = new List<string>();
+                            foreach (var kayit in ViewBag.AylikKayitlar)
+                            {
+                                labelsList.Add($"'{kayit.Key}'");
+                            }
+                            @Html.Raw(string.Join(",", labelsList));
+                        }
+                    ],
+                    datasets: [{
+                        label: 'Kayıt Sayısı',
+                        data: [
+                            @{
+                                var valuesList = new List<int>();
+                                foreach (var kayit in ViewBag.AylikKayitlar)
+                                {
+                                    valuesList.Add(kayit.Value);
+                                }
+                                @Html.Raw(string.Join(",", valuesList));
+                            }
+                        ],
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            },
+                            grid: {
+                                borderDash: [2, 2]
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Rol Dağılım Grafiği
+            var rolCtx = document.getElementById('rolGrafik').getContext('2d');
+            var rolGrafik = new Chart(rolCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Admin', 'Akademisyen', 'Öğrenci'],
+                    datasets: [{
+                        data: [@ViewBag.AdminSayisi, @ViewBag.AkademisyenSayisi, @ViewBag.OgrenciSayisi],
+                        backgroundColor: [
+                            '#dc3545', // danger
+                            '#0d6efd', // primary
+                            '#198754'  // success
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    },
+                    cutout: '75%'
+                }
+            });
+
+            // Proje Durum Grafiği
+            var projeDurumCtx = document.getElementById('projeDurumGrafik').getContext('2d');
+            var projeDurumGrafik = new Chart(projeDurumCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Beklemede', 'Devam Eden', 'Tamamlanan', 'İptal'],
+                    datasets: [{
+                        data: [@ViewBag.BeklemedeProjeSayisi, @ViewBag.DevamEdenProjeSayisi, @ViewBag.TamamlananProjeSayisi, @ViewBag.IptalProjeSayisi],
+                        backgroundColor: [
+                            '#ffc107', // warning
+                            '#0d6efd', // primary
+                            '#198754', // success
+                            '#dc3545'  // danger
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        });
+    </script>
+}
+
+@functions {
+    public string GetRolBadge(string rol)
+    {
+        return rol switch
+        {
+            "Admin" => "bg-danger",
+            "Akademisyen" => "bg-primary",
+            "Ogrenci" => "bg-success",
+            _ => "bg-secondary"
+        };
+    }
+
+    public string GetProjeDurumBadge(string durum)
+    {
+        return durum switch
+        {
+            "Beklemede" => "bg-warning",
+            
+            "Devam" => "bg-primary",
+            "Tamamlandi" => "bg-success",
+            "Iptal" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+} 

@@ -1,0 +1,654 @@
+@model UniversiteProjeYonetimSistemi.Models.Proje
+
+@{
+    ViewData["Title"] = "Proje Detayları";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-3 page-header animate-header">
+        <div class="col">
+            <h1 class="page-title"><i class="fas fa-eye me-2 text-primary"></i>@Model.Ad</h1>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-secondary animate-button">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
+                    <i class="fas fa-user-edit"></i> Danışman Değiştir
+                </a>
+            }
+            else if (User.IsInRole("Akademisyen"))
+            {
+                @if (Model.Status == "Beklemede" && ViewBag.IsCurrentUserSelectedMentor)
+                {
+                    <div class="btn-group" role="group">
+                        <form asp-controller="Proje" asp-action="ProjeKabulEt" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-success animate-button" onclick="return confirm('Bu projeyi kabul etmek istediğinizden emin misiniz?')">
+                                <i class="fas fa-check-circle"></i> Kabul Et
+                            </button>
+                        </form>
+                        <button type="button" class="btn btn-danger animate-button ms-2" data-bs-toggle="modal" data-bs-target="#reddetModal">
+                            <i class="fas fa-times-circle"></i> Reddet
+                        </button>
+                        <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-warning animate-button ms-2">
+                            <i class="fas fa-user-edit"></i> Danışman Değiştir
+                        </a>
+                    </div>
+                }
+                else if (ViewBag.IsCurrentUserMentor)
+                {
+                    <a asp-controller="ProjeAtama" asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
+                        <i class="fas fa-user-edit"></i> Danışman Değiştir
+                    </a>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Proje Detayları -->
+            <div class="card mb-4 animate-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Proje Detayları</h5>
+                    <div class="btn-group" style="min-width: 120px;">
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning details-btn animate-button w-100">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                    }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Durum:</div>
+                        <div class="col-md-8">
+                            @{
+                                var statusClass = Model.Status switch
+                                {
+                                    "Beklemede" => "badge bg-secondary",
+                                    // "Atanmis" durumu kaldirildi
+                                    "Devam" => "badge bg-primary",
+                                    "Tamamlandi" => "badge bg-success",
+                                    "Iptal" => "badge bg-danger",
+                                    _ => "badge bg-secondary"
+                                };
+                            }
+                            <span class="@statusClass">@Model.Status</span>
+                            
+                            @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                            {
+                                <div class="d-flex justify-content-end gap-2 mt-2">
+                                    @if (Model.Status == "Devam")
+                                    {
+                                        <form asp-action="CompleteProject" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success animate-button w-100" style="min-width:120px" onclick="return confirm('Bu projeyi tamamlanmış olarak işaretlemek istiyor musunuz?')">
+                                                <i class="fas fa-check-circle"></i> Projeyi Tamamla
+                                            </button>
+                                        </form>
+                                    }
+                                    
+                                    @if (Model.Status != "Tamamlandi" && Model.Status != "Iptal")
+                                    {
+                                        <form asp-action="CancelProject" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
+                                            <button type="submit" class="btn btn-sm btn-danger animate-button w-100" style="min-width:120px" onclick="return confirm('Bu projeyi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')">
+                                                <i class="fas fa-times-circle"></i> Projeyi İptal Et
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Kategori:</div>
+                        <div class="col-md-8">@(Model.Kategori?.Ad ?? "-")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Öğrenci:</div>
+                        <div class="col-md-8">@(Model.Ogrenci != null ? $"{Model.Ogrenci.Ad} {Model.Ogrenci.Soyad} ({Model.Ogrenci.OgrenciNo})" : "-")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Danışman:</div>
+                        <div class="col-md-8">@(Model.Mentor != null ? $"{Model.Mentor.Unvan} {Model.Mentor.Ad} {Model.Mentor.Soyad}" : "-")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Oluşturulma Tarihi:</div>
+                        <div class="col-md-8">@Model.OlusturmaTarihi.ToShortDateString()</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Teslim Tarihi:</div>
+                        <div class="col-md-8">@(Model.TeslimTarihi.HasValue ? Model.TeslimTarihi.Value.ToShortDateString() : "-")</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 fw-bold">Açıklama:</div>
+                        <div class="col-md-8">@Html.Raw(Model.Aciklama.Replace("\n", "<br/>"))</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proje Aşamaları -->
+                <div class="card mb-4 animate-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Proje Aşamaları</h5>
+                        <div class="d-flex flex-column gap-1" style="min-width: 120px;">
+                        @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                        {
+                            <a asp-controller="ProjeAsama" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
+                                <i class="fas fa-plus"></i> Aşama Ekle
+                            </a>
+                        }
+                        <a asp-controller="ProjeAsama" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
+                            <i class="fas fa-list"></i> Tüm Aşamalar
+                        </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    @if (Model.Asamalar != null && Model.Asamalar.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Aşama</th>
+                                        <th>Başlangıç</th>
+                                        <th>Bitiş</th>
+                                        <th>Durum</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var asama in Model.Asamalar.OrderBy(a => a.SiraNo))
+                                    {
+                                        <tr class="no-animation">
+                                            <td>
+                                                <strong>@asama.AsamaAdi</strong>
+                                                @if (!string.IsNullOrEmpty(asama.Aciklama))
+                                                {
+                                                    <br /><small class="text-muted">@asama.Aciklama</small>
+                                                }
+                                            </td>
+                                            <td>@(asama.BaslangicTarihi?.ToShortDateString() ?? "-")</td>
+                                            <td>@(asama.BitisTarihi?.ToShortDateString() ?? "-")</td>
+                                            <td>
+                                                @if (asama.Tamamlandi)
+                                                {
+                                                    <span class="badge bg-success">Tamamlandı</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Devam Ediyor</span>
+                                                }
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="dropdown d-inline-block">
+                                                    <button type="button" class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Diğer işlemler">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                                                        {
+                                                            @if (!asama.Tamamlandi)
+                                                            {
+                                                                <li>
+                                                                    <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
+                                                                        <input type="hidden" name="id" value="@asama.Id" />
+                                                                        <input type="hidden" name="projeId" value="@Model.Id" />
+                                                                        <input type="hidden" name="tamamlandi" value="true" />
+                                                                        <button type="submit" class="dropdown-item">
+                                                                            <i class="fas fa-check me-2"></i> Tamamlandı
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li>
+                                                                    <form asp-controller="ProjeAsama" asp-action="UpdateStatus" method="post" class="d-inline">
+                                                                        <input type="hidden" name="id" value="@asama.Id" />
+                                                                        <input type="hidden" name="projeId" value="@Model.Id" />
+                                                                        <input type="hidden" name="tamamlandi" value="false" />
+                                                                        <button type="submit" class="dropdown-item">
+                                                                            <i class="fas fa-undo me-2"></i> Geri Al
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                            }
+                                                        }
+
+                                                        @if ((User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor)))
+                                                        {
+                                                            <li><hr class="dropdown-divider" /></li>
+                                                            <li>
+                                                                <a class="dropdown-item" asp-controller="ProjeAsama" asp-action="Edit" asp-route-id="@asama.Id">
+                                                                    <i class="fas fa-pen me-2"></i> Düzenle
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" asp-controller="ProjeAsama" asp-action="Delete" asp-route-id="@asama.Id">
+                                                                    <i class="fas fa-trash me-2"></i> Sil
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz aşama eklenmemiş.</p>
+                    }
+                </div>
+            </div>
+            
+            <!-- Proje Dosyaları -->
+            <div class="card mb-4 animate-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Proje Dosyaları</h5>
+                    <div class="d-flex flex-column gap-1" style="min-width: 120px;">
+                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                        {
+                            <a asp-controller="ProjeDosya" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
+                                <i class="fas fa-plus me-2"></i>Dosya Ekle
+                            </a>
+                        }
+                        <a asp-controller="ProjeDosya" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
+                            <i class="fas fa-list me-2"></i>Tüm Dosyalar
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Dosyalar != null && Model.Dosyalar.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Açıklama</th>
+                                        <th>Boyut</th>
+                                        <th>Tür</th>
+                                        <th>Yükleme Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var dosya in Model.Dosyalar)
+                                    {
+                                        <tr class="table-hover-item">
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(dosya.Aciklama))
+                                                {
+                                                    @dosya.Aciklama
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Açıklama yok</span>
+                                                }
+                                            </td>
+                                            <td>@(dosya.DosyaBoyutu / 1024) KB</td>
+                                            <td>@dosya.DosyaTipi</td>
+                                            <td>@dosya.YuklemeTarihi.ToShortDateString()</td>
+                                            <td class="text-end">
+                                                <div class="dropdown d-inline-block">
+                                                    <button type="button" class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Diğer işlemler">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <a class="dropdown-item" href="@Url.Action("Download", "ProjeDosya", new { id = dosya.Id })">
+                                                                <i class="fas fa-download me-2"></i> İndir
+                                                            </a>
+                                                        </li>
+                                                        @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor) || ViewBag.IsCurrentUserProjectOwner)
+                                                        {
+                                                            <li><hr class="dropdown-divider" /></li>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" asp-controller="ProjeDosya" asp-action="Delete" asp-route-id="@dosya.Id">
+                                                                    <i class="fas fa-trash me-2"></i> Sil
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz dosya yüklenmemiş.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Proje Kaynakları -->
+            <div class="card mb-4 animate-card resources-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Proje Kaynakları</h5>
+                    <div class="d-flex flex-column gap-1" style="min-width: 120px;">
+                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                        {
+                            <a asp-controller="ProjeKaynagi" asp-action="Add" asp-route-projeId="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button w-100">
+                                <i class="fas fa-plus me-2"></i>Kaynak Ekle
+                            </a>
+                        }
+                        <a asp-controller="ProjeKaynagi" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button w-100">
+                            <i class="fas fa-list me-2"></i>Tüm Kaynaklar
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Kaynaklar != null && Model.Kaynaklar.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Kaynak Adı</th>
+                                        <th>Tip</th>
+                                        <th>Yazar</th>
+                                        <th>Yayın Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kaynak in Model.Kaynaklar)
+                                    {
+                                        <tr class="table-hover-item">
+                                            <td>
+                                                @kaynak.KaynakAdi
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var tipClass = kaynak.KaynakTipi switch
+                                                    {
+                                                        "Kitap" => "badge bg-primary",
+                                                        "Makale" => "badge bg-info",
+                                                        "Website" => "badge bg-success",
+                                                        "API" => "badge bg-warning",
+                                                        "Dokuman" => "badge bg-secondary",
+                                                        "Video" => "badge bg-danger",
+                                                        _ => "badge bg-dark"
+                                                    };
+                                                }
+                                                <span class="@tipClass">@kaynak.KaynakTipi</span>
+                                            </td>
+                                            <td>@(string.IsNullOrEmpty(kaynak.Yazar) ? "-" : kaynak.Yazar)</td>
+                                            <td>@(kaynak.YayinTarihi.HasValue ? kaynak.YayinTarihi.Value.ToShortDateString() : "-")</td>
+                                            <td class="text-end">
+                                                <div class="dropdown dropup position-static d-inline-block" data-bs-auto-close="outside">
+                                                    <button type="button" class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" aria-label="Diğer işlemler">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        @if (!string.IsNullOrEmpty(kaynak.Url))
+                                                        {
+                                                            <li>
+                                                                <a class="dropdown-item" href="@kaynak.Url" target="_blank">
+                                                                    <i class="fas fa-external-link-alt me-2"></i> Linke Git
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        <li>
+                                                            <button type="button" class="dropdown-item" data-bs-toggle="popover" title="Açıklama" data-bs-content="@(string.IsNullOrEmpty(kaynak.Aciklama) ? "Açıklama bulunmamaktadır." : kaynak.Aciklama)">
+                                                                <i class="fas fa-info-circle me-2"></i> Detay
+                                                            </button>
+                                                        </li>
+                                                        @if (User.IsInRole("Admin") || ViewBag.IsCurrentUserMentor || ViewBag.IsCurrentUserProjectOwner)
+                                                        {
+                                                            <li><hr class="dropdown-divider" /></li>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger" asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@kaynak.Id">
+                                                                    <i class="fas fa-trash me-2"></i> Sil
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz kaynak eklenmemiş.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Proje Değerlendirmeleri -->
+            <div class="card mb-4 animate-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Değerlendirmeler</h5>
+                    <div class="d-flex gap-1">
+                        @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && ViewBag.IsCurrentUserMentor))
+                        {
+                            <a asp-controller="ProjeDegerlendirme" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-sm btn-primary details-btn animate-button">
+                                <i class="fas fa-plus me-1"></i>Ekle
+                            </a>
+                        }
+                        <a asp-controller="ProjeDegerlendirme" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button">
+                            <i class="fas fa-list me-1"></i>Tümü
+                        </a>
+                    </div>
+            </div>
+            <div class="card-body">
+                @if (Model.Degerlendirmeler != null && Model.Degerlendirmeler.Any())
+                {
+                    @foreach (var degerlendirme in Model.Degerlendirmeler.OrderByDescending(d => d.DegerlendirmeTarihi))
+                    {
+                        <div class="card mb-2 comment-item table-hover-item">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="badge bg-primary">@degerlendirme.DegerlendirmeTipi</span>
+                                <div>
+                                <small>@degerlendirme.DegerlendirmeTarihi.ToShortDateString()</small>
+                                    @if (User.IsInRole("Admin") || (User.IsInRole("Akademisyen") && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == degerlendirme.AkademisyenId.ToString()))
+                                    {
+                                        <form asp-controller="ProjeDegerlendirme" asp-action="Delete" method="post" class="d-inline ms-2">
+                                            <input type="hidden" name="id" value="@degerlendirme.Id" />
+                                            <input type="hidden" name="projeId" value="@Model.Id" />
+                                            <button type="submit" class="btn btn-sm btn-danger animate-button" onclick="return confirm('Bu değerlendirmeyi silmek istediğinizden emin misiniz?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Puan: @degerlendirme.Puan / 100</h5>
+                                <p class="card-text">@degerlendirme.Aciklama</p>
+                                <small class="text-muted">Değerlendiren: @(degerlendirme.Akademisyen?.Unvan + " " + degerlendirme.Akademisyen?.Ad + " " + degerlendirme.Akademisyen?.Soyad)</small>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Henüz değerlendirme yapılmamış.</p>
+                }
+            </div>
+        </div>
+
+            <!-- Yorumlar -->
+            <div class="card animate-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Yorumlar</h5>
+                    <div class="d-flex gap-1">
+                        <a asp-controller="ProjeYorum" asp-action="Index" asp-route-projeId="@Model.Id" class="btn btn-sm btn-info details-btn animate-button">
+                            <i class="fas fa-list me-1"></i>Tümü
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="ProjeYorum" asp-action="Add" method="post" class="mt-3 animate-form">
+                        <input type="hidden" name="ProjeId" value="@Model.Id" />
+                        <div class="form-group mb-2">
+                            <label for="YorumTipi">Yorum Tipi</label>
+                            <select class="form-select" id="YorumTipi" name="YorumTipi">
+                                <option value="Genel">Genel</option>
+                                <option value="Geri Bildirim">Geri Bildirim</option>
+                                <option value="Soru">Soru</option>
+                                <option value="Onay">Onay</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="Icerik">Yorumunuz</label>
+                            <textarea class="form-control" id="Icerik" name="Icerik" rows="3" required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-sm btn-primary details-btn animate-button w-100" style="min-width:120px">Yorum Ekle</button>
+                        </div>
+                    </form>
+
+                    <hr />
+
+                    <!-- Mevcut Yorumlar -->
+                    @if (Model.Yorumlar != null && Model.Yorumlar.Any())
+                    {
+                        @foreach (var yorum in Model.Yorumlar.OrderByDescending(y => y.OlusturmaTarihi))
+                        {
+                            <div class="card mb-3 comment-item table-hover-item">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>
+                                                @if (yorum.Ogrenci != null)
+                                                {
+                                                    @(yorum.Ogrenci.Ad + " " + yorum.Ogrenci.Soyad)
+                                                }
+                                                else if (yorum.Akademisyen != null)
+                                                {
+                                                    @(yorum.Akademisyen.Unvan + " " + yorum.Akademisyen.Ad + " " + yorum.Akademisyen.Soyad)
+                                                }
+                                            </strong>
+                                            <span class="badge bg-info ms-2">@yorum.YorumTipi</span>
+                                        </div>
+                                        <div>
+                                        <small>@yorum.OlusturmaTarihi.ToShortDateString()</small>
+                                            @if (User.IsInRole("Admin") || 
+                                                (User.IsInRole("Akademisyen") && yorum.AkademisyenId.HasValue && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == yorum.AkademisyenId.Value.ToString()) ||
+                                                (User.IsInRole("Ogrenci") && yorum.OgrenciId.HasValue && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == yorum.OgrenciId.Value.ToString()))
+                                            {
+                                                <form asp-controller="ProjeYorum" asp-action="Delete" method="post" class="d-inline ms-2">
+                                                    <input type="hidden" name="id" value="@yorum.Id" />
+                                                    <input type="hidden" name="projeId" value="@Model.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-danger animate-button" onclick="return confirm('Bu yorumu silmek istediğinizden emin misiniz?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">@yorum.Icerik</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz yorum yapılmamış.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reddet Modal -->
+<div class="modal fade" id="reddetModal" tabindex="-1" aria-labelledby="reddetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reddetModalLabel">Projeyi Reddet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Proje" asp-action="ProjeReddet" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="redSebebi" class="form-label">Red Sebebi (Opsiyonel)</label>
+                        <textarea class="form-control" id="redSebebi" name="redSebebi" rows="3" placeholder="Projeyi neden reddettiğinizi açıklayabilirsiniz..."></textarea>
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i> Bu proje reddedilecek ve durumu "İptal" olarak değiştirilecektir. Bu işlem geri alınamaz.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Bu projeyi reddetmek istediğinizden emin misiniz?')">
+                        <i class="fas fa-times-circle"></i> Reddet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Bootstrap 5 tooltip aktivasyonu
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            
+            // Bootstrap 5 popover aktivasyonu
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl, {
+                    html: true
+                })
+            });
+            
+            // 5 saniye sonra alert mesajlarını otomatik kapat
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
+            
+            // Proje oluşturma sonrası kaynak ekleme modalını aç
+            @if (TempData["OpenResourceModal"] != null && (bool)TempData["OpenResourceModal"] == true)
+            {
+                <text>
+                var resourceModal = new bootstrap.Modal(document.getElementById('addResourceModal'));
+                resourceModal.show();
+                </text>
+            }
+        });
+    </script>
+} 

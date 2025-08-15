@@ -1,0 +1,90 @@
+@model UniversiteProjeYonetimSistemi.Models.Degerlendirme
+
+@{
+    ViewData["Title"] = "Değerlendirme Detayları";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="section-title"><i class="fas fa-star me-2"></i>Değerlendirme Detayları</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4 class="text-primary mb-3">@Model.DegerlendirmeTipi</h4>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Değerlendiren:</div>
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-tie me-2 text-primary"></i>
+                                <strong>@Model.Akademisyen.Unvan @Model.Akademisyen.Ad @Model.Akademisyen.Soyad</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Değerlendirme Tipi:</div>
+                        <div class="col-md-8">
+                            <span class="badge bg-info">@Model.DegerlendirmeTipi</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Puan:</div>
+                        <div class="col-md-8">
+                            @Model.Puan / 100
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Değerlendirme Tarihi:</div>
+                        <div class="col-md-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Aciklama))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Açıklama:</div>
+                            <div class="col-md-8">
+                                <div class="p-3 bg-light rounded">
+                                    @Html.Raw(Model.Aciklama.Replace("\n", "<br/>"))
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Proje:</div>
+                        <div class="col-md-8">
+                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="text-decoration-none">
+                                <i class="fas fa-project-diagram me-2"></i>@Model.Proje.Ad
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-controller="ProjeDegerlendirme" asp-action="Index" asp-route-projeId="@Model.ProjeId" class="btn btn-secondary animate-button">
+                            <i class="fas fa-arrow-left me-2"></i>Değerlendirme Listesine Dön
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a asp-controller="ProjeDegerlendirme" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning animate-button">
+                                <i class="fas fa-edit me-2"></i>Düzenle
+                            </a>
+                            <a asp-controller="ProjeDegerlendirme" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger animate-button">
+                                <i class="fas fa-trash me-2"></i>Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

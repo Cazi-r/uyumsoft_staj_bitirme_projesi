@@ -1,0 +1,80 @@
+@model UniversiteProjeYonetimSistemi.Models.Kullanici
+
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm animate-card">
+                <div class="card-header bg-light animate-header">
+                    <h5 class="mb-0">Kullanıcı Düzenle</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="KullaniciDuzenle" method="post" class="animate-form">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedAt" />
+                        <input type="hidden" asp-for="Sifre" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Ad" class="form-label">Ad</label>
+                                <input asp-for="Ad" class="form-control" />
+                                <span asp-validation-for="Ad" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Soyad" class="form-label">Soyad</label>
+                                <input asp-for="Soyad" class="form-control" />
+                                <span asp-validation-for="Soyad" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Rol" class="form-label">Rol</label>
+                                <select asp-for="Rol" class="form-select">
+                                    <option value="Admin">Admin</option>
+                                    <option value="Akademisyen">Akademisyen</option>
+                                    <option value="Ogrenci">Öğrenci</option>
+                                </select>
+                                <span asp-validation-for="Rol" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Durum</label>
+                                <div class="form-check form-switch mt-2">
+                                    <input asp-for="Aktif" class="form-check-input" type="checkbox" />
+                                    <label asp-for="Aktif" class="form-check-label">Aktif</label>
+                                    <span asp-validation-for="Aktif" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Son Giriş</label>
+                            <input value="@(Model.SonGiris.HasValue ? Model.SonGiris.Value.ToString("dd.MM.yyyy HH:mm") : "-")" 
+                                   class="form-control" readonly />
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-action="Kullanicilar" class="btn btn-outline-secondary animate-button">İptal</a>
+                            <button type="submit" class="btn btn-primary animate-button">
+                                <i class="fas fa-save me-1"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

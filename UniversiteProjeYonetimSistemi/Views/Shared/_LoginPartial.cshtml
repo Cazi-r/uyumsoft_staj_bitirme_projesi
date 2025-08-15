@@ -1,0 +1,51 @@
+﻿@using Microsoft.AspNetCore.Http
+
+<ul class="navbar-nav ms-auto">
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                <i class="fas fa-user"></i>
+            </div>
+            <span>
+                @User.Claims.FirstOrDefault(c => c.Type == "Ad")?.Value
+                @User.Claims.FirstOrDefault(c => c.Type == "Soyad")?.Value
+            </span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userDropdown">
+            <li>
+                <span class="dropdown-item-text">
+                    <span class="badge bg-primary rounded-pill">
+                        @User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value
+                    </span>
+                </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex align-items-center" asp-controller="Profile" asp-action="Index"><i class="fas fa-user me-2"></i>Profilim</a></li>
+            <li><a class="dropdown-item d-flex align-items-center" asp-controller="Profile" asp-action="Edit"><i class="fas fa-cog me-2"></i>Profil Ayarları</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="form-inline" asp-controller="Auth" asp-action="Logout" method="post">
+                    <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link btn btn-outline-light me-2 px-3" asp-controller="Auth" asp-action="Login">
+            <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link btn btn-light text-primary px-3" asp-controller="Auth" asp-action="Register">
+            <i class="fas fa-user-plus me-1"></i>Kayıt Ol
+        </a>
+    </li>
+}
+</ul>

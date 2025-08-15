@@ -1,0 +1,106 @@
+@model UniversiteProjeYonetimSistemi.Models.ViewModels.ProjeKaynagiViewModel
+
+@{
+    ViewData["Title"] = "Kaynak Ekle";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="section-title"><i class="fas fa-link me-2"></i>Yeni Kaynak Ekle</h5>
+                    <small>Proje: <strong>@ViewBag.ProjeAdi</strong></small>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-controller="ProjeKaynagi" asp-action="Add" method="post" class="animate-form">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <input type="hidden" asp-for="ProjeId" />
+
+                        <div class="mb-3">
+                            <label asp-for="KaynakAdi" class="form-label">Kaynak Adı</label>
+                            <input asp-for="KaynakAdi" class="form-control" />
+                            <span asp-validation-for="KaynakAdi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="KaynakTipi" class="form-label">Kaynak Türü</label>
+                            <select asp-for="KaynakTipi" class="form-select">
+                                <option value="">Tür seçiniz</option>
+                                @foreach (var tip in ViewBag.KaynakTipleri)
+                                {
+                                    <option value="@tip">@tip</option>
+                                }
+                            </select>
+                            <span asp-validation-for="KaynakTipi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Yazar" class="form-label">Yazar</label>
+                            <input asp-for="Yazar" class="form-control" />
+                            <span asp-validation-for="Yazar" class="text-danger"></span>
+                            <small class="text-muted">Kitap, makale vb. için yazar bilgisi</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="YayinTarihi" class="form-label">Yayın Tarihi</label>
+                            <input asp-for="YayinTarihi" class="form-control" type="date" />
+                            <span asp-validation-for="YayinTarihi" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Url" class="form-label">URL</label>
+                            <input asp-for="Url" class="form-control" type="url" />
+                            <span asp-validation-for="Url" class="text-danger"></span>
+                            <small class="text-muted">Website, API vb. için link</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Aciklama" class="form-label">Açıklama</label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Aciklama" class="text-danger"></span>
+                            <small class="text-muted">Kaynak hakkında detaylı bilgi</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-primary animate-button">
+                                <i class="fas fa-save me-2"></i>Kaynağı Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    
+    <script>
+        // URL alanında kaynak türü seçildiğinde ipucu göster
+        document.getElementById('KaynakTipi').addEventListener('change', function(e) {
+            const urlInput = document.getElementById('Url');
+            const urlLabel = urlInput.previousElementSibling;
+            
+            switch(e.target.value) {
+                case 'Website':
+                case 'API':
+                    urlLabel.innerHTML = '<i class="fas fa-link me-1"></i> URL *';
+                    urlInput.required = true;
+                    break;
+                case 'Video':
+                    urlLabel.innerHTML = '<i class="fas fa-link me-1"></i> Video URL (İsteğe Bağlı)';
+                    urlInput.required = false;
+                    break;
+                default:
+                    urlLabel.innerHTML = '<i class="fas fa-link me-1"></i> URL (İsteğe Bağlı)';
+                    urlInput.required = false;
+                    break;
+            }
+        });
+    </script>
+} 

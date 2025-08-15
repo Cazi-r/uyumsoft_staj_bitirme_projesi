@@ -1,0 +1,61 @@
+@model UniversiteProjeYonetimSistemi.Models.Proje
+
+@{
+    ViewData["Title"] = "Proje Sil";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow mb-4 animate-card">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between animate-header">
+            <h6 class="m-0 font-weight-bold text-primary">Proje Silme</h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-triangle"></i> Uyarı</h5>
+                <p>Bu projeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+            </div>
+
+            <div class="mb-4">
+                <h5>Proje Bilgileri</h5>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-2">Proje Adı:</dt>
+                    <dd class="col-sm-10">@Model.Ad</dd>
+
+                    <dt class="col-sm-2">Açıklama:</dt>
+                    <dd class="col-sm-10">@Model.Aciklama</dd>
+
+                    <dt class="col-sm-2">Durumu:</dt>
+                    <dd class="col-sm-10">@Model.Status</dd>
+
+                    <dt class="col-sm-2">Oluşturma Tarihi:</dt>
+                    <dd class="col-sm-10">@Model.OlusturmaTarihi.ToString("dd.MM.yyyy")</dd>
+
+                    <dt class="col-sm-2">Teslim Tarihi:</dt>
+                    <dd class="col-sm-10">@(Model.TeslimTarihi.HasValue ? Model.TeslimTarihi.Value.ToString("dd.MM.yyyy") : "-")</dd>
+                </dl>
+            </div>
+
+            <form asp-action="Delete" method="post" class="animate-form">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary animate-button">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                    <button type="submit" class="btn btn-danger animate-button">
+                        <i class="fas fa-trash"></i> Projeyi Sil
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+        });
+    </script>
+} 

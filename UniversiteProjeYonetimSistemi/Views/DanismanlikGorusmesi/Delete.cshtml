@@ -1,0 +1,104 @@
+@model UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi
+@using UniversiteProjeYonetimSistemi.Models
+
+@{
+    ViewData["Title"] = "Görüşme Talebi Sil";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>@ViewData["Title"]</h2>
+            <p class="text-danger">Bu işlemi geri alamazsınız!</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="m-0">@Model.Baslik</h5>
+                                        <span class="badge @(Model.Durum == GorusmeDurumu.HocaOnayiBekliyor || Model.Durum == GorusmeDurumu.OgrenciOnayiBekliyor ? "bg-warning" : Model.Durum == GorusmeDurumu.Onaylandi ? "bg-success" : "bg-danger")">
+                        @Model.Durum
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Proje</h6>
+                            <p>@Model.Proje?.Ad</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Görüşme Tipi</h6>
+                            <p>@Model.GorusmeTipi</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Öğrenci</h6>
+                            <p>@Model.Ogrenci?.Ad @Model.Ogrenci?.Soyad</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Akademisyen</h6>
+                            <p>@Model.Akademisyen?.Unvan @Model.Akademisyen?.Ad @Model.Akademisyen?.Soyad</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Görüşme Tarihi</h6>
+                            <p>@Model.GorusmeTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Oluşturulma Tarihi</h6>
+                            <p>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="fw-bold">Notlar</h6>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <p class="card-text">@(string.IsNullOrEmpty(Model.Notlar) ? "Herhangi bir not girilmemiş." : Model.Notlar)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Sil
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x"></i> İptal
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-header">
+                    <h5 class="m-0"><i class="bi bi-exclamation-triangle"></i> Uyarı</h5>
+                </div>
+                <div class="card-body">
+                    <p>Bu görüşme talebini silmek istediğinizden emin misiniz?</p>
+                    <p>Bu işlem geri alınamaz ve tüm ilişkili veriler silinecektir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+        });
+    </script>
+} 

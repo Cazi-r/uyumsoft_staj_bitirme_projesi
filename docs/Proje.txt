@@ -1,0 +1,90 @@
+YEMEK SİPARİŞ SİSTEMİ 
+ADMİN, 
+YEMEK 
+FİRMASI, 
+(YEMEKSEPETİ) 
+ARAÇ KİRALAMA SİSTEMİ 
+KULLANICI 
+ADMİN, ARAÇ KİRALAMA FİRMASI, KULLANICI 
+(YOLCU 360) 
+OTEL ARAMA SİHİRBAZI 
+ADMİN, OTEL YÖNETİMİ, OTEL ARAYAN 
+KULLANICI (TRİVAGO) 
+İŞ BULMA SİTESİ 
+EN UCUZ ÜRÜN BUL-ALIŞVERİŞ SİSTEMİ 
+ADMİN, İŞVEREN, İŞ ARAYAN (KARİYER) 
+ADMİN, SATICI, ALICI (AKAKÇE) 
+EMLAK SİTESİ 
+ADMİN, KİRAYA VEREN, KİRACI (HÜRRİYET 
+EMLAK) 
+ÜNİVERSİTE BÖLÜM DUYURU VE BİLGİ SİSTEMİ 
+ADMİN, PERSONEL(AKADEMİK/İDARİ), ÖĞRENCİ 
+BİLGİSAYAR MÜHENDİSLİĞİ PROJE YÖNETİM 
+SİSTEMİ 
+PROJE KOORDİNATÖRÜ, AKADEMİK PERSONEL, 
+ÖĞRENCİ 
+EN UCUZ OTOBÜS BİLETİ BUL 
+ADMİN, OTOBÜS FİRMASI, KULLANICI (KALKIŞ VE 
+VARIŞ NOKTASI ARASINDA SÜRE VE FİYATA GÖRE 
+SEÇENEKLER SUNABİLMELİ) 
+İKİNCİ EL KİTAP SATIŞ UYGULAMASI 
+ADMİN, SATICI, ALICI 
+ETKİNLİK (Konferans, KonserI GÖRÜNTÜLEME 
+SİSTEMİ 
+ADMİN, KATILIMCI, ETKİNLİĞİ GERÇEKLEŞTİRİCİ 
+ÖRNEK PROJE KONULARI (PRODUCER - CONSUMER) 
+PROJE KURALLARI 
+1- Proje raporunu okulunuz için hazırlayacağınız staj defterine ön hazırlık olarak düşünebilirsiniz, bu 
+nedenle okulunuzun staj defteri formatına benzer bir rapor staj defteri için kolaylık sağlayacaktır. 
+2-  Rapor ad, soyad ve proje adı bilgilerini içeren bir kapak sayfası ile başlamalıdır. 
+3-  Sonraki sayfada proje adı, proje amacı ve kısa özeti bulunmalıdır. Bu bölümleri takiben proje planı 
+ve gantt şeması aşağıdaki gibi eklenmelidir. (NOT: Aşağıdaki tablo ve şema görsel olarak bilgi verme 
+amaçlıdır. İçerikteki iş açıklaması, gün vb. bilgiler sizin tarafınızdan oluşturulmalıdır) 
+İŞ NO TARİH SÜRE(Gün) İŞ ADI 
+1 25.06.2016 3 İŞ KURALLARI 
+2 28.06.2016 3 VERİTABANI TASARIMI 
+3 01.07.2016 3 SINIF TASARIMI 
+4 04.07.2016 3 GERÇEKLEME 
+5 06.07.2016 3 GERÇEKLEME 
+6 09.07.2016 3 GERÇEKLEME 
+7 12.07.2016 3 TEST 
+8 15.07.2016 3 TEST 
+ 
+ 
+ 
+4- Plan aşamasından sonra dersteki üniversite sistemi veri tabanı örneğinde olduğu gibi maddeler 
+halinde iş kurallarını oluşturunuz.  
+ 
+5- İş kurallarına uygun olarak veri tabanının varlık ilişki(ER) diyagramını crow’s foot notasyonu 
+kullanarak oluşturunuz. Rapordaki varlık ilişki(entity-relation:ER) diyagramı elle çizilmemelidir, Visio 
+benzeri program ile veya www.lucidchart.com ya da draw.io sitesine ücretsiz üye olarak çizebilirsiniz. 
+Varlık ilişki diyagramını CHEN notasyonu kullanarak çizmeyiniz. Veri tabanı en az 10 tablodan 
+oluşmalıdır.  
+ 
+6- Veri tabanı tasarımını onaylattıktan sonra C# programlama dilinde tasarım ve gerçekleme 
+işlemlerini yapabilirsiniz. Projenizi  MVC kullanarak yapmanız GEREKMEKTEDİR. MVC Core, Angular, 
+React, Wue vb güncel front-end teknolojilerini kullanırsanız BONUS puan alabilirsiniz. 
+25/06/2016 27/06/2016 29/06/2016 01/07/2016 03/07/2016 05/07/2016 07/07/2016 09/07/2016 11/07/2016 13/07/2016 15/07/2016
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ GANTT ŞEMASI
+6-  Onaylanan veri tabanı tasarımına göre nesneye yönelik sınıf diyagramlarını (UML Class Diagrams) 
+oluşturunuz ve raporun bu bölümüne ekleyiniz.  
+7- Gerçekleme aşamasında C# kodlamalarında yapılan her bir işin günlük olarak özetlenmesi ve bir 
+sonraki gün yapılacak işlemlerin belirtilmesi gerekmektedir. Bu işlem için aşağıdakine benzer yapıyı 
+kullanabilirsiniz.  
+15.07.2016 YAPILAN İŞLEMLER: 
+✓ Ara yüz tasarımı aşağıdaki şekilde yapıldı.  
+✓ Ara yüzün kullanacağı resim okuma modülü C# dilinde gerçeklendi. Bu sayede yazılımın Open 
+File Dialog kullanarak farklı türlerde Resim okuyabilir hale gelmesi sağlandı.  
+16.07.2016 TARİHİNDE YAPILACAK İŞLEMLER: 
+• Ekranda görülen resim istatistiklerinin kodlanması, 
+• Resim üzerinde iyileştirme gerçekleme için Parçacık Sürü  Optimizasyonu algoritmasının 
+gerçeklenmesi. 
+ 

@@ -1,0 +1,80 @@
+@model UniversiteProjeYonetimSistemi.Models.Kullanici
+
+@{
+    ViewData["Title"] = "Kullanıcı Sil";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card border-danger shadow-sm animate-card">
+                <div class="card-header bg-danger text-white animate-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Kullanıcı Silme Onayı
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>@Model.Ad @Model.Soyad</strong> kullanıcısını silmek istediğinizden emin misiniz?
+                    </div>
+                    
+                    <p>Bu işlem, kullanıcının sistemdeki hesabını kaldıracaktır.</p>
+                    <p>Kullanıcıya ait projeler veya diğer ilişkili kayıtlar varsa, kullanıcı pasif duruma alınacaktır.</p>
+                    
+                    <div class="mt-4">
+                        <h6>Kullanıcı Bilgileri</h6>
+                        <table class="table table-sm animate-table">
+                            <tbody>
+                                <tr class="table-hover-item">
+                                    <th style="width: 30%">ID:</th>
+                                    <td>@Model.Id</td>
+                                </tr>
+                                <tr class="table-hover-item">
+                                    <th>Ad Soyad:</th>
+                                    <td>@Model.Ad @Model.Soyad</td>
+                                </tr>
+                                <tr class="table-hover-item">
+                                    <th>Email:</th>
+                                    <td>@Model.Email</td>
+                                </tr>
+                                <tr class="table-hover-item">
+                                    <th>Rol:</th>
+                                    <td>@Model.Rol</td>
+                                </tr>
+                                <tr class="table-hover-item">
+                                    <th>Durum:</th>
+                                    <td>@(Model.Aktif ? "Aktif" : "Pasif")</td>
+                                </tr>
+                                <tr class="table-hover-item">
+                                    <th>Kayıt Tarihi:</th>
+                                    <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <form asp-action="KullaniciSil" method="post" class="mt-4 animate-form">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Kullanicilar" class="btn btn-outline-secondary animate-button">İptal</a>
+                            <button type="submit" class="btn btn-danger animate-button">
+                                <i class="fas fa-trash me-1"></i>
+                                Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+        });
+    </script>
+} 

@@ -1,0 +1,308 @@
+@model UniversiteProjeYonetimSistemi.Models.DanismanlikGorusmesi
+@using UniversiteProjeYonetimSistemi.Models
+
+@{ 
+    ViewData["Title"] = "Görüşme Detayları";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header animate-header">
+<div>
+            <h1 class="page-title"><i class="fas fa-comment-dots me-2 text-primary"></i> Görüşme Detayları</h1>
+        </div>
+        <div>
+            <span class="badge bg-light text-dark border date-badge ms-2">
+                <i class="far fa-calendar me-1"></i> @DateTime.Now.ToString("dd MMMM yyyy")
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm animate-card">
+                <div class="card-header d-flex justify-content-between align-items-center bg-white py-3">
+                    <h5 class="mb-0 fw-bold">@Model.Baslik</h5>
+                    @{
+                        var statusBadgeClass = Model.Durum switch
+                        {
+                            GorusmeDurumu.HocaOnayiBekliyor => "bg-warning",
+                            GorusmeDurumu.OgrenciOnayiBekliyor => "bg-warning", 
+                            GorusmeDurumu.Onaylandi => "bg-success",
+                            GorusmeDurumu.IptalEdildi => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+                        
+                        var statusText = Model.Durum switch
+                        {
+                            GorusmeDurumu.HocaOnayiBekliyor => "Akademisyen Onayı Bekliyor",
+                            GorusmeDurumu.OgrenciOnayiBekliyor => "Öğrenci Onayı Bekliyor",
+                            GorusmeDurumu.Onaylandi => "Onaylandı",
+                            GorusmeDurumu.IptalEdildi => "İptal Edildi",
+                            _ => Model.Durum.ToString()
+                        };
+                    }
+                    <span class="badge @statusBadgeClass">@statusText</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-folder me-2"></i>Proje
+                            </h6>
+                            <p class="mb-0">@Model.Proje?.Ad</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-video me-2"></i>Görüşme Tipi
+                            </h6>
+                            <p class="mb-0">
+                                <span class="badge bg-primary">@Model.GorusmeTipi</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-user-graduate me-2"></i>Öğrenci
+                            </h6>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                    @(Model.Ogrenci?.Ad?.Substring(0,1) ?? "")@(Model.Ogrenci?.Soyad?.Substring(0,1) ?? "")
+                                </div>
+                                <div>
+                                    <div class="fw-medium">@Model.Ogrenci?.Ad @Model.Ogrenci?.Soyad</div>
+                                    <small class="text-muted">@Model.Ogrenci?.OgrenciNo</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Akademisyen
+                            </h6>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                                    @(Model.Akademisyen?.Ad?.Substring(0,1) ?? "")@(Model.Akademisyen?.Soyad?.Substring(0,1) ?? "")
+                                </div>
+                                <div>
+                                    <div class="fw-medium">@Model.Akademisyen?.Unvan @Model.Akademisyen?.Ad @Model.Akademisyen?.Soyad</div>
+                                    <small class="text-muted">Danışman</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-calendar-alt me-2"></i>Görüşme Tarihi
+                            </h6>
+                            <p class="mb-0">@Model.GorusmeTarihi.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-clock me-2"></i>Oluşturulma Tarihi
+                            </h6>
+                            <p class="mb-0">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-user me-2"></i>Talep Sahibi
+                            </h6>
+                            <p class="mb-0">
+                                @if (Model.TalepEden == "Ogrenci")
+                                {
+                                    <span class="badge bg-info">Öğrenci Talebi</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Akademisyen Talebi</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-user-edit me-2"></i>Son Güncelleyen
+                            </h6>
+                            <p class="mb-0">
+                                <span class="badge bg-outline-secondary">@(Model.SonGuncelleyenRol ?? "Sistem")</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="fw-bold text-muted">
+                                <i class="fas fa-sticky-note me-2"></i>Notlar
+                            </h6>
+                            <div class="card bg-light border-0">
+                                <div class="card-body">
+                                    <p class="card-text mb-0">@(string.IsNullOrEmpty(Model.Notlar) ? "Herhangi bir not girilmemiş." : Model.Notlar)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex gap-2">
+                                                                @if (User.IsInRole("Akademisyen") && Model.Durum == GorusmeDurumu.HocaOnayiBekliyor)
+                                {
+                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="karar" value="Onayla" />
+                                        <button type="submit" class="btn btn-success animate-button">
+                                            <i class="fas fa-check me-1"></i> Onayla
+                                        </button>
+                                    </form>
+                                    
+                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="karar" value="Reddet" />
+                                        <button type="submit" class="btn btn-danger animate-button">
+                                            <i class="fas fa-times me-1"></i> Reddet
+                                        </button>
+                                    </form>
+                                }
+                                
+                                @if (User.IsInRole("Ogrenci") && Model.Durum == GorusmeDurumu.OgrenciOnayiBekliyor)
+                                {
+                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="karar" value="Onayla" />
+                                        <button type="submit" class="btn btn-success animate-button">
+                                            <i class="fas fa-check me-1"></i> Kabul Et
+                                        </button>
+                                    </form>
+                                    
+                                    <form asp-action="OnayveyaReddet" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="karar" value="Reddet" />
+                                        <button type="submit" class="btn btn-danger animate-button">
+                                            <i class="fas fa-times me-1"></i> Reddet
+                                        </button>
+                                    </form>
+                                }
+                                
+                                                                @if ((User.IsInRole("Ogrenci") && (Model.Durum == GorusmeDurumu.HocaOnayiBekliyor || Model.Durum == GorusmeDurumu.OgrenciOnayiBekliyor)) || (User.IsInRole("Akademisyen") && Model.Durum != GorusmeDurumu.Onaylandi))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary animate-button">
+                                        <i class="fas fa-edit me-1"></i> Düzenle
+                                    </a>
+                                }
+                                
+                                <a asp-action="Index" class="btn btn-outline-secondary animate-button">
+                                    <i class="fas fa-arrow-left me-1"></i> Geri
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+                        @if (Model.Durum == GorusmeDurumu.Onaylandi)
+            {
+                <div class="card border-success mb-3 animate-card">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-calendar-check me-2"></i> Görüşme Bilgileri
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-success">
+                            <i class="fas fa-check-circle me-2"></i>Onaylanmış Görüşme
+                        </h5>
+                        <p class="card-text">
+                            Bu görüşme akademisyen tarafından onaylanmıştır.
+                        </p>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <strong>Tarih:</strong> 
+                                <span>@Model.GorusmeTarihi.ToString("dd.MM.yyyy")</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <strong>Saat:</strong> 
+                                <span>@Model.GorusmeTarihi.ToString("HH:mm")</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <strong>Yer:</strong> 
+                                <span class="badge bg-primary">@(Model.GorusmeTipi == "Online" ? "Online Görüşme" : "Yüz Yüze Görüşme")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+                        else if (Model.Durum == GorusmeDurumu.IptalEdildi)
+            {
+                <div class="card border-danger mb-3 animate-card">
+                    <div class="card-header bg-danger text-white">
+                        <i class="fas fa-times-circle me-2"></i> Görüşme Bilgileri
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-danger">
+                            <i class="fas fa-ban me-2"></i>Reddedilmiş Görüşme
+                        </h5>
+                        <p class="card-text">
+                            Bu görüşme talebi reddedilmiştir.
+                        </p>
+                        @if (User.IsInRole("Ogrenci"))
+                        {
+                            <p class="card-text">
+                                Yeni bir görüşme talebi oluşturabilirsiniz.
+                            </p>
+                            <a asp-action="Create" class="btn btn-outline-primary animate-button">
+                                <i class="fas fa-plus-circle me-1"></i> Yeni Talep Oluştur
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card border-warning mb-3 animate-card">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="fas fa-hourglass-half me-2"></i> Görüşme Bilgileri
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">
+                            <i class="fas fa-clock me-2"></i>Bekleyen Görüşme Talebi
+                        </h5>
+                        @if (Model.Durum == GorusmeDurumu.HocaOnayiBekliyor)
+                        {
+                        <p class="card-text">
+                            Bu görüşme talebi henüz akademisyen tarafından değerlendirilmemiştir.
+                        </p>
+                        <p class="card-text">
+                                <small class="text-muted">Akademisyen yanıt verdiğinde bildirim alacaksınız.</small>
+                            </p>
+                        }
+                        else if (Model.Durum == GorusmeDurumu.OgrenciOnayiBekliyor)
+                        {
+                            <p class="card-text">
+                                Bu görüşme talebi akademisyen tarafından değerlendirilerek sizin onayınız beklenmektedir.
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">Lütfen görüşme bilgilerini kontrol ederek kabul edin veya reddedin.</small>
+                            </p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div> 
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Alert'leri 5 saniye sonra otomatik kapat
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+} 

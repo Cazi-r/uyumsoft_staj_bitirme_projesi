@@ -1,0 +1,102 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeDosya
+
+@{
+    ViewData["Title"] = "Dosya Detayları";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="section-title"><i class="fas fa-file-alt me-2"></i>Dosya Detayları</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4 class="text-primary mb-3">@Model.DosyaAdi</h4>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Dosya Adı:</div>
+                        <div class="col-md-8">@Model.DosyaAdi</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Dosya Türü:</div>
+                        <div class="col-md-8">
+                            <span class="badge bg-info">@Model.DosyaTipi</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Dosya Boyutu:</div>
+                        <div class="col-md-8">
+                            @{
+                                var sizeInMB = Model.DosyaBoyutu / 1024.0 / 1024.0;
+                                var sizeText = sizeInMB > 1 ? $"{sizeInMB:F1} MB" : $"{Model.DosyaBoyutu / 1024.0:F0} KB";
+                            }
+                            <span class="text-muted">@sizeText</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Yükleyen:</div>
+                        <div class="col-md-8">
+                            <span class="badge bg-secondary">@Model.YukleyenTipi</span>
+                            @if (!string.IsNullOrEmpty(ViewBag.YukleyenAdi))
+                            {
+                                <br />
+                                <span class="text-muted">@ViewBag.YukleyenAdi</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Yükleme Tarihi:</div>
+                        <div class="col-md-8">@Model.YuklemeTarihi.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Aciklama))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-4 fw-bold">Açıklama:</div>
+                            <div class="col-md-8">
+                                <div class="p-3 bg-light rounded">
+                                    @Html.Raw(Model.Aciklama.Replace("\n", "<br/>"))
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Dosya Yolu:</div>
+                        <div class="col-md-8">
+                            <code class="text-muted">@Model.DosyaYolu</code>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-controller="ProjeDosya" asp-action="Index" asp-route-projeId="@Model.ProjeId" class="btn btn-secondary animate-button">
+                            <i class="fas fa-arrow-left me-2"></i>Dosya Listesine Dön
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a asp-controller="ProjeDosya" asp-action="Download" asp-route-id="@Model.Id" class="btn btn-success animate-button">
+                                <i class="fas fa-download me-2"></i>Dosyayı İndir
+                            </a>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                            {
+                                <a asp-controller="ProjeDosya" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger animate-button">
+                                    <i class="fas fa-trash me-2"></i>Sil
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

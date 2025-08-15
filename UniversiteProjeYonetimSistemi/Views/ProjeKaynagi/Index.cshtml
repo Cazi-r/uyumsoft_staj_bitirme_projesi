@@ -1,0 +1,118 @@
+@model IEnumerable<UniversiteProjeYonetimSistemi.Models.ProjeKaynagi>
+
+@{
+    ViewData["Title"] = "Proje Kaynakları";
+    var projeId = Model.FirstOrDefault()?.ProjeId ?? 0;
+}
+
+<div class="container py-4 animate-header">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Proje Kaynakları</h5>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="ProjeKaynagi" asp-action="Add" asp-route-projeId="@projeId" class="btn btn-light btn-sm animate-button">
+                            <i class="fas fa-plus me-2"></i>Yeni Kaynak Ekle
+                        </a>
+                        <a asp-controller="Proje" asp-action="Details" asp-route-id="@projeId" class="btn btn-outline-light btn-sm animate-button">
+                            <i class="fas fa-arrow-left me-2"></i>Projeye Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Henüz kaynak eklenmemiş</h5>
+                            <p class="text-muted">Bu proje için henüz herhangi bir kaynak tanımlanmamış.</p>
+                            <a asp-controller="ProjeKaynagi" asp-action="Add" asp-route-projeId="@projeId" class="btn btn-primary animate-button">
+                                <i class="fas fa-plus me-2"></i>İlk Kaynağı Ekle
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Kaynak Adı</th>
+                                        <th>Tür</th>
+                                        <th>Yazar</th>
+                                        <th>Yayın Tarihi</th>
+                                        <th>URL</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kaynak in Model.OrderByDescending(k => k.EklemeTarihi))
+                                    {
+                                        <tr class="animate-row">
+                                            <td>
+                                                <strong>@kaynak.KaynakAdi</strong>
+                                                @if (!string.IsNullOrEmpty(kaynak.Aciklama))
+                                                {
+                                                    <br /><small class="text-muted">@(kaynak.Aciklama.Length > 50 ? kaynak.Aciklama.Substring(0, 50) + "..." : kaynak.Aciklama)</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">@kaynak.KaynakTipi</span>
+                                            </td>
+                                            <td>
+                                                @(string.IsNullOrEmpty(kaynak.Yazar) ? "-" : kaynak.Yazar)
+                                            </td>
+                                            <td>
+                                                @(kaynak.YayinTarihi?.ToString("dd/MM/yyyy") ?? "-")
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(kaynak.Url))
+                                                {
+                                                    <a href="@kaynak.Url" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-external-link-alt me-1"></i>Görüntüle
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column gap-1">
+                                                    <a asp-controller="ProjeKaynagi" asp-action="Details" asp-route-id="@kaynak.Id" 
+                                                       class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-eye me-1"></i>Detay
+                                                    </a>
+                                                    <a asp-controller="ProjeKaynagi" asp-action="Edit" asp-route-id="@kaynak.Id" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-edit me-1"></i>Düzenle
+                                                    </a>
+                                                    <a asp-controller="ProjeKaynagi" asp-action="Delete" asp-route-id="@kaynak.Id" 
+                                                       class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash me-1"></i>Sil
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .animate-row {
+        transition: all 0.3s ease;
+    }
+    
+    .animate-row:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+</style> 

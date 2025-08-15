@@ -1,0 +1,84 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeAsamasi
+
+@{
+    ViewData["Title"] = "Proje Aşaması Sil";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Proje Aşaması Sil</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Dikkat!</strong> Bu işlem geri alınamaz. Aşama ve tüm ilgili veriler kalıcı olarak silinecektir.
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Aşama Bilgileri:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Aşama Adı:</strong>
+                                <p>@Model.AsamaAdi</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Sıra No:</strong>
+                                <p>@Model.SiraNo</p>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Aciklama))
+                        {
+                            <div class="mb-3">
+                                <strong>Açıklama:</strong>
+                                <p>@Model.Aciklama</p>
+                            </div>
+                        }
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Başlangıç Tarihi:</strong>
+                                <p>@Model.BaslangicTarihi?.ToString("dd/MM/yyyy")</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Bitiş Tarihi:</strong>
+                                <p>@Model.BitisTarihi?.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Durum:</strong>
+                            <p>
+                                @if (Model.Tamamlandi)
+                                {
+                                    <span class="badge bg-success">Tamamlandı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">Devam Ediyor</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <form asp-controller="ProjeAsama" asp-action="Delete" method="post" class="animate-form">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="projeId" value="@Model.ProjeId" />
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@Model.ProjeId" class="btn btn-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-danger animate-button">
+                                <i class="fas fa-trash me-2"></i>Aşamayı Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

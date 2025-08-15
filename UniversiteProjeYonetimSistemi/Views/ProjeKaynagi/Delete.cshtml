@@ -1,0 +1,92 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeKaynagi
+
+@{
+    ViewData["Title"] = "Kaynak Sil";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Kaynak Sil</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Dikkat!</strong> Bu işlem geri alınamaz. Kaynak kalıcı olarak silinecektir.
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Kaynak Bilgileri:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Kaynak Adı:</strong>
+                                <p>@Model.KaynakAdi</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Kaynak Türü:</strong>
+                                <p><span class="badge bg-info">@Model.KaynakTipi</span></p>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Yazar))
+                        {
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Yazar:</strong>
+                                    <p>@Model.Yazar</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Yayın Tarihi:</strong>
+                                    <p>@(Model.YayinTarihi?.ToString("dd/MM/yyyy") ?? "-")</p>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.Url))
+                        {
+                            <div class="mb-3">
+                                <strong>URL:</strong>
+                                <p><a href="@Model.Url" target="_blank">@Model.Url</a></p>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.Aciklama))
+                        {
+                            <div class="mb-3">
+                                <strong>Açıklama:</strong>
+                                <p>@Model.Aciklama</p>
+                            </div>
+                        }
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Ekleme Tarihi:</strong>
+                                <p>@Model.EklemeTarihi.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Son Güncelleme:</strong>
+                                <p>@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form asp-controller="ProjeKaynagi" asp-action="Delete" method="post" class="animate-form">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="projeId" value="@Model.ProjeId" />
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="ProjeKaynagi" asp-action="Index" asp-route-projeId="@Model.ProjeId" class="btn btn-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-danger animate-button">
+                                <i class="fas fa-trash me-2"></i>Kaynağı Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

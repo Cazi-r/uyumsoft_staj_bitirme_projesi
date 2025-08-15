@@ -1,0 +1,183 @@
+@{
+    ViewData["Title"] = "Değerlendirme Ekle";
+    var proje = ViewBag.Proje;
+}
+
+<style>
+    /* Range input için custom renkli track */
+    input[type=range].puan-range::-webkit-slider-thumb {
+        background: #0d6efd;
+    }
+    input[type=range].puan-range {
+        width: 100%;
+        accent-color: #dc3545; /* fallback */
+    }
+    input[type=range].puan-range::-webkit-slider-runnable-track {
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #198754 100%);
+    }
+    input[type=range].puan-range::-moz-range-thumb {
+        background: #0d6efd;
+    }
+    input[type=range].puan-range::-moz-range-track {
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #198754 100%);
+    }
+    input[type=range].puan-range::-ms-fill-lower {
+        background: #dc3545;
+    }
+    input[type=range].puan-range::-ms-fill-upper {
+        background: #198754;
+    }
+</style>
+
+<div class="container py-4 animate-header">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="section-title">
+                            <i class="fas fa-star me-2"></i>Proje Değerlendirme
+                        </h5>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">Proje Bilgileri</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover-item">
+                                <tr>
+                                    <th style="width: 150px;">Proje Adı</th>
+                                    <td>@proje.Ad</td>
+                                </tr>
+                                @if (proje.Ogrenci != null)
+                                {
+                                    <tr>
+                                        <th>Öğrenci</th>
+                                        <td>@proje.Ogrenci.Ad @proje.Ogrenci.Soyad (@proje.Ogrenci.OgrenciNo)</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <th>Durum</th>
+                                    <td>
+                                        @{
+                                            string badgeClass = "";
+                                            switch (proje.Status)
+                                            {
+                                                case "Beklemede": badgeClass = "bg-warning"; break;
+                                                
+                                                case "Devam": badgeClass = "bg-primary"; break;
+                                                case "Tamamlandi": badgeClass = "bg-success"; break;
+                                                case "Iptal": badgeClass = "bg-danger"; break;
+                                                default: badgeClass = "bg-secondary"; break;
+                                            }
+                                        }
+                                        <span class="badge @badgeClass">@proje.Status</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <form asp-controller="ProjeDegerlendirme" asp-action="Add" method="post" class="animate-form">
+                        <input type="hidden" name="projeId" value="@proje.Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-tag me-1"></i>Değerlendirme Tipi
+                            </label>
+                            <select name="degerlendirmeTipi" class="form-select" required>
+                                <option value="">Seçiniz...</option>
+                                <option value="Ara Değerlendirme">Ara Değerlendirme</option>
+                                <option value="Final Değerlendirme">Final Değerlendirme</option>
+                                <option value="İlerleme Raporu">İlerleme Raporu</option>
+                                <option value="Sunum Değerlendirme">Sunum Değerlendirme</option>
+                                <option value="Teknik İnceleme">Teknik İnceleme</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-star me-1"></i>Puan (0-100)
+                            </label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" name="puan" class="form-range flex-grow-1 puan-range" min="0" max="100" value="70" id="puanSlider">
+                                <span class="badge ms-3" id="puanDisplay" style="min-width: 50px; font-size: 1rem; background-color: #ffc107; color: #222;">70</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mt-1">
+                                <span>Yetersiz (0)</span>
+                                <span>Geliştirilebilir (25)</span>
+                                <span>İyi (50)</span>
+                                <span>Çok iyi (75)</span>
+                                <span>Mükemmel (100)</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-comment me-1"></i>Değerlendirme Açıklaması
+                            </label>
+                            <textarea name="aciklama" class="form-control" rows="6" placeholder="Değerlendirme detaylarını yazınız..." required></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Değerlendirmenizde projenin güçlü yanlarını, geliştirilmesi gereken alanlarını ve önerilerinizi belirtiniz.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Proje" asp-action="Details" asp-route-id="@proje.Id" class="btn btn-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-primary animate-button">
+                                <i class="fas fa-save me-2"></i>Değerlendirmeyi Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function getColorForScore(val) {
+            // 0: kırmızı (#dc3545), 50: sarı (#ffc107), 100: yeşil (#198754)
+            let r, g, b;
+            if (val < 50) {
+                // kırmızıdan sarıya
+                let ratio = val / 50;
+                r = 220 + (255-220)*ratio;
+                g = 53 + (193-53)*ratio;
+                b = 69 + (7-69)*ratio;
+            } else {
+                // sarıdan yeşile
+                let ratio = (val-50)/50;
+                r = 255 + (25-255)*ratio;
+                g = 193 + (135-193)*ratio;
+                b = 7 + (84-7)*ratio;
+            }
+            return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+        }
+        function updatePuanColor(val) {
+            const color = getColorForScore(val);
+            document.getElementById('puanDisplay').style.backgroundColor = color;
+            document.getElementById('puanDisplay').style.color = val < 30 ? '#fff' : '#222';
+            // Slider track için accent-color (modern tarayıcılar)
+            document.getElementById('puanSlider').style.setProperty('accent-color', color);
+        }
+        $(document).ready(function() {
+            // Animasyonlar artık global sistem tarafından otomatik yönetiliyor
+        });
+        document.getElementById('puanSlider').addEventListener('input', function() {
+            document.getElementById('puanDisplay').textContent = this.value;
+            updatePuanColor(this.value);
+        });
+        // Sayfa yüklenince ilk renk ayarı
+        updatePuanColor(document.getElementById('puanSlider').value);
+    </script>
+} 

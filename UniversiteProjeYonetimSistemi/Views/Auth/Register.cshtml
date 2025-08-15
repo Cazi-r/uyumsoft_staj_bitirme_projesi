@@ -1,0 +1,206 @@
+@model UniversiteProjeYonetimSistemi.Models.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="row justify-content-center mt-4 animate-header">
+    <div class="col-md-8">
+        <div class="card animate-card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Yeni Kullanıcı Kaydı</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Register" method="post" class="animate-form">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Ad" class="form-label"></label>
+                                <input asp-for="Ad" class="form-control" />
+                                <span asp-validation-for="Ad" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Soyad" class="form-label"></label>
+                                <input asp-for="Soyad" class="form-control" />
+                                <span asp-validation-for="Soyad" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Rol" class="form-label"></label>
+                                <select asp-for="Rol" class="form-select" id="rolSelect">
+                                    <option value="">-- Seçiniz --</option>
+                                    @foreach (var rol in ViewBag.Roller)
+                                    {
+                                        <option value="@rol">@rol</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Rol" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label"></label>
+                                <input asp-for="Password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ConfirmPassword" class="form-label"></label>
+                                <input asp-for="ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                            
+                            <!-- Rol seçimine göre gösterilecek/gizlenecek alanlar -->
+                            <div id="ogrenciAlanlari" class="role-fields" style="display:none;">
+                                <div class="mb-3">
+                                    <label asp-for="OgrenciNo" class="form-label"></label>
+                                    <input asp-for="OgrenciNo" class="form-control" />
+                                    <span asp-validation-for="OgrenciNo" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="Telefon" class="form-label"></label>
+                                    <input asp-for="Telefon" class="form-control" placeholder="0XXX XXX XX XX" />
+                                    <span asp-validation-for="Telefon" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="Adres" class="form-label"></label>
+                                    <textarea asp-for="Adres" class="form-control" rows="3" placeholder="Adres bilgisi"></textarea>
+                                    <span asp-validation-for="Adres" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div id="akademisyenAlanlari" class="role-fields" style="display:none;">
+                                <div class="mb-3">
+                                    <label asp-for="Unvan" class="form-label"></label>
+                                    <select asp-for="Unvan" class="form-select">
+                                        <option value="">-- Seçiniz --</option>
+                                        <option value="Prof. Dr.">Prof. Dr.</option>
+                                        <option value="Doç. Dr.">Doç. Dr.</option>
+                                        <option value="Dr. Öğr. Üyesi">Dr. Öğr. Üyesi</option>
+                                        <option value="Arş. Gör.">Arş. Gör.</option>
+                                        <option value="Öğr. Gör.">Öğr. Gör.</option>
+                                    </select>
+                                    <span asp-validation-for="Unvan" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="UzmanlikAlani" class="form-label"></label>
+                                    <input asp-for="UzmanlikAlani" class="form-control" />
+                                    <span asp-validation-for="UzmanlikAlani" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="Ofis" class="form-label"></label>
+                                    <input asp-for="Ofis" class="form-control" placeholder="Ofis bilgisi (örn: A-203)" />
+                                    <span asp-validation-for="Ofis" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="Telefon" class="form-label"></label>
+                                    <input asp-for="Telefon" class="form-control" placeholder="0XXX XXX XX XX" />
+                                    <span asp-validation-for="Telefon" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div id="adminAlanlari" class="role-fields" style="display:none;">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Sistem yöneticisi (Admin) olarak kayıt oluyorsunuz. Temel bilgileriniz kaydedilecektir.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 d-flex justify-content-between">
+                        <a asp-action="Login" class="btn btn-secondary animate-button">
+                            <i class="fas fa-arrow-left me-2"></i>Giriş Sayfasına Dön
+                        </a>
+                        <button type="submit" class="btn btn-primary animate-button">
+                            <i class="fas fa-user-plus me-2"></i>Kayıt Ol
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    
+    <script>
+        $(document).ready(function () {
+            // Rol değişikliğinde ilgili alanları göster/gizle
+            $("#rolSelect").change(function () {
+                var selectedValue = $(this).val();
+                
+                // Tüm rol alanlarını gizle
+                $(".role-fields").hide();
+                
+                // Seçilen role göre ilgili alanları göster
+                if (selectedValue === "Ogrenci") {
+                    $("#ogrenciAlanlari").show();
+                } else if (selectedValue === "Akademisyen") {
+                    $("#akademisyenAlanlari").show();
+                } else if (selectedValue === "Admin") {
+                    $("#adminAlanlari").show();
+                }
+                
+                // Form validasyonunu güncelle
+                updateValidationRules();
+            });
+            
+            // Sayfa yüklendiğinde mevcut role göre alanları göster
+            var initialRole = $("#rolSelect").val();
+            if (initialRole === "Ogrenci") {
+                $("#ogrenciAlanlari").show();
+            } else if (initialRole === "Akademisyen") {
+                $("#akademisyenAlanlari").show();
+            } else if (initialRole === "Admin") {
+                $("#adminAlanlari").show();
+            }
+            
+            // İlk yüklemede validasyon kurallarını güncelle
+            updateValidationRules();
+            
+            // Rol seçimine göre validasyon kurallarını güncelle
+            function updateValidationRules() {
+                var selectedRole = $("#rolSelect").val();
+                
+                // Öğrenci numarası validasyonu
+                if (selectedRole === "Ogrenci") {
+                    $("#OgrenciNo").attr("data-val", "true");
+                    $("#OgrenciNo").attr("data-val-required", "Öğrenci numarası zorunludur.");
+                } else {
+                    $("#OgrenciNo").removeAttr("data-val");
+                    $("#OgrenciNo").removeAttr("data-val-required");
+                }
+                
+                // Akademisyen unvan validasyonu
+                if (selectedRole === "Akademisyen") {
+                    $("#Unvan").attr("data-val", "true");
+                    $("#Unvan").attr("data-val-required", "Unvan zorunludur.");
+                } else {
+                    $("#Unvan").removeAttr("data-val");
+                    $("#Unvan").removeAttr("data-val-required");
+                }
+                
+                // Admin için ek validasyon kuralı gerekmez
+                
+                // Validasyon kurallarını tekrar çalıştır
+                $('form').validate().resetForm();
+            }
+        });
+    </script>
+} 

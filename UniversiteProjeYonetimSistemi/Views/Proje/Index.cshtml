@@ -1,0 +1,327 @@
+@model IEnumerable<UniversiteProjeYonetimSistemi.Models.Proje>
+
+@{ 
+    ViewData["Title"] = "Projeler"; 
+} 
+
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="d-flex justify-content-between align-items-center mb-2 page-header animate-header">
+                <h4 class="page-title">
+                    <i class="fas fa-tasks text-primary me-2"></i>@ViewData["Title"]
+                </h4>
+            </div>
+
+            <!-- Sticky page toolbar -->
+            <div class="page-toolbar shadow-sm border rounded bg-white mb-3">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <!-- Search -->
+                    <div class="flex-grow-1" style="min-width: 240px;">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" id="searchInput" class="form-control border-0 bg-light" placeholder="Projelerde ara...">
+                </div>
+            </div>
+
+            <!-- Filters (chip-like) -->
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-light border filter-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-filter me-1"></i> Durum
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item status-option active" data-value="" href="#">Tum Durumlar</a></li>
+                        <li><a class="dropdown-item status-option" data-value="Beklemede" href="#">Beklemede</a></li>
+                        
+                        <li><a class="dropdown-item status-option" data-value="Devam" href="#">Devam</a></li>
+                        <li><a class="dropdown-item status-option" data-value="Tamamlandi" href="#">Tamamlandi</a></li>
+                        <li><a class="dropdown-item status-option" data-value="Iptal" href="#">Iptal</a></li>
+                    </ul>
+                </div>
+
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-light border filter-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-tags me-1"></i> Kategori
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item category-option active" data-value="" href="#">Tum Kategoriler</a></li>
+                        @foreach (var kategori in Model.Where(p => p.Kategori != null)
+                                                      .GroupBy(p => p.Kategori.Ad)
+                                                      .Select(g => g.First().Kategori))
+                        {
+                            <li><a class="dropdown-item category-option" data-value="@kategori.Ad" href="#">@kategori.Ad</a></li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- Applied filter chips -->
+                <div id="activeFilters" class="d-flex align-items-center flex-wrap gap-2"></div>
+            </div>
+
+            <!-- CTA -->
+            <div class="ms-auto">
+                @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                {
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Yeni Proje
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4 main-table animate-card">
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="projectsTable" class="table table-hover mb-0 animate-table">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Proje</th>
+                            <th>Öğrenci</th>
+                            <th>Danışman</th>
+                            <th style="width: 180px;">Oluşturma/Teslim</th>
+                            <th>Durum</th>
+                            <th>Kategori</th>
+                            <th style="width: 160px;" class="text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var studentName = item.Ogrenci != null ? $"{item.Ogrenci.Ad} {item.Ogrenci.Soyad}" : "-";
+                        var dateTitle = $"Olusturma: {item.OlusturmaTarihi:dd.MM.yyyy HH:mm}";
+                        if (item.TeslimTarihi.HasValue)
+                        {
+                            dateTitle += $" - Teslim: {item.TeslimTarihi.Value:dd.MM.yyyy HH:mm}";
+                        }
+                        <tr class="project-row table-hover-item" 
+                            data-name="@item.Ad.ToLower()" 
+                            data-status="@item.Status"
+                            data-category="@(item.Kategori?.Ad ?? "")"
+                            data-student="@studentName.ToLower()">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="project-icon me-3">
+                                        <span class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-file-alt"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">@item.Ad</h6>
+                                        <span class="text-muted small project-description" data-full-text="@item.Aciklama">@(item.Aciklama?.Length > 50 ? item.Aciklama.Substring(0, 50) + "..." : item.Aciklama)</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                @if (item.Ogrenci != null)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-2">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <span>@(item.Ogrenci?.Ad + " " + item.Ogrenci?.Soyad)</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Mentor != null)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-2">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        <span>@(item.Mentor?.Ad + " " + item.Mentor?.Soyad)</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="small" title="@dateTitle">
+                                    @item.OlusturmaTarihi.ToString("dd.MM.yy")
+                                    @if (item.TeslimTarihi.HasValue)
+                                    {
+                                        <span class="text-muted">/</span> @item.TeslimTarihi.Value.ToString("dd.MM.yy")
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                @{
+                                    var statusClass = item.Status switch
+                                    {
+                                        "Beklemede" => "badge bg-secondary",
+                                        
+                                        "Devam" => "badge bg-primary",
+                                        "Tamamlandi" => "badge bg-success",
+                                        "Iptal" => "badge bg-danger",
+                                        _ => "badge bg-secondary"
+                                    };
+                                    var statusText = item.Status switch
+                                    {
+                                        "Beklemede" => "Beklemede",
+                                        
+                                        "Devam" => "Devam Ediyor",
+                                        "Tamamlandi" => "Tamamlandi",
+                                        "Iptal" => "Iptal",
+                                        _ => item.Status
+                                    };
+                                }
+                                <span class="@statusClass">@statusText</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">@(item.Kategori?.Ad ?? "-")</span>
+                            </td>
+                            <td class="text-end actions-cell">
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye me-1"></i> Goruntule
+                                    </a>
+                                    <div class="dropdown d-inline-block">
+                                        <button type="button" class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Diger islemler">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Akademisyen"))
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
+                                                    <i class="fas fa-pen me-2"></i> Duzenle
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <li><hr class="dropdown-divider" /></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">
+                                                    <i class="fas fa-trash me-2"></i> Sil
+                                                </a>
+                                            </li>
+                                        }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <div id="noDataMessage" class="text-center py-5 d-none">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h6>Aradığınız kriterlere uygun proje bulunamadı.</h6>
+                    <p class="text-muted">Lütfen farklı arama kriterleri deneyin.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Arama ve filtreleme fonksiyonu
+            let statusFilter = '';
+            let categoryFilter = '';
+
+            function renderActiveChips() {
+                const $wrap = $('#activeFilters');
+                $wrap.empty();
+                if (statusFilter) {
+                    $wrap.append(`<span class="badge bg-light text-dark border">Durum: ${statusFilter} <button type="button" class="btn btn-sm btn-link p-0 ms-1 remove-status"><i class="fas fa-times"></i></button></span>`);
+                }
+                if (categoryFilter) {
+                    $wrap.append(`<span class="badge bg-light text-dark border">Kategori: ${categoryFilter} <button type="button" class="btn btn-sm btn-link p-0 ms-1 remove-category"><i class="fas fa-times"></i></button></span>`);
+                }
+            }
+
+            function filterProjects() {
+                const searchTerm = $('#searchInput').val().toLowerCase();
+                
+                let matchCount = 0;
+                
+                $('.project-row').each(function() {
+                    const name = $(this).data('name');
+                    const status = $(this).data('status');
+                    const category = $(this).data('category');
+                    const student = $(this).data('student').toLowerCase();
+                    
+                    const matchesSearch = name.includes(searchTerm) || student.includes(searchTerm);
+                    const matchesStatus = statusFilter === '' || status === statusFilter;
+                    const matchesCategory = categoryFilter === '' || category === categoryFilter;
+                    
+                    const shouldShow = matchesSearch && matchesStatus && matchesCategory;
+                    
+                    $(this).toggle(shouldShow);
+                    
+                    if (shouldShow) {
+                        matchCount++;
+                    }
+                });
+                
+                // Sonuç bulunamadı mesajını göster/gizle
+                if (matchCount === 0) {
+                    $('#noDataMessage').removeClass('d-none');
+                } else {
+                    $('#noDataMessage').addClass('d-none');
+                }
+            }
+            
+            // Arama olayını dinle
+            $('#searchInput').on('keyup', filterProjects);
+
+            // Dropdown filtre secimleri
+            $('.status-option').on('click', function(e){
+                e.preventDefault();
+                $('.status-option').removeClass('active');
+                $(this).addClass('active');
+                statusFilter = $(this).data('value');
+                renderActiveChips();
+                filterProjects();
+            });
+            $('.category-option').on('click', function(e){
+                e.preventDefault();
+                $('.category-option').removeClass('active');
+                $(this).addClass('active');
+                categoryFilter = $(this).data('value');
+                renderActiveChips();
+                filterProjects();
+            });
+
+            // Chip kaldirma
+            $('#activeFilters').on('click', '.remove-status', function(){
+                statusFilter = '';
+                $('.status-option').removeClass('active');
+                $('.status-option[data-value=""]').addClass('active');
+                renderActiveChips();
+                filterProjects();
+            });
+            $('#activeFilters').on('click', '.remove-category', function(){
+                categoryFilter = '';
+                $('.category-option').removeClass('active');
+                $('.category-option[data-value=""]').addClass('active');
+                renderActiveChips();
+                filterProjects();
+            });
+            
+            // Tablo satırlarına hover efekti
+            $('.project-row').hover(
+                function() {
+                    $(this).addClass('bg-light');
+                },
+                function() {
+                    $(this).removeClass('bg-light');
+                }
+            );
+        });
+    </script>
+} 

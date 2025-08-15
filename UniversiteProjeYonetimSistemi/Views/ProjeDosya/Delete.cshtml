@@ -1,0 +1,94 @@
+@model UniversiteProjeYonetimSistemi.Models.ProjeDosya
+
+@{
+    ViewData["Title"] = "Dosya Sil";
+}
+
+<div class="container py-4 animate-header">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Dosya Sil</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Dikkat!</strong> Bu işlem geri alınamaz. Dosya kalıcı olarak silinecektir.
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Dosya Bilgileri:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Dosya Adı:</strong>
+                                <p>@Model.DosyaAdi</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Dosya Türü:</strong>
+                                <p><span class="badge bg-info">@Model.DosyaTipi</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Dosya Boyutu:</strong>
+                                <p>
+                                    @{
+                                        var sizeInMB = Model.DosyaBoyutu / 1024.0 / 1024.0;
+                                        var sizeText = sizeInMB > 1 ? $"{sizeInMB:F1} MB" : $"{Model.DosyaBoyutu / 1024.0:F0} KB";
+                                    }
+                                    @sizeText
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Yükleyen:</strong>
+                                <p>
+                                    <span class="badge bg-secondary">@Model.YukleyenTipi</span>
+                                    @if (!string.IsNullOrEmpty(ViewBag.YukleyenAdi))
+                                    {
+                                        <br />
+                                        <span class="text-muted">@ViewBag.YukleyenAdi</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Yükleme Tarihi:</strong>
+                                <p>@Model.YuklemeTarihi.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Dosya Yolu:</strong>
+                                <p><code class="text-muted">@Model.DosyaYolu</code></p>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Aciklama))
+                        {
+                            <div class="mb-3">
+                                <strong>Açıklama:</strong>
+                                <p>@Model.Aciklama</p>
+                            </div>
+                        }
+                    </div>
+                    
+                    <form asp-controller="ProjeDosya" asp-action="Delete" method="post" class="animate-form">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="projeId" value="@Model.ProjeId" />
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="ProjeDosya" asp-action="Index" asp-route-projeId="@Model.ProjeId" class="btn btn-secondary animate-button">
+                                <i class="fas fa-arrow-left me-2"></i>Vazgeç
+                            </a>
+                            <button type="submit" class="btn btn-danger animate-button">
+                                <i class="fas fa-trash me-2"></i>Dosyayı Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
