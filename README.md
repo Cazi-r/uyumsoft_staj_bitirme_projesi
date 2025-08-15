@@ -87,6 +87,5 @@ Gemini:Model  = gemini-1.5-flash
 - Denetleyiciler: `UniversiteProjeYonetimSistemi/Controllers`
 - Servisler: `UniversiteProjeYonetimSistemi/Services`
 
-> Not: Üretim ortamında gizli bilgiler (DB bağlantı dizesi, API anahtarları) depo içine eklenmemelidir. Kullanıcı gizleri, ortam değişkenleri veya güvenli bir giz yönetimi kullanın.
 
 
