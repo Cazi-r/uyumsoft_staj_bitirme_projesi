@@ -575,6 +575,7 @@ function applySavedThemeSettings() {
     const themeMode = localStorage.getItem('themeMode');
     if (themeMode === 'dark') {
         rootElement.classList.add('dark-mode');
+        rootElement.classList.add('dark-theme');
         
         // Update theme switcher if on settings page
         const darkModeRadio = document.getElementById('darkMode');
@@ -593,6 +594,7 @@ function applySavedThemeSettings() {
         }
     } else if (themeMode === 'light') {
         rootElement.classList.remove('dark-mode');
+        rootElement.classList.remove('dark-theme');
         
         // Update theme switcher if on settings page
         const lightModeRadio = document.getElementById('lightMode');
@@ -610,6 +612,7 @@ function applySavedThemeSettings() {
         const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (prefersDarkMode) {
             rootElement.classList.add('dark-mode');
+            rootElement.classList.add('dark-theme');
             
             // Sistem tercihi koyu temaysa yüksek kontrast devre dışı olmalı
             const highContrastSwitch = document.getElementById('highContrastSwitch');
@@ -620,6 +623,7 @@ function applySavedThemeSettings() {
             }
         } else {
             rootElement.classList.remove('dark-mode');
+            rootElement.classList.remove('dark-theme');
             
             // Sistem tercihi açık temaysa yüksek kontrast aktif edilebilir
             const highContrastSwitch = document.getElementById('highContrastSwitch');
@@ -791,8 +795,10 @@ if (localStorage.getItem('themeMode') === 'auto') {
         .addEventListener('change', event => {
             if (event.matches) {
                 document.documentElement.classList.add('dark-mode');
+                document.documentElement.classList.add('dark-theme');
             } else {
                 document.documentElement.classList.remove('dark-mode');
+                document.documentElement.classList.remove('dark-theme');
             }
         });
 }

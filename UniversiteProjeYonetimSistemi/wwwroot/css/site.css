@@ -1060,6 +1060,48 @@ td.text-end .btn-group .btn { white-space: nowrap; }
   }
 }
 
+/* =====================================================
+   NAV TABS / PILLS - DARK THEME OVERRIDES
+   ===================================================== */
+.dark-mode .nav-tabs,
+.dark-theme .nav-tabs {
+  border-bottom-color: var(--card-border) !important;
+}
+
+.dark-mode .nav-tabs .nav-link,
+.dark-theme .nav-tabs .nav-link {
+  color: var(--nav-link-color) !important;
+  background-color: transparent;
+  border-color: transparent transparent var(--card-border) !important;
+}
+
+.dark-mode .nav-tabs .nav-link.active,
+.dark-theme .nav-tabs .nav-link.active {
+  color: var(--nav-link-hover-color) !important;
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) var(--card-border) var(--card-bg) !important;
+}
+
+.dark-mode .tab-content,
+.dark-theme .tab-content {
+  background-color: var(--card-bg);
+  color: var(--body-color);
+}
+
+.dark-mode .table thead.table-light th,
+.dark-theme .table thead.table-light th {
+  background-color: var(--card-header-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .card-header.bg-white,
+.dark-theme .card-header.bg-white {
+  background-color: var(--card-header-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--card-header-border) !important;
+}
+
 .no-animations .table-hover-item:hover {
   transform: none !important;
 }
@@ -3518,11 +3560,11 @@ body.dark-theme .btn-link * {
   display: none; flex-direction: column; overflow: hidden; z-index: 1050;
 }
 .ai-chat-panel.open { display: flex; }
-.ai-chat-header { padding: 10px 12px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center; font-weight:600; }
+.ai-chat-header { padding: 10px 12px; border-bottom: 1px solid #eee; display:flex; justify-content:space-between; align-items:center; font-weight:600; background:#fff; }
 .ai-chat-messages { padding: 12px; gap: 8px; display:flex; flex-direction:column; overflow:auto; flex: 1 1 auto; }
 .ai-msg { padding: 8px 10px; border-radius: 8px; max-width: 85%; }
-.ai-msg.user { align-self: flex-end; background: #e3f2fd; }
-.ai-msg.bot { align-self: flex-start; background: #f3f4f6; }
+.ai-msg.user { align-self: flex-end; background: #e3f2fd; color:#0f172a; }
+.ai-msg.bot { align-self: flex-start; background: #f3f4f6; color:#111827; }
 .ai-chat-input { padding: 10px; display:flex; gap:8px; border-top: 1px solid #eee; align-items:center; }
 .ai-send-btn { background:#3B82F6; color:#fff; border:none; width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
 .ai-send-btn:hover { filter: brightness(0.95); }
@@ -3557,6 +3599,35 @@ body.dark-theme .ai-send-btn { background: #2563eb; color: #fff; }
 body.dark-theme .ai-chat-btn { background: #2563eb; }
 body.dark-theme .ai-chat-panel .ai-chat-messages { scrollbar-color: #4b5563 transparent; }
 body.dark-theme .ai-chat-panel .ai-chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); }
+
+/* Strong overrides to fix residual light styles in dark mode */
+body.dark-theme .ai-chat-header { background: #111827 !important; border-bottom-color: #374151 !important; }
+body.dark-theme .ai-msg.bot { background: #1f2937 !important; color: #e5e7eb !important; }
+body.dark-theme .ai-msg.user { background: rgba(59,130,246,.25) !important; color: #dbeafe !important; }
+body.dark-theme .ai-chat-input { background: #111827 !important; border-top-color: #374151 !important; }
+
+/* When dark classes are on html element */
+.dark-mode .ai-chat-panel,
+.dark-theme .ai-chat-panel {
+  background: #111827 !important;
+  color: #e5e7eb !important;
+}
+.dark-mode .ai-chat-header,
+.dark-theme .ai-chat-header {
+  background: #111827 !important;
+  border-bottom-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+.dark-mode .ai-msg.bot,
+.dark-theme .ai-msg.bot { background: #1f2937 !important; color: #e5e7eb !important; }
+.dark-mode .ai-msg.user,
+.dark-theme .ai-msg.user { background: rgba(59,130,246,.25) !important; color: #dbeafe !important; }
+.dark-mode .ai-chat-input,
+.dark-theme .ai-chat-input { background: #111827 !important; border-top-color: #374151 !important; }
+.dark-mode #ai-chat-input.form-control,
+.dark-theme #ai-chat-input.form-control { background: #111827 !important; color: #e5e7eb !important; border-color: #374151 !important; }
+.dark-mode #ai-chat-input::placeholder,
+.dark-theme #ai-chat-input::placeholder { color: #9ca3af !important; }
 
 /* =====================================================
    TOOLTIP STYLES - PROJECT DESCRIPTION TRUNCATION
@@ -3667,4 +3738,114 @@ body.dark-theme .ai-chat-panel .ai-chat-messages::-webkit-scrollbar-thumb { back
     left: 20px;
     transform: translateY(-100%);
   }
+}
+
+/* =====================================================
+   FULLCALENDAR - DARK THEME OVERRIDES
+   ===================================================== */
+.dark-mode .fc, .dark-theme .fc {
+  color: var(--body-color);
+}
+
+.dark-mode .fc .fc-toolbar-title,
+.dark-theme .fc .fc-toolbar-title {
+  color: var(--body-color) !important;
+}
+
+.dark-mode .fc .fc-button-primary,
+.dark-theme .fc .fc-button-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #fff !important;
+}
+
+.dark-mode .fc .fc-button-primary:hover,
+.dark-theme .fc .fc-button-primary:hover {
+  filter: brightness(0.92);
+}
+
+.dark-mode .fc .fc-col-header-cell,
+.dark-theme .fc .fc-col-header-cell {
+  background-color: var(--card-header-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .fc .fc-scrollgrid,
+.dark-theme .fc .fc-scrollgrid,
+.dark-mode .fc-theme-standard td,
+.dark-theme .fc-theme-standard td,
+.dark-mode .fc-theme-standard th,
+.dark-theme .fc-theme-standard th {
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .fc .fc-daygrid-day,
+.dark-theme .fc .fc-daygrid-day {
+  background-color: var(--card-bg);
+}
+
+.dark-mode .fc .fc-day-today,
+.dark-theme .fc .fc-day-today {
+  background-color: rgba(var(--primary-color-rgb), 0.12) !important;
+}
+
+.dark-mode .fc .fc-daygrid-day-number,
+.dark-theme .fc .fc-daygrid-day-number,
+.dark-mode .fc .fc-daygrid-day-top a,
+.dark-theme .fc .fc-daygrid-day-top a {
+  color: var(--body-color) !important;
+}
+
+.dark-mode .fc .fc-popover,
+.dark-theme .fc .fc-popover {
+  background-color: var(--card-bg) !important;
+  color: var(--body-color) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .fc .fc-list,
+.dark-theme .fc .fc-list {
+  background-color: var(--card-bg);
+  color: var(--body-color);
+}
+
+.dark-mode .fc .fc-list-table td,
+.dark-theme .fc .fc-list-table td,
+.dark-mode .fc .fc-list-table th,
+.dark-theme .fc .fc-list-table th {
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .fc a,
+.dark-theme .fc a {
+  color: var(--nav-link-color);
+}
+
+.dark-mode .fc a:hover,
+.dark-theme .fc a:hover {
+  color: var(--nav-link-hover-color);
+}
+
+/* =====================================================
+   PROFILE PAGES - DARK THEME FIXES
+   ===================================================== */
+.dark-mode .table.table-borderless tbody th,
+.dark-mode .table.table-borderless tbody td,
+.dark-theme .table.table-borderless tbody th,
+.dark-theme .table.table-borderless tbody td {
+  background-color: var(--table-bg) !important;
+  color: var(--body-color) !important;
+}
+
+.dark-mode .form-floating > label,
+.dark-theme .form-floating > label {
+  color: #adb5bd !important;
+}
+
+.dark-mode .form-floating > .form-control:focus ~ label,
+.dark-theme .form-floating > .form-control:focus ~ label,
+.dark-mode .form-floating > .form-select:focus ~ label,
+.dark-theme .form-floating > .form-select:focus ~ label {
+  color: var(--body-color) !important;
 }

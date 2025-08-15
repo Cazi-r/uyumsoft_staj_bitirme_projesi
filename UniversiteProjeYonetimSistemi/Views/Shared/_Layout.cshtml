@@ -3,21 +3,29 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
     <title>@ViewData["Title"] - Proje Yönetim Sistemi</title>
     <script>
         // Sayfa DOM yüklenmeden önce tema ayarlarını uygula
         (function() {
             // Theme mode (dark/light)
             const rootElement = document.documentElement;
+            // Legacy destek
+            const legacyDark = localStorage.getItem('darkMode') === 'true';
+            if (!localStorage.getItem('themeMode') && legacyDark) {
+                try { localStorage.setItem('themeMode', 'dark'); } catch (_) {}
+            }
             
             // Apply theme mode
             const themeMode = localStorage.getItem('themeMode');
             if (themeMode === 'dark') {
                 rootElement.classList.add('dark-mode');
+                rootElement.classList.add('dark-theme');
             } else if (themeMode === 'auto') {
                 const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (prefersDarkMode) {
                     rootElement.classList.add('dark-mode');
+                    rootElement.classList.add('dark-theme');
                 }
             }
             
@@ -80,6 +88,10 @@
             });
         })();
     </script>
+    <style>
+        html.dark-mode, html.dark-theme { background-color: #1e1e2d; }
+        @@media (prefers-color-scheme: dark) { html { background-color: #1e1e2d; } }
+    </style>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -413,41 +425,42 @@
         document.addEventListener('DOMContentLoaded', function() {
             const darkModeSwitch = document.getElementById('darkModeSwitch');
             const darkThemeToggle = document.getElementById('darkThemeToggle');
+            const rootElement = document.documentElement;
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             
-            // LocalStorage'dan tema durumunu kontrol et
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            // LocalStorage'dan tema durumunu kontrol et (yeni anahtar: themeMode)
+            let themeMode = localStorage.getItem('themeMode');
+            if (!themeMode) {
+                themeMode = (localStorage.getItem('darkMode') === 'true') ? 'dark' : 'light';
+            }
+            const isDark = themeMode === 'dark' || (themeMode === 'auto' && prefersDark);
             
-            // Sayfa yüklendiğinde tema durumunu uygula
-            if (isDarkMode) {
-                darkModeSwitch.checked = true;
-                applyDarkTheme();
+            if (darkModeSwitch) {
+                darkModeSwitch.checked = !!isDark;
+                darkModeSwitch.addEventListener('change', function() {
+                    const nextMode = this.checked ? 'dark' : 'light';
+                    try { localStorage.setItem('themeMode', nextMode); } catch (_) {}
+                    applyTheme(nextMode);
+                });
             }
             
-            // Switch değiştirildiğinde tema değiştir
-            darkModeSwitch.addEventListener('change', function() {
-                if (this.checked) {
-                    applyDarkTheme();
-                    localStorage.setItem('darkMode', 'true');
+            if (darkThemeToggle && darkModeSwitch) {
+                darkThemeToggle.addEventListener('click', function(e) {
+                    if (e.target !== darkModeSwitch) {
+                        darkModeSwitch.checked = !darkModeSwitch.checked;
+                        darkModeSwitch.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+            
+            function applyTheme(mode) {
+                if (mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    rootElement.classList.add('dark-mode');
+                    rootElement.classList.add('dark-theme');
                 } else {
-                    removeDarkTheme();
-                    localStorage.setItem('darkMode', 'false');
+                    rootElement.classList.remove('dark-mode');
+                    rootElement.classList.remove('dark-theme');
                 }
-            });
-            
-            // Tüm toggle alanına tıklanabilirlik ekle
-            darkThemeToggle.addEventListener('click', function(e) {
-                if (e.target !== darkModeSwitch) {
-                    darkModeSwitch.checked = !darkModeSwitch.checked;
-                    darkModeSwitch.dispatchEvent(new Event('change'));
-                }
-            });
-            
-            function applyDarkTheme() {
-                document.body.classList.add('dark-theme');
-            }
-            
-            function removeDarkTheme() {
-                document.body.classList.remove('dark-theme');
             }
         });
     </script>
