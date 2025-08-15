@@ -3,7 +3,7 @@
     ViewData["Title"] = "Bildirimlerim";
 }
 
-<div class="container mt-4">
+<div class="container mt-4 bildirimler-page">
     <h1 class="page-title"><i class="fas fa-bell me-2 text-primary"></i>Bildirimlerim</h1>
 
     <div class="card shadow mb-4">
@@ -64,9 +64,8 @@
                             </div>
                             <p class="mb-1">@bildirim.Icerik</p>
                             <div class="d-flex justify-content-end mt-2">
-                                <form asp-action="OkunduDurumu" method="post" class="d-inline">
+                                <form asp-controller="Bildirim" asp-action="OkunduDurumu" method="post" class="d-inline" data-no-transition="true">
                                     <input type="hidden" name="id" value="@bildirim.Id" />
-                                    <input type="hidden" name="okundu" value="@(!bildirim.Okundu)" />
                                     <button type="submit" class="btn btn-sm @(bildirim.Okundu ? "btn-outline-primary" : "btn-primary")">
                                         @(bildirim.Okundu ? "Okunmadı Olarak İşaretle" : "Okundu Olarak İşaretle")
                                     </button>

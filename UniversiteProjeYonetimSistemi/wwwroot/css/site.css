@@ -692,6 +692,12 @@ td.text-end .btn-group .btn { white-space: nowrap; }
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Bildirimler sayfasında kart hover kaldırma */
+.bildirimler-page .card:hover {
+  transform: none !important;
+  box-shadow: var(--box-shadow) !important;
+}
+
 .card-header {
   background-color: var(--card-header-bg);
   border-bottom: var(--border-width) solid var(--card-header-border);

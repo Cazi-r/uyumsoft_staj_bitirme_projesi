@@ -71,7 +71,7 @@ namespace UniversiteProjeYonetimSistemi.Controllers
 
         // Bir bildirimi okundu/okunmadi olarak isaretler. Rol/kullanici yetkisi kontrol edilir.
         [HttpPost]
-        public async Task<IActionResult> OkunduDurumu(int id, bool okundu)
+        public async Task<IActionResult> OkunduDurumu(int id)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var kullanici = await _context.Kullanicilar.FirstOrDefaultAsync(k => k.Id.ToString() == userId);
@@ -100,8 +100,8 @@ namespace UniversiteProjeYonetimSistemi.Controllers
             if (!yetkili)
                 return Forbid();
 
-            // Bildirimi güncelle
-            bildirim.Okundu = okundu;
+            // Bildirimi güncelle (toggle)
+            bildirim.Okundu = !bildirim.Okundu;
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
