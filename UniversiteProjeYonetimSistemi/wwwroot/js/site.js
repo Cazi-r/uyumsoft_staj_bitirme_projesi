@@ -799,13 +799,26 @@ if (localStorage.getItem('themeMode') === 'auto') {
 
 // Highlight active nav link based on current URL
 function highlightActiveNavLink() {
-    const currentUrl = window.location.pathname;
+    const currentUrl = window.location.pathname.toLowerCase();
     let bestMatch = null;
 
     document.querySelectorAll('.sidebar-link').forEach(link => {
         const href = link.getAttribute('href');
-        if (currentUrl.startsWith(href)) {
-            if (!bestMatch || href.length > bestMatch.getAttribute('href').length) {
+        if (!href) return;
+        
+        const normalizedHref = href.toLowerCase();
+        
+        // Ana sayfa (/) icin ozel kontrol - sadece tam eslesme
+        if (normalizedHref === '/' || normalizedHref === '/home') {
+            if (currentUrl === '/' || currentUrl === '/home' || currentUrl === '/home/index') {
+                if (!bestMatch || normalizedHref.length > bestMatch.getAttribute('href').length) {
+                    bestMatch = link;
+                }
+            }
+        }
+        // Diger linkler icin startsWith kullan ama "/" hariç
+        else if (normalizedHref !== '/' && currentUrl.startsWith(normalizedHref)) {
+            if (!bestMatch || normalizedHref.length > bestMatch.getAttribute('href').length) {
                 bestMatch = link;
             }
         }
@@ -1268,9 +1281,14 @@ function setupPageTransitions() {
     
     // Geri/ileri tuşu geçişleri
     window.addEventListener('popstate', function() {
-        // Geri tuşu için özel bir geçici animasyon göster (çok kısa süreli)
+        // Geri tuşu için özel bir geçici animasyon göster
         const pageTransition = document.getElementById('pageTransition');
         if (pageTransition) {
+            // Önceki timeout'ları temizle
+            if (window.backButtonTimeout) {
+                clearTimeout(window.backButtonTimeout);
+            }
+            
             // Interval'ı önceden temizle
             if (iconInterval) {
                 clearInterval(iconInterval);
@@ -1283,12 +1301,21 @@ function setupPageTransitions() {
             // Icon'u değiştir (tek seferlik)
             cycleIcons();
             
-            // Çok kısa süre sonra (300ms) animasyonu gizle
-            setTimeout(() => {
+            // İkon değiştirme interval'ı başlat (geri tuşu için kısa süreli)
+            iconInterval = setInterval(cycleIcons, 500);
+            
+            // 1 saniye sonra animasyonu gizle (kullanıcının isteği)
+            window.backButtonTimeout = setTimeout(() => {
                 hidePageTransition();
                 // sessionStorage'ı temizle (geri tuşu için gerekli değil)
                 sessionStorage.removeItem('pageIsNavigating');
-            }, 300);
+                
+                // Interval'ı temizle
+                if (iconInterval) {
+                    clearInterval(iconInterval);
+                    iconInterval = null;
+                }
+            }, 1000); // 1 saniye = 1000ms
         }
     });
 }
@@ -1297,6 +1324,11 @@ function setupPageTransitions() {
 function showPageTransition() {
     const pageTransition = document.getElementById('pageTransition');
     if (!pageTransition) return;
+    
+    // forceHidePageTransition'in verdigi inline gizleme stillerini kaldir
+    pageTransition.style.opacity = '';
+    pageTransition.style.visibility = '';
+    pageTransition.style.display = '';
     
     // Var olan interval'ı temizle
     if (iconInterval) {
@@ -1338,3 +1370,39 @@ function hidePageTransition() {
         iconInterval = null;
     }
 }
+
+// Geri donuslerde veya bfcache restorasyonunda animasyonu aninda kapatmak icin guclu kapatma
+function forceHidePageTransition() {
+    try {
+        const pageTransition = document.getElementById('pageTransition');
+        if (pageTransition) {
+            pageTransition.classList.remove('show');
+            // Ekran artefakti kalmasin diye style ile de gizleyelim (sonra tekrar acilabilir)
+            pageTransition.style.opacity = '0';
+            pageTransition.style.visibility = 'hidden';
+        }
+        document.body.classList.remove('page-transitioning');
+        if (iconInterval) {
+            clearInterval(iconInterval);
+            iconInterval = null;
+        }
+        if (window.backButtonTimeout) {
+            clearTimeout(window.backButtonTimeout);
+            window.backButtonTimeout = null;
+        }
+        // Navigasyon bayragini temizle (geri donuste overlay kalmasin)
+        sessionStorage.removeItem('pageIsNavigating');
+    } catch (_) { /* no-op */ }
+}
+
+// bfcache'den geri gelindiginde sayfa blur kalmasin
+window.addEventListener('pageshow', function() {
+    forceHidePageTransition();
+});
+
+// Sekme tekrar gorunur hale geldiginde de emniyet icin kapat
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        forceHidePageTransition();
+    }
+});
